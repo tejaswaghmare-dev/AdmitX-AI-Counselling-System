@@ -401,6 +401,12 @@ public class StudentLogin {
                         imageFrame
                 );
 
+                Button btnnew = new Button("dashboard");
+                btnnew.setOnAction(e->{
+                        
+                });
+
+                
 
                 // =====================================================
                 // FINAL ROOT
@@ -408,7 +414,8 @@ public class StudentLogin {
 
                 HBox root = new HBox(
                         loginPanel,
-                        imagePanel
+                        imagePanel,
+                        btnnew
                 );
                 root.setAlignment(Pos.CENTER);
 

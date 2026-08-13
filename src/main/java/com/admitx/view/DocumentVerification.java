@@ -445,38 +445,68 @@ public class DocumentVerification {
         } catch (IOException ignored) {
         }
     }
-    private void refresh() {
+        private void refresh() {
+
         documentList.getChildren().clear();
+
         int uploaded = 0;
+
         for (DocumentItem item : documents) {
-            Path expected = getStudentFolder()
-                    .resolve(
-                            cleanName(item.name) +
-                            ".jpg"
-                    );
-            if (Files.exists(expected)) {
-                item.file = expected.toFile();
-            }
-            if (item.file != null) {
+
+                Path folder = getStudentFolder();
+
+                String baseName = cleanName(item.name);
+
+                String[] extensions = {
+                        ".jpg",
+                        ".jpeg",
+                        ".png",
+                        ".pdf"
+                };
+
+                item.file = null;
+
+                for (String extension : extensions) {
+
+                Path expected = folder.resolve(
+                        baseName + extension
+                );
+
+                if (Files.exists(expected)) {
+                        item.file = expected.toFile();
+                        break;
+                }
+                }
+
+                if (item.file != null) {
                 uploaded++;
-            }
-            documentList.getChildren().add(
-                    documentRow(item)
-            );
+                }
+
+                documentList.getChildren().add(
+                        documentRow(item)
+                );
         }
+
         int total = documents.size();
+
         double progress =
-                (double) uploaded / total;
+                total == 0
+                        ? 0
+                        : (double) uploaded / total;
+
         progressBar.setProgress(progress);
+
         progressLabel.setText(
                 (int) (progress * 100) + "%"
         );
+
         int pending = total - uploaded;
+
         pendingLabel.setText(
                 pending +
                 " compulsory documents are still pending upload."
         );
-    }
+        }
     private HBox bottomButtons(Stage stage) {
         HBox box = new HBox();
         box.setAlignment(Pos.CENTER_LEFT);
@@ -574,8 +604,8 @@ public class DocumentVerification {
     }
     private Region line(boolean completed) {
         Region line = new Region();
-        line.setPrefWidth(170);
-        line.setPrefHeight(3);
+        line.setPrefWidth(150);
+        line.setPrefHeight(1);
         line.setStyle(
                 "-fx-background-color: " +
                 (completed ? GREEN : "#BEC4D1") +

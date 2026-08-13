@@ -29,8 +29,12 @@ public class StudentDashboard {
     private static String currentApplicationId;
     private static String currentStudentName;
 
-    public static void showDashboard(Stage stage, String studentName,
-                                     String applicationId) {
+        public static void showDashboard(Stage stage, String studentName,
+                                        String applicationId) {
+
+        currentStage = stage;
+        currentApplicationId = applicationId;
+        currentStudentName = studentName;
 
         root = new BorderPane();
         root.setStyle("-fx-background-color: " + BG + ";");
@@ -147,24 +151,23 @@ public class StudentDashboard {
         );
 
         dashboard.setOnAction(e ->
-                showDashboardPage("Rahul Kumar", "STU00001")
-        );
+        showDashboardPage(
+                currentStudentName,
+                currentApplicationId
+        )
+);
 
         application.setOnAction(e ->
                 showPage("Application",
                         "Application page will be developed here.")
         );
 
-           documents.setOnAction(e -> {
+                documents.setOnAction(e -> {
 
         DocumentVerification documentsPage =
                 new DocumentVerification(currentApplicationId);
 
-        centerPane.getChildren().clear();
-
-        centerPane.getChildren().add(
-                documentsPage.getPage(currentStage)
-        );
+        setCenter(documentsPage.getPage(currentStage));
         });
 
         merit.setOnAction(e ->

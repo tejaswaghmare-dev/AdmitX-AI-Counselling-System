@@ -18,7 +18,7 @@ import javafx.stage.Stage;
 public class LandingPage extends Application {
 
         public static Stage LandingPagestage;
-        private Scene landpageScene;
+        
 
 
         @Override
@@ -123,27 +123,11 @@ public class LandingPage extends Application {
 
 
                 // =========================================================
-                // STUDENT DESCRIPTION
-                // =========================================================
-
-        
-
-                // =========================================================
                 // STUDENT BUTTON
                 // =========================================================
 
                 
-
-
                 Button studentBtn = new Button("Get started ->");
-
-                studentBtn.setOnAction(e->{
-                        StudentSignup studentSignup = new StudentSignup();
-
-                        LandingPagestage.setScene(landpageScene);
-                });
-
-                
 
                 studentBtn.setPrefWidth(200);
                 studentBtn.setPrefHeight(45);
@@ -162,13 +146,7 @@ public class LandingPage extends Application {
                 // STUDENT CARD
                 // =========================================================
 
-                VBox studentCard = new VBox(
-                        15,
-                        studentImagePane,
-                        studentTitle,
-                        
-                        studentBtn
-                );
+                VBox studentCard = new VBox(15,studentImagePane,studentTitle, studentBtn);
 
                 studentCard.setAlignment(Pos.CENTER);
 
@@ -248,13 +226,6 @@ public class LandingPage extends Application {
 
 
                 // =========================================================
-                // COUNSELOR DESCRIPTION
-                // =========================================================
-
-        
-
-
-                // =========================================================
                 // COUNSELOR BUTTON
                 // =========================================================
 
@@ -278,13 +249,7 @@ public class LandingPage extends Application {
                 // COUNSELOR CARD
                 // =========================================================
 
-                VBox counselorCard = new VBox(
-                        15,
-                        counselorImagePane,
-                        counselorTitle,
-                        
-                        counselorBtn
-                );
+                VBox counselorCard = new VBox(15,counselorImagePane,counselorTitle,  counselorBtn);
 
                 counselorCard.setAlignment(Pos.CENTER);
 
@@ -339,11 +304,7 @@ public class LandingPage extends Application {
                 // CARDS CONTAINER
                 // =========================================================
 
-                HBox cards = new HBox(
-                        40,
-                        studentCard,
-                        counselorCard
-                );
+                HBox cards = new HBox(40,studentCard, counselorCard);
 
                 cards.setAlignment(Pos.CENTER);
 
@@ -352,26 +313,18 @@ public class LandingPage extends Application {
                 // CENTER CONTENT
                 // =========================================================
 
-                VBox centerContent = new VBox(
-                        40,
-                        chooseRole,
-                        cards
-                );
+                VBox centerContent = new VBox(40,chooseRole,cards);
 
                 centerContent.setAlignment(Pos.CENTER);
 
-                centerContent.setPadding(
-                        new Insets(30)
-                );
+                centerContent.setPadding(new Insets(30));
 
 
                 // =========================================================
                 // FOOTER
                 // =========================================================
 
-                Label footer = new Label(
-                        "© 2026 AdmitX | AI-Powered Counseling & Seat Allocation"
-                );
+                Label footer = new Label("© 2026 AdmitX | AI-Powered Counseling & Seat Allocation");
                 footer.setFont(Font.font("sans-serif"));
 
                 footer.setStyle("""
@@ -379,15 +332,9 @@ public class LandingPage extends Application {
                         -fx-font-size: 13px;
                         """);
 
-                footer.setPadding(
-                        new Insets(15)
-                );
+                footer.setPadding(new Insets(15));
 
-                BorderPane.setAlignment(
-                        footer,
-                        Pos.CENTER
-                );
-
+                BorderPane.setAlignment(footer,Pos.CENTER);
 
                 // =========================================================
                 // ROOT
@@ -399,9 +346,7 @@ public class LandingPage extends Application {
                 root.setCenter(centerContent);
                 root.setBottom(footer);
 
-                root.setStyle("""
-                        -fx-background-color: #f4f7fc;
-                        """);
+                root.setStyle("-fx-background-color: #f4f7fc;");
 
 
                 // =========================================================
@@ -416,8 +361,7 @@ public class LandingPage extends Application {
 
                 // navigation for student button
                 LandingPagestage = stage;
-                landpageScene = scene;
-
+                
                 studentBtn.setOnAction(e->{
                         StudentSignup studentSignup = new StudentSignup();
 
@@ -431,11 +375,6 @@ public class LandingPage extends Application {
 
                         LandingPagestage.setScene(counselorSignup.getScenefromCounselorsignup());
                 });
-
-
-
-
-
 
                 // =========================================================
                 // STAGE

@@ -31,11 +31,12 @@ public class StudentSignup  {
 
                 imageContainer.setStyle("""
                         -fx-background-color:
-                        linear-gradient(to right, #9C075C, #C2185B);
+                        linear-gradient(to right, #20005a, #5f00db);
                         """);
 
                 // AdmitX logo
                 Label logo = new Label("AdmitX");
+                
                 logo.setFont(Font.font("sans-serif", 30));
                 logo.setStyle("""
                         -fx-font-weight: bold;
@@ -75,7 +76,7 @@ public class StudentSignup  {
                 imageFrame.setStyle("""
                         -fx-background-color: rgba(255, 255, 255, 0.9);
                         -fx-background-radius: 30;
-                        -fx-border-color: rgba(156,7,92,0.20);
+                        -fx-border-color: rgba(1, 38, 107, 0.2);
                         -fx-border-width: 2;
                         -fx-border-radius: 30;
                         -fx-effect: dropshadow(
@@ -278,7 +279,7 @@ public class StudentSignup  {
                 signupButton.setPrefHeight(50);
 
                 signupButton.setStyle("""
-                        -fx-background-color: #46003a;
+                        -fx-background-color: #150a3f;
                         -fx-text-fill: white;
                         -fx-font-size: 16px;
                         -fx-font-weight: bold;
@@ -291,27 +292,7 @@ public class StudentSignup  {
                 // BUTTON HOVER
                 // =====================================================
 
-                signupButton.setOnMouseEntered(e ->
-                        signupButton.setStyle("""
-                                -fx-background-color: #1D4ED8;
-                                -fx-text-fill: white;
-                                -fx-font-size: 16px;
-                                -fx-font-weight: bold;
-                                -fx-background-radius: 10;
-                                -fx-cursor: hand;
-                                """)
-                );
-
-                signupButton.setOnMouseExited(e ->
-                        signupButton.setStyle("""
-                                -fx-background-color: #2563EB;
-                                -fx-text-fill: white;
-                                -fx-font-size: 16px;
-                                -fx-font-weight: bold;
-                                -fx-background-radius: 10;
-                                -fx-cursor: hand;
-                                """)
-                );
+                
 
 
                 // =====================================================
@@ -335,15 +316,20 @@ public class StudentSignup  {
                         Font.font("sans-serif")
                 );
 
+                // navigation for sign in 
                 signIn.setOnAction(e->{
                         StudentLogin studentLogin = new StudentLogin();
 
-                        LandingPage.LandingPagestage.setScene(studentLogin.getScenefromStudentlogin());
+                        Runnable callbacktoreturnlogin = ()->{
+                                LandingPage.LandingPagestage.setScene(studentsignupScene);
+                        };
+
+                        LandingPage.LandingPagestage.setScene(studentLogin.getScenefromStudentlogin(callbacktoreturnlogin));
                 });
                 
 
                 signIn.setStyle("""
-                        -fx-text-fill: #9C075C;
+                        -fx-text-fill: #62328f;
                         -fx-font-size: 14px;
                         -fx-font-weight: bold;
                         """);

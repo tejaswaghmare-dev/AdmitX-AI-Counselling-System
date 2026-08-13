@@ -401,22 +401,40 @@ public class StudentLogin {
                         imageFrame
                 );
 
+                Button btnnew = new Button("dashboard");
+                btnnew.setOnAction(e->{
+                        
+                });
+
+                
 
                 // =====================================================
                 // FINAL ROOT
                 // =====================================================
 
-                Button btn = new Button();
-                btn.setOnAction(e->{
-                        DashboardUI db = new DashboardUI();
 
-                        LandingPage.LandingPagestage.setScene(db.getSceneFromDashboard());
+                ///////////////////////////////////
+                /// 
+                /// 
+                /// dashbaord connectivity for now 
+                Button loginButton1 = new Button("dummy login");
+                loginButton1.setPrefWidth(250);
+                loginButton1.setPrefHeight(45);
+
+                loginButton1.setOnAction(e -> {
+                StudentDashboard.showDashboard(
+                        LandingPage.LandingPagestage,
+                        "Tejas Waghmare",
+                        "STU00001"
+                );
                 });
 
+               
                 HBox root = new HBox(
                         loginPanel,
                         imagePanel,
-                        btn
+                        btnnew,
+                        loginButton1
                 );
                 root.setAlignment(Pos.CENTER);
 
@@ -431,6 +449,8 @@ public class StudentLogin {
                 // SCENE
                 // =====================================================
 
+                
+
                 Scene scene = new Scene(
                         root,
                         1366,
@@ -438,6 +458,10 @@ public class StudentLogin {
 
                 );
                 studentloginScene =scene;
+
+                
+               
+                
 
                 return studentloginScene;
         }

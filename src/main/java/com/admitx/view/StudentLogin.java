@@ -406,15 +406,25 @@ public class StudentLogin {
                 // FINAL ROOT
                 // =====================================================
 
+                Button btn = new Button();
+                btn.setOnAction(e->{
+                        DashboardUI db = new DashboardUI();
+
+                        LandingPage.LandingPagestage.setScene(db.getSceneFromDashboard());
+                });
+
                 HBox root = new HBox(
                         loginPanel,
-                        imagePanel
+                        imagePanel,
+                        btn
                 );
                 root.setAlignment(Pos.CENTER);
 
                 root.setStyle(
                         "-fx-background-color: white;"
                 );
+
+               
 
 
                 // =====================================================
@@ -425,6 +435,7 @@ public class StudentLogin {
                         root,
                         1366,
                         700
+
                 );
                 studentloginScene =scene;
 

@@ -268,8 +268,8 @@ public class CounselorSignup {
         // CONFIRM PASSWORD
         // =====================================================
 
-        Label confirmLabel =
-                new Label("Confirm Password");
+        Label confirmLabel = new Label("Confirm Password");
+
 
         confirmLabel.setFont(Font.font("sans-serif"));
 

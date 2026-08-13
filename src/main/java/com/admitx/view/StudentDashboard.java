@@ -25,6 +25,9 @@ public class StudentDashboard {
 
     private static BorderPane root;
     private static StackPane centerPane;
+     private static Stage currentStage;
+    private static String currentApplicationId;
+    private static String currentStudentName;
 
     public static void showDashboard(Stage stage, String studentName,
                                      String applicationId) {
@@ -152,10 +155,17 @@ public class StudentDashboard {
                         "Application page will be developed here.")
         );
 
-        documents.setOnAction(e ->
-                showPage("Documents",
-                        "Documents page will be developed here.")
+           documents.setOnAction(e -> {
+
+        DocumentVerification documentsPage =
+                new DocumentVerification(currentApplicationId);
+
+        centerPane.getChildren().clear();
+
+        centerPane.getChildren().add(
+                documentsPage.getPage(currentStage)
         );
+        });
 
         merit.setOnAction(e ->
                 showPage("Merit List",

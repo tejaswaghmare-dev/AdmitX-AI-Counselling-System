@@ -18,7 +18,7 @@ import javafx.scene.text.Font;
 public class StudentLogin {
         private Scene studentloginScene;
 
-        public Scene getScenefromStudentlogin(){
+        public Scene getScenefromStudentlogin(Runnable returntosignup){
                 // =====================================================
                 // LEFT SIDE - LOGIN FORM
                 // =====================================================
@@ -241,6 +241,12 @@ public class StudentLogin {
 
                 Hyperlink signUp =
                         new Hyperlink("Sign Up");
+
+                // return to sign up page 
+
+                signUp.setOnAction(e->{
+                        returntosignup.run();
+                });
 
                 signUp.setFont(
                         Font.font("sans-serif")

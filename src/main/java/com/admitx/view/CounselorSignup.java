@@ -11,9 +11,9 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 
 public class CounselorSignup {
 
@@ -30,8 +30,8 @@ public class CounselorSignup {
         imagePanel.setStyle("""
                 -fx-background-color: linear-gradient(
                     to bottom right,
-                    #f5e8f1,
-                    #e8f8f6
+                    #02614c,
+                    #07bea9
                 );
                 """);
 
@@ -41,6 +41,7 @@ public class CounselorSignup {
         // =====================================================
 
         Label logo = new Label("AdmitX");
+        logo.setFont(Font.font("sans-serif"));
 
         logo.setStyle("""
                 -fx-font-family: Arial;
@@ -103,9 +104,9 @@ public class CounselorSignup {
         imageFrame.setAlignment(Pos.CENTER);
 
         imageFrame.setStyle("""
-                -fx-background-color: rgba(255,255,255,0.60);
+                -fx-background-color: rgba(0, 112, 112, 0.6);
                 -fx-background-radius: 30;
-                -fx-border-color: rgba(156,7,92,0.15);
+                -fx-border-color: rgba(140, 194, 173, 0.15);
                 -fx-border-width: 2;
                 -fx-border-radius: 30;
                 -fx-effect: dropshadow(
@@ -123,33 +124,15 @@ public class CounselorSignup {
         // LEFT SIDE TAGLINE
         // =====================================================
 
-        Label tagline = new Label(
-                "Empowering Better Counseling Decisions."
-        );
+       
 
-        tagline.setStyle("""
-                -fx-font-family: Arial;
-                -fx-font-size: 19px;
-                -fx-font-weight: bold;
-                -fx-text-fill: #374151;
-                """);
-
-        StackPane.setAlignment(
-                tagline,
-                Pos.BOTTOM_CENTER
-        );
-
-        StackPane.setMargin(
-                tagline,
-                new Insets(0, 0, 25, 0)
-        );
+       ;
 
 
         // Add to image panel
         imagePanel.getChildren().addAll(
                 imageFrame,
-                logo,
-                tagline
+                logo     
         );
 
 
@@ -177,9 +160,9 @@ public class CounselorSignup {
         // =====================================================
 
         Label title = new Label(
-                "Create Counselor Account"
+                "Sign up page"
         );
-
+        title.setFont(Font.font("sans-serif"));
         title.setStyle("""
                 -fx-font-family: Arial;
                 -fx-font-size: 30px;
@@ -191,6 +174,7 @@ public class CounselorSignup {
         Label subtitle = new Label(
                 "Manage students, counseling rounds and seat allocation"
         );
+        subtitle.setFont(Font.font("sans-serif"));
 
         subtitle.setStyle("""
                 -fx-font-size: 14px;
@@ -204,6 +188,8 @@ public class CounselorSignup {
 
         Label emailLabel =
                 new Label("Email Address");
+
+        emailLabel.setFont(Font.font("sans-serif"));
 
         emailLabel.setStyle("""
                 -fx-font-size: 14px;
@@ -244,6 +230,8 @@ public class CounselorSignup {
         Label passwordLabel =
                 new Label("Password");
 
+        passwordLabel.setFont(Font.font("sans-serif"));
+
         passwordLabel.setStyle("""
                 -fx-font-size: 14px;
                 -fx-font-weight: bold;
@@ -282,6 +270,8 @@ public class CounselorSignup {
 
         Label confirmLabel =
                 new Label("Confirm Password");
+
+        confirmLabel.setFont(Font.font("sans-serif"));
 
         confirmLabel.setStyle("""
                 -fx-font-size: 14px;
@@ -322,6 +312,8 @@ public class CounselorSignup {
         Button signupButton =
                 new Button("Sign Up");
 
+        signupButton.setFont(Font.font("sans-serif"));
+
         signupButton.setPrefHeight(48);
 
         signupButton.setMaxWidth(
@@ -329,7 +321,7 @@ public class CounselorSignup {
         );
 
         signupButton.setStyle("""
-                -fx-background-color: #14B8A6;
+                -fx-background-color: #006357;
                 -fx-text-fill: white;
                 -fx-font-size: 16px;
                 -fx-font-weight: bold;
@@ -345,6 +337,8 @@ public class CounselorSignup {
         Label accountLabel =
                 new Label("Already have an account?");
 
+        accountLabel.setFont(Font.font("sans-serif"));
+
         accountLabel.setStyle("""
                 -fx-text-fill: #6b7280;
                 -fx-font-size: 14px;
@@ -352,6 +346,7 @@ public class CounselorSignup {
 
         Hyperlink signIn =
                 new Hyperlink("Sign In");
+        signIn.setFont(Font.font("sans-serif"));
 
 
         // navigation for sign in
@@ -359,11 +354,20 @@ public class CounselorSignup {
         signIn.setOnAction(e->{
                 CounselorLogin counselorLogin = new CounselorLogin();
 
-                LandingPage.LandingPagestage.setScene(counselorLogin.getSceneFromCounselorLogin());
+                Runnable callbacktosignup = new Runnable(){
+
+                        @Override
+                        public void run() {
+                                LandingPage.LandingPagestage.setScene(counselorScene);
+                        }
+
+                };
+
+                LandingPage.LandingPagestage.setScene(counselorLogin.getSceneFromCounselorLogin(callbacktosignup));
         });
 
         signIn.setStyle("""
-                -fx-text-fill: #9C075C;
+                -fx-text-fill: #33a588;
                 -fx-font-size: 14px;
                 -fx-font-weight: bold;
                 -fx-border-color: transparent;
@@ -421,22 +425,6 @@ public class CounselorSignup {
             );
         });
 
-
-        // =====================================================
-        // FORM CONTENT
-        // =====================================================
-
-        // Region spacer1 = new Region();
-        // VBox.setVgrow(
-        //         spacer1,
-        //         javafx.scene.layout.Priority.ALWAYS
-        // );
-
-        // Region spacer2 = new Region();
-        // VBox.setVgrow(
-        //         spacer2,
-        //         javafx.scene.layout.Priority.ALWAYS
-        // );
 
         formPanel.getChildren().addAll(
                 title,

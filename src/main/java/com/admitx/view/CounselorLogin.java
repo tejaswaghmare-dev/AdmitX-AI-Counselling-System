@@ -11,15 +11,16 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
+
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 
 public class CounselorLogin {
 
     private Scene counselorLoginScene;
 
-    public Scene getSceneFromCounselorLogin() {
+    public Scene getSceneFromCounselorLogin(Runnable callbackfromcousnelorsignup) {
 
         // =====================================================
         // LEFT SIDE - LOGIN FORM
@@ -42,14 +43,7 @@ public class CounselorLogin {
         // LOGO
         // =====================================================
 
-        Label logo = new Label("AdmitX");
-
-        logo.setStyle("""
-                -fx-font-family: Arial;
-                -fx-font-size: 30px;
-                -fx-font-weight: bold;
-                -fx-text-fill: #9C075C;
-                """);
+       
 
 
         // =====================================================
@@ -59,6 +53,7 @@ public class CounselorLogin {
         Label title = new Label(
                 "Welcome Back, Counselor"
         );
+        title.setFont(Font.font("sans-serif"));
 
         title.setStyle("""
                 -fx-font-family: Arial;
@@ -71,6 +66,7 @@ public class CounselorLogin {
         Label subtitle = new Label(
                 "Login to manage counseling and seat allocation"
         );
+        subtitle.setFont(Font.font("sans-serif"));
 
         subtitle.setStyle("""
                 -fx-font-size: 14px;
@@ -85,6 +81,7 @@ public class CounselorLogin {
         Label emailLabel = new Label(
                 "Email Address / Counselor ID"
         );
+        emailLabel.setFont(Font.font("sans-serif"));
 
         emailLabel.setStyle("""
                 -fx-font-size: 14px;
@@ -122,6 +119,7 @@ public class CounselorLogin {
 
         Label passwordLabel =
                 new Label("Password");
+        passwordLabel.setFont(Font.font("sans-serif"));
 
         passwordLabel.setStyle("""
                 -fx-font-size: 14px;
@@ -160,9 +158,10 @@ public class CounselorLogin {
 
         Hyperlink forgotPassword =
                 new Hyperlink("Forgot Password?");
+        forgotPassword.setFont(Font.font("sans-serif"));
 
         forgotPassword.setStyle("""
-                -fx-text-fill: #9C075C;
+                -fx-text-fill: #c9ab00;
                 -fx-font-size: 13px;
                 -fx-font-weight: bold;
                 -fx-border-color: transparent;
@@ -190,7 +189,7 @@ public class CounselorLogin {
         );
 
         loginButton.setStyle("""
-                -fx-background-color: #14B8A6;
+                -fx-background-color: #e6d92d;
                 -fx-text-fill: white;
                 -fx-font-size: 16px;
                 -fx-font-weight: bold;
@@ -205,6 +204,7 @@ public class CounselorLogin {
 
         Label accountLabel =
                 new Label("Don't have an account?");
+        accountLabel.setFont(Font.font("sans-serif"));
 
         accountLabel.setStyle("""
                 -fx-text-fill: #6b7280;
@@ -214,8 +214,14 @@ public class CounselorLogin {
         Hyperlink signUp =
                 new Hyperlink("Sign Up");
 
+        // sign up for counselor page
+        
+        signUp.setOnAction(e->{
+                callbackfromcousnelorsignup.run();
+        });
+
         signUp.setStyle("""
-                -fx-text-fill: #9C075C;
+                -fx-text-fill: #eeff00;
                 -fx-font-size: 14px;
                 -fx-font-weight: bold;
                 -fx-border-color: transparent;
@@ -261,17 +267,7 @@ public class CounselorLogin {
         // SPACERS
         // =====================================================
 
-        Region spacer1 = new Region();
-        VBox.setVgrow(
-                spacer1,
-                javafx.scene.layout.Priority.ALWAYS
-        );
-
-        Region spacer2 = new Region();
-        VBox.setVgrow(
-                spacer2,
-                javafx.scene.layout.Priority.ALWAYS
-        );
+       
 
 
         // =====================================================
@@ -279,14 +275,13 @@ public class CounselorLogin {
         // =====================================================
 
         loginPanel.getChildren().addAll(
-                logo,
                 title,
                 subtitle,
-                spacer1,
+                
                 emailBox,
                 passwordBox,
                 forgotRow,
-                spacer2,
+                
                 loginButton,
                 signupRow
         );
@@ -301,8 +296,8 @@ public class CounselorLogin {
         imagePanel.setStyle("""
                 -fx-background-color: linear-gradient(
                     to bottom right,
-                    #f5e8f1,
-                    #e8f8f6
+                    #eeff00,
+                    #b3c700
                 );
                 """);
 
@@ -373,6 +368,7 @@ public class CounselorLogin {
         // =====================================================
 
         Label imageLogo = new Label("AdmitX");
+        imageLogo.setFont(Font.font("sans-serif"));
 
         imageLogo.setStyle("""
                 -fx-font-family: Arial;
@@ -396,32 +392,15 @@ public class CounselorLogin {
         // TAGLINE
         // =====================================================
 
-        Label tagline = new Label(
-                "Smart Counseling. Better Outcomes."
-        );
+        
 
-        tagline.setStyle("""
-                -fx-font-family: Arial;
-                -fx-font-size: 19px;
-                -fx-font-weight: bold;
-                -fx-text-fill: #374151;
-                """);
-
-        StackPane.setAlignment(
-                tagline,
-                Pos.BOTTOM_CENTER
-        );
-
-        StackPane.setMargin(
-                tagline,
-                new Insets(0, 0, 25, 0)
-        );
+    
 
 
         imagePanel.getChildren().addAll(
                 imageFrame,
-                imageLogo,
-                tagline
+                imageLogo
+               
         );
 
 

@@ -391,3 +391,12 @@ public class LandingPage extends Application {
     }
 
 }
+
+// Learn. Practice. Understand the
+// CAP Admission Process.
+
+// Welcome to the official training environment for the Maharashtra
+// Health and Technical Common Entrance Test (MHT CET)
+// Centralised Admission Process (CAP) for Engineering. Experience
+// the real workflow without real consequences.
+// ⚠️ **IMPORTANT: This is a training simulator. Any data entered here will NOT affect actual CAP admissions.**

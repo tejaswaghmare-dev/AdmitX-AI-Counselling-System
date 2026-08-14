@@ -195,10 +195,15 @@ public class StudentDashboard {
                         "Admission page will be developed here.")
         );
 
-        notices.setOnAction(e ->
-                showPage("Notices",
-                        "Notices page will be developed here.")
+                notices.setOnAction(e -> {
+
+        NoticeBoard noticeBoard =
+                new NoticeBoard();
+
+        setCenter(
+                noticeBoard.getPage()
         );
+        });
 
         help.setOnAction(e ->
                 showPage("Help",

@@ -20,8 +20,10 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.FileChooser;
@@ -126,7 +128,8 @@ public class DocumentVerification {
     }
     private VBox journey() {
         VBox box = card();
-        HBox steps = new HBox();
+        HBox steps = new HBox(0);
+        steps.setAlignment(Pos.CENTER);
         steps.setAlignment(Pos.CENTER);
         steps.getChildren().addAll(
                 step("✓", "Registration", true),
@@ -575,19 +578,30 @@ public class DocumentVerification {
             String name,
             boolean completed) {
         VBox content = new VBox(7);
+                Circle circle = new Circle(22);
+
+        circle.setFill(
+                completed
+                        ? Color.web(GREEN)
+                        : Color.web(BLUE)
+        );
         content.setAlignment(Pos.CENTER);
-        Label circle = new Label(number);
-        circle.setAlignment(Pos.CENTER);
-        circle.setPrefSize(45, 45);
-        circle.setStyle(
+        Label numberl1 = new Label(number);
+        numberl1.setAlignment(Pos.CENTER);
+        numberl1.setPrefSize(45, 45);
+        numberl1.setStyle(
                 "-fx-background-color: " +
                 (completed ? GREEN : BLUE) +
                 ";" +
                 "-fx-background-radius: 50;"
         );
-        circle.setTextFill(Color.WHITE);
-        circle.setFont(
+        numberl1.setTextFill(Color.WHITE);
+        numberl1.setFont(
                 Font.font("Arial", FontWeight.BOLD, 17)
+        );
+                StackPane circlePane = new StackPane(
+                circle,
+                numberl1
         );
         Label title = label(
                 name,
@@ -595,24 +609,34 @@ public class DocumentVerification {
                 true
         );
         content.getChildren().addAll(
-                circle,
+                circlePane,
                 title
         );
         HBox result = new HBox(content);
         result.setAlignment(Pos.CENTER);
         return result;
     }
-    private Region line(boolean completed) {
+                private Region line(boolean completed) {
+
         Region line = new Region();
-        line.setPrefWidth(150);
-        line.setPrefHeight(1);
+
+        line.setPrefWidth(75);
+        line.setMinWidth(50);
+        line.setMaxWidth(75);
+
+        line.setPrefHeight(3);
+        line.setMinHeight(3);
+        line.setMaxHeight(3);
+
         line.setStyle(
                 "-fx-background-color: " +
                 (completed ? GREEN : "#BEC4D1") +
-                ";"
+                ";" +
+                "-fx-background-radius: 3;"
         );
+
         return line;
-    }
+        }
     private Label label(
             String text,
             int size,

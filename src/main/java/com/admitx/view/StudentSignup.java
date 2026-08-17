@@ -175,6 +175,80 @@ public class StudentSignup  {
 
 
                 // =====================================================
+                // Name
+                // =====================================================
+
+                Label nameLabel = new Label("Enter name");
+                nameLabel.setFont(
+                        Font.font("sans-serif")
+                );
+
+                nameLabel.setStyle("""
+                        -fx-font-size: 14px;
+                        -fx-font-weight: bold;
+                        -fx-text-fill: #374151;
+                        """);
+
+                TextField nameField = new TextField();
+
+                nameField.setPromptText("Enter your name");
+
+                nameField.setPrefHeight(48);
+
+                nameField.setStyle("""
+                        -fx-background-color: #f9fafb;
+                        -fx-border-color: #d1d5db;
+                        -fx-border-radius: 10;
+                        -fx-background-radius: 10;
+                        -fx-padding: 0 15;
+                        -fx-font-size: 14px;
+                        """);
+
+                // =====================================================
+                // Mobile
+                // =====================================================
+
+                Label mobileLabel = new Label("Mobile Number");
+                mobileLabel.setFont(
+                        Font.font("sans-serif")
+                );
+
+                mobileLabel.setStyle("""
+                        -fx-font-size: 14px;
+                        -fx-font-weight: bold;
+                        -fx-text-fill: #374151;
+                        """);
+
+                TextField mobiField= new TextField();
+
+                mobiField.setPromptText("Enter your mobile number");
+
+                mobiField.setPrefHeight(48);
+
+                mobiField.setStyle("""
+                        -fx-background-color: #f9fafb;
+                        -fx-border-color: #d1d5db;
+                        -fx-border-radius: 10;
+                        -fx-background-radius: 10;
+                        -fx-padding: 0 15;
+                        -fx-font-size: 14px;
+                        """);
+
+
+                VBox nameBox = new VBox(
+                        7,
+                        nameLabel,
+                        nameField
+                );
+
+                VBox mobileBox = new VBox(
+                        7,
+                        mobileLabel,
+                        mobiField
+                );
+
+                
+                // =====================================================
                 // EMAIL
                 // =====================================================
 
@@ -349,6 +423,8 @@ public class StudentSignup  {
 
                 signupButton.setOnAction(e -> {
 
+                String name = nameField.getText();
+                String mobile = mobiField.getText();
                 String email = emailField.getText();
                 String password = passwordField.getText();
                 String confirmPassword =
@@ -375,8 +451,11 @@ public class StudentSignup  {
                 }
 
                 System.out.println(
-                        "Student account created successfully!"
+                        "Student account created successfully!"   
                 );
+                System.out.println("Name : " + name);
+                System.out.println("Mobile : " + mobile);
+                System.out.println("Email : " + email);
 
                 // Later you can connect this to MySQL/Firebase.
                 });
@@ -408,14 +487,17 @@ public class StudentSignup  {
                         title,
                         subtitle,
                         new Region(),
+
+                        nameBox,
+                        mobileBox,
                         emailBox,
                         passwordBox,
                         confirmBox,
+
                         new Region(),
                         signupButton,
                         loginRow
                 );
-
 
                 // =====================================================
                 // ROOT

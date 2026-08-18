@@ -5,6 +5,7 @@
     "version": "0.2.0",
     "configurations": [
 <<<<<<< HEAD
+<<<<<<< HEAD
         {
             "type": "java",
             "name": "Main",
@@ -13,6 +14,10 @@
             "projectName": "admit-x"
         },
 =======
+=======
+    
+
+>>>>>>> d9f849927279f98f39a2afdc3f52ea32f3451be7
 
 
 >>>>>>> 91154f1fa6f16b6d529fc18926d1676512f489e4

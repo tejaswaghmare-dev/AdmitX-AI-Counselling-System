@@ -1,7 +1,8 @@
-package com.admitx;
+ package com.admitx;
 
 
 import com.admitx.view.LandingPage;
+
 
 import javafx.application.Application;
 

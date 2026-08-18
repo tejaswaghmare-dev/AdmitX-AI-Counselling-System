@@ -6,6 +6,9 @@
     "configurations": [
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> b8957e7d5d65843c16e4a1d47d3864f4b9178d1b
         {
             "type": "java",
             "name": "Main",
@@ -13,6 +16,7 @@
             "mainClass": "com.admitx.Main",
             "projectName": "admit-x"
         },
+<<<<<<< HEAD
 =======
 =======
     
@@ -21,6 +25,8 @@
 
 
 >>>>>>> 91154f1fa6f16b6d529fc18926d1676512f489e4
+=======
+>>>>>>> b8957e7d5d65843c16e4a1d47d3864f4b9178d1b
         {
             "type": "java",
             "name": "StudentSignup",
@@ -40,7 +46,11 @@
             "request": "launch",
             "mainClass": "com.admitx.Main",
             "projectName": "admitx",
+<<<<<<< HEAD
             "vmArgs": "--module-path \"D:/downloads/openjfx-21.0.12_windows-x64_bin-sdk/javafx-sdk-21.0.12/lib\" --add-modules javafx.controls,javafx.fxml"
+=======
+            "vmArgs": "--module-path \"C://java2026//openjfx-21.0.12_windows-x64_bin-sdk//javafx-sdk-21.0.12//lib\" --add-modules javafx.controls,javafx.fxml"
+>>>>>>> b8957e7d5d65843c16e4a1d47d3864f4b9178d1b
         }
     ]
 }

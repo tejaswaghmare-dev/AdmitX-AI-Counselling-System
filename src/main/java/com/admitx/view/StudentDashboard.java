@@ -20,14 +20,21 @@ public class StudentDashboard {
     private static final String NAVY = "#081B33";
     private static final String BLUE = "#173DB5";
     private static final String ORANGE = "#B45100";
-    private static final String BG = "#F6F7F9";
-    private static final String BORDER = "#D7D9DE";
+    private static final String BG = "#69ec7e";
+    private static final String BORDER = "#000207";
 
     private static BorderPane root;
     private static StackPane centerPane;
+     private static Stage currentStage;
+    private static String currentApplicationId;
+    private static String currentStudentName;
 
-    public static void showDashboard(Stage stage, String studentName,
-                                     String applicationId) {
+        public static void showDashboard(Stage stage, String studentName,
+                                        String applicationId) {
+
+        currentStage = stage;
+        currentApplicationId = applicationId;
+        currentStudentName = studentName;
 
         root = new BorderPane();
         root.setStyle("-fx-background-color: " + BG + ";");
@@ -56,17 +63,17 @@ public class StudentDashboard {
         header.setAlignment(Pos.CENTER_LEFT);
         header.setPadding(new Insets(0, 18, 0, 18));
         header.setPrefHeight(45);
-        header.setStyle("-fx-background-color: " + ORANGE + ";");
+        header.setStyle("-fx-background-color: " + BLUE + ";");
 
         Label title = new Label("MHT CET CAP PORTAL");
         title.setTextFill(Color.WHITE);
         title.setFont(Font.font("Arial", FontWeight.BOLD, 14));
 
-        Label training = new Label(
-                "DUMMY / TRAINING PORTAL — For Educational Practice Only"
-        );
-        training.setTextFill(Color.WHITE);
-        training.setFont(Font.font("Arial", FontWeight.BOLD, 14));
+        // Label training = new Label(
+        //         "DUMMY / TRAINING PORTAL — For Educational Practice Only"
+        // );
+        // training.setTextFill(Color.WHITE);
+        // training.setFont(Font.font("Arial", FontWeight.BOLD, 14));
 
         Region space = new Region();
         HBox.setHgrow(space, Priority.ALWAYS);
@@ -89,7 +96,7 @@ public class StudentDashboard {
 
         header.getChildren().addAll(
                 title,
-                training,
+                
                 space,
                 notification,
                 profile
@@ -144,18 +151,24 @@ public class StudentDashboard {
         );
 
         dashboard.setOnAction(e ->
-                showDashboardPage("Rahul Kumar", "STU00001")
-        );
+        showDashboardPage(
+                currentStudentName,
+                currentApplicationId
+        )
+);
 
         application.setOnAction(e ->
                 showPage("Application",
                         "Application page will be developed here.")
         );
 
-        documents.setOnAction(e ->
-                showPage("Documents",
-                        "Documents page will be developed here.")
-        );
+                documents.setOnAction(e -> {
+
+        DocumentVerification documentsPage =
+                new DocumentVerification(currentApplicationId);
+
+        setCenter(documentsPage.getPage(currentStage));
+        });
 
         merit.setOnAction(e ->
                 showPage("Merit List",
@@ -555,7 +568,7 @@ public class StudentDashboard {
         box.setPadding(new Insets(18));
 
         box.setStyle(
-                "-fx-background-color: white;" +
+                "-fx-background-color: #3fcadd;" +
                 "-fx-border-color: " + BORDER + ";" +
                 "-fx-border-radius: 12;" +
                 "-fx-background-radius: 12;"

@@ -1,7 +1,6 @@
-package com.example.view;
 
-import com.example.view.Navigation;
-import com.example.view.StudentLayout;
+package com.admitx.view;
+
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;

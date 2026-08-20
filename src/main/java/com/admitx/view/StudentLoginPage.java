@@ -1,7 +1,7 @@
 package com.admitx.view;
 
 import com.admitx.controller.AuthController;
-import com.admitx.view.Navigation;
+
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;

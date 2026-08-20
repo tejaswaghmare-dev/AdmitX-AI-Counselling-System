@@ -1,8 +1,8 @@
-package com.example.view;
+package com.admitx.view;
 
-import com.example.view.Navigation;
-import com.example.view.StudentLayout;
-import com.example.model.ApplicationData;
+
+
+import com.admitx.model.ApplicationData;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;

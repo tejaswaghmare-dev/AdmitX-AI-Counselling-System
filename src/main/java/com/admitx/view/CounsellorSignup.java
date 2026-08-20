@@ -15,7 +15,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 
-public class CounselorSignup {
+public class CounsellorSignup {
 
     private Scene counselorScene;
 
@@ -352,7 +352,7 @@ public class CounselorSignup {
         // navigation for sign in
 
         signIn.setOnAction(e->{
-                CounselorLogin counselorLogin = new CounselorLogin();
+                //CounselorLogin counselorLogin = new CounselorLogin();
 
                 Runnable callbacktosignup = new Runnable(){
 
@@ -360,10 +360,10 @@ public class CounselorSignup {
                         public void run() {
                                 LandingPage.LandingPagestage.setScene(counselorScene);
         
-                };
+                }
 
-                LandingPage.LandingPagestage.setScene(counselorLogin.getSceneFromCounselorLogin(callbacktosignup));
-        });
+                //LandingPage.LandingPagestage.setScene(counselorLogin.getSceneFromCounselorLogin(callbacktosignup));
+      });
 
         signIn.setStyle("""
                 -fx-text-fill: #33a588;
@@ -474,5 +474,5 @@ public class CounselorSignup {
                 );
 
         return counselorScene;
-    }
-}
+        };  
+};

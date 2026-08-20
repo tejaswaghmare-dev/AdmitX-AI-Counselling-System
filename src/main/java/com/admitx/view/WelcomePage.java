@@ -1,318 +1,1611 @@
 package com.admitx.view;
 
-import com.admitx.view.Navigation;
-import com.admitx.view.CounsellorLoginPage;
-
-
+import javafx.animation.FadeTransition;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
-import javafx.scene.effect.Glow;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.Stop;
+import javafx.scene.shape.Polygon;
 import javafx.scene.text.Font;
-import javafx.scene.text.Text;
+import javafx.scene.text.FontWeight;
+import javafx.util.Duration;
 
 public class WelcomePage {
 
+    // =========================================================
+    // ADMITX COLOR SYSTEM
+    // =========================================================
+
+    private static final String BLACK = "#040505";
+    private static final String DARK = "#161613";
+    private static final String CARD = "#2B2C2B";
+
+    private static final String LIME = "#C6E92F";
+    private static final String LIME_2 = "#8AA30B";
+    private static final String LIME_3 = "#5E7107";
+
+    private static final String OLIVE = "#3F340D";
+
+    private static final String WHITE = "#FBFBFB";
+    private static final String BEIGE = "#D4CBB6";
+
+    private static final String GREY = "#9A9D91";
+    private static final String MUTED = "#60645B";
+    private static final String BORDER = "#2B2C2B";
+
+
+    // =========================================================
+    // MAIN SCENE
+    // =========================================================
+
     public static Scene getScene() {
 
-        // Dark gradient background
-        BackgroundFill gradientFill = new BackgroundFill(
-                new javafx.scene.paint.LinearGradient(
-                        0, 0, 1, 1,
-                        true,
-                        javafx.scene.paint.CycleMethod.NO_CYCLE,
-                        new javafx.scene.paint.Stop(0, Color.web("#0A0A0F")),
-                        new javafx.scene.paint.Stop(0.4, Color.web("#1A1A2E")),
-                        new javafx.scene.paint.Stop(0.7, Color.web("#16213E")),
-                        new javafx.scene.paint.Stop(1, Color.web("#0A0A0F"))
-                ),
-                CornerRadii.EMPTY,
-                Insets.EMPTY
-        );
-        
-        Background background = new Background(gradientFill);
+        // =====================================================
+        // ROOT
+        // =====================================================
 
-        // Main container
-        VBox root = new VBox(25);
-        root.setAlignment(Pos.CENTER);
-        root.setPadding(new Insets(50, 40, 50, 40));
-        root.setBackground(background);
+        StackPane root = new StackPane();
 
-        // Logo/Icon section with glow
-        VBox logoContainer = new VBox(5);
-        logoContainer.setAlignment(Pos.CENTER);
-        
-        // Animated glowing icon
-        Text iconText = new Text("🎓");
-        iconText.setFont(Font.font("Segoe UI Emoji", 80));
-        Glow glow = new Glow(0.3);
-        iconText.setEffect(glow);
-        
-        Label capLabel = new Label("MHT CET CAP");
-        capLabel.setStyle(
-                "-fx-font-size: 13px;" +
-                "-fx-font-weight: bold;" +
-                "-fx-text-fill: #6C8CBF;" +
-                "-fx-letter-spacing: 4px;" +
-                "-fx-opacity: 0.7;"
-        );
-        
-        logoContainer.getChildren().addAll(iconText, capLabel);
-        logoContainer.setPadding(new Insets(0, 0, 10, 0));
 
-        // Main Title with dark theme glow
-        Label title = new Label("AdmitX");
-        title.setStyle(
-                "-fx-font-size: 56px;" +
-                "-fx-font-weight: bold;" +
-                "-fx-text-fill: #E8EDF5;" +
-                "-fx-font-family: 'Segoe UI';"
-        );
-        DropShadow titleShadow = new DropShadow(25, Color.web("#4A7FB5", 0.3));
-        title.setEffect(titleShadow);
+        // =====================================================
+        // DARK BACKGROUND
+        // =====================================================
 
-        // Subtitle
-        Label subtitle = new Label("AI-Powered Counselling & Admission Portal");
-        subtitle.setStyle(
-                "-fx-font-size: 18px;" +
-                "-fx-text-fill: #8AA8C7;" +
-                "-fx-font-family: 'Segoe UI';" +
-                "-fx-opacity: 0.8;"
+        BackgroundFill backgroundFill =
+                new BackgroundFill(
+
+                        new LinearGradient(
+                                0,
+                                0,
+                                1,
+                                1,
+                                true,
+                                CycleMethod.NO_CYCLE,
+
+                                new Stop(
+                                        0.0,
+                                        Color.web(BLACK)
+                                ),
+
+                                new Stop(
+                                        0.40,
+                                        Color.web("#080907")
+                                ),
+
+                                new Stop(
+                                        0.70,
+                                        Color.web(DARK)
+                                ),
+
+                                new Stop(
+                                        1.0,
+                                        Color.web(BLACK)
+                                )
+                        ),
+
+                        CornerRadii.EMPTY,
+                        Insets.EMPTY
+                );
+
+
+        root.setBackground(
+                new Background(backgroundFill)
         );
 
-        // Decorative divider with dark theme
-        HBox divider = new HBox();
-        divider.setAlignment(Pos.CENTER);
-        Region line1 = new Region();
-        line1.setPrefWidth(80);
-        line1.setStyle("-fx-background-color: #4A7FB5; -fx-min-height: 2px; -fx-opacity: 0.4;");
-        Label dot = new Label("◆");
-        dot.setStyle("-fx-text-fill: #4A7FB5; -fx-font-size: 10px; -fx-padding: 0 10 0 10; -fx-opacity: 0.6;");
-        Region line2 = new Region();
-        line2.setPrefWidth(80);
-        line2.setStyle("-fx-background-color: #4A7FB5; -fx-min-height: 2px; -fx-opacity: 0.4;");
-        divider.getChildren().addAll(line1, dot, line2);
 
-        // Feature badges with dark theme
-        HBox badgeContainer = new HBox(15);
-        badgeContainer.setAlignment(Pos.CENTER);
-        badgeContainer.setPadding(new Insets(10, 0, 10, 0));
-        
-        String[][] badges = {
-            {"📊", "Analytics"},
-            {"🎯", "Smart Allotment"},
-            {"🔄", "Multi-Round"}
-        };
-        
-        for (String[] badge : badges) {
-            VBox badgeBox = new VBox(2);
-            badgeBox.setAlignment(Pos.CENTER);
-            
-            Label iconLabel = new Label(badge[0]);
-            iconLabel.setStyle("-fx-font-size: 16px;");
-            
-            Label textLabel = new Label(badge[1]);
-            textLabel.setStyle(
-                    "-fx-text-fill: #8AA8C7;" +
-                    "-fx-font-size: 11px;" +
-                    "-fx-font-weight: bold;"
+        // =====================================================
+        // FULL SCREEN STUDENT IMAGE
+        // =====================================================
+
+        ImageView studentImage =
+                new ImageView();
+
+        try {
+
+            Image image =
+                    new Image(
+                            "assets/images/admitxstd.jpeg"
+                    );
+
+            studentImage.setImage(image);
+
+            studentImage.setPreserveRatio(true);
+
+            studentImage.setSmooth(true);
+
+            /*
+             * The image is intentionally large.
+             * It will cover most of the screen.
+             */
+
+            studentImage.setOpacity(0.55);
+
+        } catch (Exception e) {
+
+            System.out.println(
+                    "Student image could not be loaded."
             );
-            
-            badgeBox.getChildren().addAll(iconLabel, textLabel);
-            badgeBox.setStyle(
-                    "-fx-background-color: rgba(74, 127, 181, 0.08);" +
-                    "-fx-padding: 8 16 8 16;" +
-                    "-fx-background-radius: 20px;" +
-                    "-fx-border-color: rgba(74, 127, 181, 0.15);" +
-                    "-fx-border-radius: 20px;" +
-                    "-fx-border-width: 1px;"
+
+            System.out.println(
+                    e.getMessage()
             );
-            badgeContainer.getChildren().add(badgeBox);
         }
 
-        // Button container
-        VBox buttonContainer = new VBox(12);
-        buttonContainer.setAlignment(Pos.CENTER);
-        buttonContainer.setPadding(new Insets(15, 0, 10, 0));
 
-        // Dark theme button styles
-        String primaryButtonStyle = 
-                "-fx-background-color: #1E3A5F;" +
-                "-fx-text-fill: #E8EDF5;" +
-                "-fx-font-size: 15px;" +
-                "-fx-pref-width: 260px;" +
-                "-fx-pref-height: 48px;" +
-                "-fx-background-radius: 12px;" +
-                "-fx-font-weight: bold;" +
-                "-fx-cursor: hand;" +
-                "-fx-effect: dropshadow(gaussian, rgba(30, 58, 95, 0.6), 15, 0, 0, 5);" +
-                "-fx-border-color: rgba(74, 127, 181, 0.2);" +
-                "-fx-border-radius: 12px;" +
-                "-fx-border-width: 1px;";
-        
-        String secondaryButtonStyle = 
-                "-fx-background-color: rgba(30, 58, 95, 0.3);" +
-                "-fx-text-fill: #8AA8C7;" +
-                "-fx-font-size: 15px;" +
-                "-fx-pref-width: 260px;" +
-                "-fx-pref-height: 48px;" +
-                "-fx-background-radius: 12px;" +
-                "-fx-border-color: rgba(74, 127, 181, 0.2);" +
-                "-fx-border-radius: 12px;" +
-                "-fx-border-width: 1.5px;" +
-                "-fx-font-weight: bold;" +
-                "-fx-cursor: hand;";
+        // =====================================================
+        // RESPONSIVE STUDENT IMAGE SIZE
+        // =====================================================
 
-        String counsellorButtonStyle = 
-                "-fx-background-color: transparent;" +
-                "-fx-text-fill: #5A7D9E;" +
-                "-fx-font-size: 14px;" +
-                "-fx-pref-width: 260px;" +
-                "-fx-pref-height: 40px;" +
-                "-fx-background-radius: 8px;" +
-                "-fx-border-color: rgba(74, 127, 181, 0.1);" +
-                "-fx-border-radius: 8px;" +
-                "-fx-border-width: 1px;" +
-                "-fx-cursor: hand;";
+        studentImage.fitWidthProperty()
+                .bind(
+                        root.widthProperty()
+                                .multiply(0.90)
+                );
 
-        // Student Login Button
-        Button loginButton = new Button("🔐 Student Login");
-        loginButton.setStyle(primaryButtonStyle);
-        loginButton.setOnMouseEntered(e -> 
-            loginButton.setStyle(
-                primaryButtonStyle.replace("#1E3A5F", "#2A4A75")
-            )
-        );
-        loginButton.setOnMouseExited(e -> 
-            loginButton.setStyle(primaryButtonStyle)
-        );
-        
-        // Student Registration Button
-        Button registerButton = new Button("📝 Student Registration");
-        registerButton.setStyle(secondaryButtonStyle);
-        registerButton.setOnMouseEntered(e -> 
-            registerButton.setStyle(
-                secondaryButtonStyle.replace("rgba(30, 58, 95, 0.3)", "rgba(30, 58, 95, 0.5)")
-            )
-        );
-        registerButton.setOnMouseExited(e -> 
-            registerButton.setStyle(secondaryButtonStyle)
+        studentImage.fitHeightProperty()
+                .bind(
+                        root.heightProperty()
+                                .multiply(0.95)
+                );
+
+
+        StackPane.setAlignment(
+                studentImage,
+                Pos.CENTER
         );
 
-        // Counsellor Button
-        Button counsellorButton = new Button("👤 Counsellor Login");
-        counsellorButton.setStyle(counsellorButtonStyle);
-        counsellorButton.setOnMouseEntered(e -> 
-            counsellorButton.setStyle(
-                counsellorButtonStyle.replace("rgba(74, 127, 181, 0.1)", "rgba(74, 127, 181, 0.2)")
-            )
-        );
-        counsellorButton.setOnMouseExited(e -> 
-            counsellorButton.setStyle(counsellorButtonStyle)
+
+        // =====================================================
+        // IMAGE DARK OVERLAY
+        // =====================================================
+
+        Region imageOverlay =
+                new Region();
+
+        imageOverlay.setMouseTransparent(
+                true
         );
 
-        // Guide Button
-        Button guideButton = new Button("📖 User Guide");
-        guideButton.setStyle(
-                "-fx-background-color: transparent;" +
-                "-fx-text-fill: #3D5A78;" +
-                "-fx-font-size: 13px;" +
-                "-fx-cursor: hand;" +
-                "-fx-underline: true;" +
-                "-fx-opacity: 0.6;"
-        );
-        guideButton.setOnMouseEntered(e -> 
-            guideButton.setStyle(
-                "-fx-background-color: transparent;" +
-                "-fx-text-fill: #5A7D9E;" +
-                "-fx-font-size: 13px;" +
-                "-fx-cursor: hand;" +
-                "-fx-underline: true;" +
-                "-fx-opacity: 0.8;"
-            )
-        );
-        guideButton.setOnMouseExited(e -> 
-            guideButton.setStyle(
-                "-fx-background-color: transparent;" +
-                "-fx-text-fill: #3D5A78;" +
-                "-fx-font-size: 13px;" +
-                "-fx-cursor: hand;" +
-                "-fx-underline: true;" +
-                "-fx-opacity: 0.6;"
-            )
+        imageOverlay.setStyle(
+
+                "-fx-background-color: " +
+
+                "linear-gradient(" +
+
+                "to right," +
+
+                "rgba(4,5,5,0.18)," +
+
+                "rgba(4,5,5,0.42)," +
+
+                "rgba(4,5,5,0.82)," +
+
+                "rgba(4,5,5,0.97)" +
+
+                ");"
         );
 
-        // Action handlers
-        loginButton.setOnAction(e -> Navigation.goTo(StudentLoginPage.getScene()));
-        registerButton.setOnAction(e -> Navigation.goTo(StudentRegistrationPage.getScene()));
-        counsellorButton.setOnAction(e -> Navigation.goTo(CounsellorLoginPage.getScene()));
-        guideButton.setOnAction(e -> showGuide());
 
-        // Add all buttons to container
-        buttonContainer.getChildren().addAll(
+        imageOverlay.prefWidthProperty()
+                .bind(
+                        root.widthProperty()
+                );
+
+        imageOverlay.prefHeightProperty()
+                .bind(
+                        root.heightProperty()
+                );
+
+
+        // =====================================================
+        // SECOND DARK OVERLAY
+        // =====================================================
+
+        Region topDarkOverlay =
+                new Region();
+
+        topDarkOverlay.setMouseTransparent(
+                true
+        );
+
+        topDarkOverlay.setStyle(
+
+                "-fx-background-color: " +
+
+                "linear-gradient(" +
+
+                "to bottom," +
+
+                "rgba(4,5,5,0.65)," +
+
+                "transparent 35%," +
+
+                "rgba(4,5,5,0.60)" +
+
+                ");"
+        );
+
+
+        topDarkOverlay.prefWidthProperty()
+                .bind(
+                        root.widthProperty()
+                );
+
+        topDarkOverlay.prefHeightProperty()
+                .bind(
+                        root.heightProperty()
+                );
+
+
+        // =====================================================
+        // DECORATIVE DIAGONAL SHAPES
+        // =====================================================
+
+        Polygon diagonal1 =
+                new Polygon(
+
+                        700, 0,
+                        1100, 0,
+                        1100, 160,
+                        780, 60
+                );
+
+        diagonal1.setFill(
+                Color.web(
+                        LIME_3,
+                        0.18
+                )
+        );
+
+
+        Polygon diagonal2 =
+                new Polygon(
+
+                        850, 0,
+                        1100, 0,
+                        1100, 90
+                );
+
+        diagonal2.setFill(
+                Color.web(
+                        LIME,
+                        0.08
+                ));
+
+
+        Polygon diagonal3 =
+                new Polygon(
+
+                        0, 650,
+                        0, 800,
+                        330, 800,
+                        110, 660
+                );
+
+        diagonal3.setFill(
+                Color.web(
+                        OLIVE,
+                        0.20
+                ));
+
+
+        // =====================================================
+        // TOP BAR
+        // =====================================================
+
+        HBox topBar =
+                new HBox();
+
+        topBar.setAlignment(
+                Pos.CENTER_LEFT
+        );
+
+        topBar.setPadding(
+                new Insets(
+                        20,
+                        50,
+                        0,
+                        55
+                )
+        );
+
+
+        // =====================================================
+        // LARGE ADMITX LOGO
+        // ORIGINAL SIZE: 1600 x 570
+        // =====================================================
+
+        ImageView logoView =
+                new ImageView();
+
+        try {
+
+            Image logo =
+                    new Image(
+                            "/assets/images/admitxlogo.jpeg"
+                    );
+
+            logoView.setImage(
+                    logo
+            );
+
+            /*
+             * LARGE LOGO
+             *
+             * Original:
+             * 1600 x 570
+             *
+             * Display:
+             * approximately 300 x 107
+             */
+
+            logoView.setFitWidth(
+                    300
+            );
+
+            logoView.setFitHeight(
+                    107
+            );
+
+            logoView.setPreserveRatio(
+                    true
+            );
+
+            logoView.setSmooth(
+                    true
+            );
+
+        } catch (Exception e) {
+
+            System.out.println(
+                    "Logo could not be loaded."
+            );
+
+            System.out.println(
+                    e.getMessage()
+            );
+        }
+
+
+        topBar.getChildren().add(
+                logoView
+        );
+
+
+        // =====================================================
+        // TOP SPACER
+        // =====================================================
+
+        Region topSpacer =
+                new Region();
+
+        HBox.setHgrow(
+                topSpacer,
+                Priority.ALWAYS
+        );
+
+
+        // =====================================================
+        // USER GUIDE
+        // =====================================================
+
+        Button guideButton =
+                new Button(
+                        "USER GUIDE"
+                );
+
+        guideButton.setCursor(
+                Cursor.HAND
+        );
+
+        applyGuideStyle(
+                guideButton,
+                false
+        );
+
+        guideButton.setOnMouseEntered(
+                e -> applyGuideStyle(
+                        guideButton,
+                        true
+                )
+        );
+
+        guideButton.setOnMouseExited(
+                e -> applyGuideStyle(
+                        guideButton,
+                        false
+                )
+        );
+
+        guideButton.setOnAction(
+                e -> showGuide()
+        );
+
+
+        topBar.getChildren().addAll(
+
+                topSpacer,
+                guideButton
+        );
+
+
+        // =====================================================
+        // LEFT CONTENT
+        // =====================================================
+
+        VBox leftContent =
+                new VBox(
+                        18
+                );
+
+        leftContent.setAlignment(
+                Pos.CENTER_LEFT
+        );
+
+        leftContent.setMaxWidth(
+                540
+        );
+
+
+        // =====================================================
+        // SMALL LABEL
+        // =====================================================
+
+        Label smallLabel =
+                new Label(
+                        "MHT CET • CAP ADMISSION PLATFORM"
+                );
+
+        smallLabel.setFont(
+                Font.font(
+                        "Segoe UI",
+                        FontWeight.BOLD,
+                        11
+                )
+        );
+
+        smallLabel.setTextFill(
+                Color.web(LIME)
+        );
+
+        smallLabel.setStyle(
+                "-fx-letter-spacing: 2px;"
+        );
+
+
+        // =====================================================
+        // MAIN HEADING
+        // =====================================================
+
+        Label heading =
+                new Label(
+                        "YOUR ADMISSION.\nYOUR FUTURE."
+                );
+
+        heading.setFont(
+                Font.font(
+                        "Segoe UI",
+                        FontWeight.EXTRA_BOLD,
+                        55
+                )
+        );
+
+        heading.setTextFill(
+                Color.web(WHITE)
+        );
+
+        heading.setLineSpacing(
+                -5
+        );
+
+        heading.setEffect(
+                new DropShadow(
+                        30,
+                        Color.web(
+                                LIME,
+                                0.10
+                        )
+                )
+        );
+
+
+        // =====================================================
+        // LIME HEADING
+        // =====================================================
+
+        Label limeText =
+                new Label(
+                        "MAKE THE RIGHT CHOICE."
+                );
+
+        limeText.setFont(
+                Font.font(
+                        "Segoe UI",
+                        FontWeight.EXTRA_BOLD,
+                        18
+                )
+        );
+
+        limeText.setTextFill(
+                Color.web(LIME)
+        );
+
+        limeText.setStyle(
+                "-fx-letter-spacing: 1px;"
+        );
+
+
+        // =====================================================
+        // DESCRIPTION
+        // =====================================================
+
+        Label description =
+                new Label(
+
+                        "AI-powered counselling that helps you " +
+                        "understand colleges, track CAP rounds " +
+                        "and make smarter admission decisions."
+                );
+
+        description.setFont(
+                Font.font(
+                        "Segoe UI",
+                        15
+                )
+        );
+
+        description.setTextFill(
+                Color.web(BEIGE)
+        );
+
+        description.setWrapText(
+                true
+        );
+
+        description.setMaxWidth(
+                470
+        );
+
+
+        // =====================================================
+        // FEATURES
+        // =====================================================
+
+        VBox features =
+                new VBox(
+                        12
+                );
+
+        features.getChildren().addAll(
+
+                createFeature(
+                        "01",
+                        "SMART ALLOTMENT",
+                        "Better college choices"
+                ),
+
+                createFeature(
+                        "02",
+                        "CAP ROUND TRACKING",
+                        "Never miss an update"
+                ),
+
+                createFeature(
+                        "03",
+                        "COLLEGE ANALYTICS",
+                        "Decide with confidence"
+                )
+        );
+
+
+        leftContent.getChildren().addAll(
+
+                smallLabel,
+                heading,
+                limeText,
+                description,
+                features
+        );
+
+
+        // =====================================================
+        // LEFT SECTION
+        // =====================================================
+
+        StackPane leftSection =
+                new StackPane();
+
+        leftSection.setAlignment(
+                Pos.CENTER_LEFT
+        );
+
+        leftSection.setMaxWidth(
+                590
+        );
+
+        leftSection.getChildren().add(
+                leftContent
+        );
+
+
+        // =====================================================
+        // RIGHT ACTION CARD
+        // =====================================================
+
+        VBox actionCard =
+                new VBox(
+                        17
+                );
+
+        actionCard.setAlignment(
+                Pos.TOP_CENTER
+        );
+
+        actionCard.setPrefWidth(
+                380
+        );
+
+        actionCard.setMaxWidth(
+                380
+        );
+
+        actionCard.setPadding(
+                new Insets(
+                        36,
+                        32,
+                        32,
+                        32
+                )
+        );
+
+        actionCard.setStyle(
+
+                "-fx-background-color:" +
+                "rgba(16,18,17,0.96);" +
+
+                "-fx-background-radius:20;" +
+
+                "-fx-border-color:" +
+                "rgba(198,233,47,0.15);" +
+
+                "-fx-border-radius:20;" +
+
+                "-fx-border-width:1;"
+        );
+
+
+        actionCard.setEffect(
+                new DropShadow(
+                        45,
+                        Color.color(
+                                0,
+                                0,
+                                0,
+                                0.75
+                        )
+                )
+        );
+
+
+        // =====================================================
+        // CARD HEADER
+        // =====================================================
+
+        Label cardSmall =
+                new Label(
+                        "WELCOME TO"
+                );
+
+        cardSmall.setFont(
+                Font.font(
+                        "Segoe UI",
+                        FontWeight.BOLD,
+                        10
+                )
+        );
+
+        cardSmall.setTextFill(
+                Color.web(MUTED)
+        );
+
+        cardSmall.setStyle(
+                "-fx-letter-spacing:2px;"
+        );
+
+
+        Label cardTitle =
+                new Label(
+                        "ADMITX"
+                );
+
+        cardTitle.setFont(
+                Font.font(
+                        "Segoe UI",
+                        FontWeight.EXTRA_BOLD,
+                        30
+                )
+        );
+
+        cardTitle.setTextFill(
+                Color.web(WHITE)
+        );
+
+
+        Label cardDescription =
+                new Label(
+                        "Choose how you want to continue"
+                );
+
+        cardDescription.setFont(
+                Font.font(
+                        "Segoe UI",
+                        12
+                )
+        );
+
+        cardDescription.setTextFill(
+                Color.web(GREY)
+        );
+
+
+        // =====================================================
+        // STUDENT LABEL
+        // =====================================================
+
+        Label studentLabel =
+                new Label(
+                        "STUDENT"
+                );
+
+        studentLabel.setFont(
+                Font.font(
+                        "Segoe UI",
+                        FontWeight.BOLD,
+                        10
+                )
+        );
+
+        studentLabel.setTextFill(
+                Color.web(LIME)
+        );
+
+        studentLabel.setStyle(
+                "-fx-letter-spacing:2px;"
+        );
+
+
+        // =====================================================
+        // STUDENT LOGIN
+        // =====================================================
+
+        Button loginButton =
+                new Button(
+                        "STUDENT LOGIN   →"
+                );
+
+        loginButton.setMaxWidth(
+                Double.MAX_VALUE
+        );
+
+        loginButton.setPrefHeight(
+                52
+        );
+
+        loginButton.setCursor(
+                Cursor.HAND
+        );
+
+        loginButton.setFont(
+                Font.font(
+                        "Segoe UI",
+                        FontWeight.BOLD,
+                        13
+                )
+        );
+
+        applyPrimaryButton(
+                loginButton,
+                false
+        );
+
+        loginButton.setOnMouseEntered(
+                e -> applyPrimaryButton(
+                        loginButton,
+                        true
+                )
+        );
+
+        loginButton.setOnMouseExited(
+                e -> applyPrimaryButton(
+                        loginButton,
+                        false
+                )
+        );
+
+
+        // =====================================================
+        // STUDENT REGISTRATION
+        // =====================================================
+
+        Button registerButton =
+                new Button(
+                        "CREATE STUDENT ACCOUNT"
+                );
+
+        registerButton.setMaxWidth(
+                Double.MAX_VALUE
+        );
+
+        registerButton.setPrefHeight(
+                48
+        );
+
+        registerButton.setCursor(
+                Cursor.HAND
+        );
+
+        registerButton.setFont(
+                Font.font(
+                        "Segoe UI",
+                        FontWeight.BOLD,
+                        12
+                )
+        );
+
+        applySecondaryButton(
+                registerButton,
+                false
+        );
+
+        registerButton.setOnMouseEntered(
+                e -> applySecondaryButton(
+                        registerButton,
+                        true
+                )
+        );
+
+        registerButton.setOnMouseExited(
+                e -> applySecondaryButton(
+                        registerButton,
+                        false
+                )
+        );
+
+
+        // =====================================================
+        // DIVIDER
+        // =====================================================
+
+        HBox divider =
+                createDivider();
+
+
+        // =====================================================
+        // COUNSELLOR
+        // =====================================================
+
+        Label counsellorLabel =
+                new Label(
+                        "COUNSELLOR PORTAL"
+                );
+
+        counsellorLabel.setFont(
+                Font.font(
+                        "Segoe UI",
+                        FontWeight.BOLD,
+                        10
+                )
+        );
+
+        counsellorLabel.setTextFill(
+                Color.web(MUTED)
+        );
+
+        counsellorLabel.setStyle(
+                "-fx-letter-spacing:1.5px;"
+        );
+
+
+        Button counsellorButton =
+                new Button(
+                        "COUNSELLOR LOGIN   →"
+                );
+
+        counsellorButton.setMaxWidth(
+                Double.MAX_VALUE
+        );
+
+        counsellorButton.setPrefHeight(
+                43
+        );
+
+        counsellorButton.setCursor(
+                Cursor.HAND
+        );
+
+        counsellorButton.setFont(
+                Font.font(
+                        "Segoe UI",
+                        FontWeight.BOLD,
+                        11
+                )
+        );
+
+        applyCounsellorButton(
+                counsellorButton,
+                false
+        );
+
+        counsellorButton.setOnMouseEntered(
+                e -> applyCounsellorButton(
+                        counsellorButton,
+                        true
+                )
+        );
+
+        counsellorButton.setOnMouseExited(
+                e -> applyCounsellorButton(
+                        counsellorButton,
+                        false
+                )
+        );
+
+
+        // =====================================================
+        // NAVIGATION
+        // =====================================================
+
+        loginButton.setOnAction(
+                e -> Navigation.goTo(
+                        StudentLoginPage.getScene()
+                )
+        );
+
+
+        registerButton.setOnAction(
+                e -> Navigation.goTo(
+                        StudentSignupPage.getScene()
+                )
+        );
+
+
+        counsellorButton.setOnAction(
+                e -> Navigation.goTo(
+                        CounsellorLoginPage.getScene()
+                )
+        );
+
+
+        // =====================================================
+        // CARD CONTENT
+        // =====================================================
+
+        actionCard.getChildren().addAll(
+
+                cardSmall,
+                cardTitle,
+                cardDescription,
+
+                createSpacing(8),
+
+                studentLabel,
                 loginButton,
                 registerButton,
+
+                divider,
+
+                counsellorLabel,
                 counsellorButton
         );
 
-        // Footer with dark theme
-        Label footer = new Label("© 2026 AdmitX · All rights reserved");
+
+        // =====================================================
+        // MAIN CONTENT
+        // =====================================================
+
+        HBox mainContent =
+                new HBox(
+                        80
+                );
+
+        mainContent.setAlignment(
+                Pos.CENTER
+        );
+
+        mainContent.setPadding(
+                new Insets(
+                        20,
+                        70,
+                        20,
+                        70
+                )
+        );
+
+
+        HBox.setHgrow(
+                leftSection,
+                Priority.ALWAYS
+        );
+
+
+        mainContent.getChildren().addAll(
+
+                leftSection,
+                actionCard
+        );
+
+
+        // =====================================================
+        // FOOTER
+        // =====================================================
+
+        Label footer =
+                new Label(
+                        "© 2026 ADMITX  •  SMARTER ADMISSIONS"
+                );
+
+        footer.setFont(
+                Font.font(
+                        "Segoe UI",
+                        FontWeight.BOLD,
+                        9
+                )
+        );
+
+        footer.setTextFill(
+                Color.web(MUTED)
+        );
+
         footer.setStyle(
-                "-fx-text-fill: #2A3D55;" +
-                "-fx-font-size: 12px;" +
-                "-fx-opacity: 0.5;"
+                "-fx-letter-spacing:1px;"
         );
-        
-        // Decorative line above footer
-        Region footerLine = new Region();
-        footerLine.setPrefWidth(200);
-        footerLine.setStyle(
-                "-fx-background-color: rgba(74, 127, 181, 0.1);" +
-                "-fx-min-height: 1px;"
-        );
-        
-        VBox footerBox = new VBox(8);
-        footerBox.setAlignment(Pos.CENTER);
-        footerBox.setPadding(new Insets(20, 0, 0, 0));
-        footerBox.getChildren().addAll(footerLine, footer);
 
-        // Assemble everything
+
+        // =====================================================
+        // PAGE
+        // =====================================================
+
+        BorderPane page =
+                new BorderPane();
+
+        page.setTop(
+                topBar
+        );
+
+        page.setCenter(
+                mainContent
+        );
+
+
+        BorderPane.setAlignment(
+                footer,
+                Pos.CENTER
+        );
+
+
+        BorderPane.setMargin(
+                footer,
+                new Insets(
+                        0,
+                        0,
+                        20,
+                        0
+                )
+        );
+
+
+        page.setBottom(
+                footer
+        );
+
+
+        // =====================================================
+        // ROOT LAYERS
+        // =====================================================
+
         root.getChildren().addAll(
-                logoContainer,
-                title,
-                subtitle,
-                divider,
-                badgeContainer,
-                buttonContainer,
-                guideButton,
-                footerBox
+
+                studentImage,
+
+                imageOverlay,
+
+                topDarkOverlay,
+
+                diagonal1,
+                diagonal2,
+                diagonal3,
+
+                page
         );
 
-        // Scene with dark theme
-        Scene scene = new Scene(root, 900, 700);
-        
-        // Add subtle animation to title
-        title.setScaleX(0.95);
-        title.setScaleY(0.95);
-        
-        // Fade-in animation
-        javafx.animation.FadeTransition ft = new javafx.animation.FadeTransition(
-                javafx.util.Duration.millis(800), root
+
+        // =====================================================
+        // FULL SCREEN SCENE
+        // =====================================================
+
+        Scene scene =
+                new Scene(
+                        root
+                );
+
+
+        // =====================================================
+        // FADE ANIMATION
+        // =====================================================
+
+        FadeTransition fade =
+                new FadeTransition(
+                        Duration.millis(700),
+                        root
+                );
+
+        fade.setFromValue(
+                0
         );
-        ft.setFromValue(0);
-        ft.setToValue(1);
-        ft.play();
+
+        fade.setToValue(
+                1
+        );
+
+        fade.play();
+
 
         return scene;
     }
 
+
+    // =========================================================
+    // FEATURE
+    // =========================================================
+
+    private static HBox createFeature(
+
+            String number,
+            String title,
+            String description
+    ) {
+
+        HBox box =
+                new HBox(
+                        12
+                );
+
+        box.setAlignment(
+                Pos.CENTER_LEFT
+        );
+
+
+        Label numberLabel =
+                new Label(
+                        number
+                );
+
+        numberLabel.setPrefWidth(
+                25
+        );
+
+        numberLabel.setFont(
+                Font.font(
+                        "Segoe UI",
+                        FontWeight.BOLD,
+                        10
+                )
+        );
+
+        numberLabel.setTextFill(
+                Color.web(LIME)
+        );
+
+
+        VBox text =
+                new VBox(
+                        2
+                );
+
+
+        Label titleLabel =
+                new Label(
+                        title
+                );
+
+        titleLabel.setFont(
+                Font.font(
+                        "Segoe UI",
+                        FontWeight.BOLD,
+                        10
+                )
+        );
+
+        titleLabel.setTextFill(
+                Color.web(WHITE)
+        );
+
+
+        Label descriptionLabel =
+                new Label(
+                        description
+                );
+
+        descriptionLabel.setFont(
+                Font.font(
+                        "Segoe UI",
+                        10
+                )
+        );
+
+        descriptionLabel.setTextFill(
+                Color.web(MUTED)
+        );
+
+
+        text.getChildren().addAll(
+
+                titleLabel,
+                descriptionLabel
+        );
+
+
+        box.getChildren().addAll(
+
+                numberLabel,
+                text
+        );
+
+
+        return box;
+    }
+
+
+    // =========================================================
+    // DIVIDER
+    // =========================================================
+
+    private static HBox createDivider() {
+
+        HBox divider =
+                new HBox(
+                        10
+                );
+
+        divider.setAlignment(
+                Pos.CENTER
+        );
+
+
+        Region line1 =
+                new Region();
+
+        Region line2 =
+                new Region();
+
+
+        HBox.setHgrow(
+                line1,
+                Priority.ALWAYS
+        );
+
+        HBox.setHgrow(
+                line2,
+                Priority.ALWAYS
+        );
+
+
+        line1.setPrefHeight(
+                1
+        );
+
+        line2.setPrefHeight(
+                1
+        );
+
+
+        line1.setStyle(
+                "-fx-background-color:"
+                + BORDER + ";"
+        );
+
+        line2.setStyle(
+                "-fx-background-color:"
+                + BORDER + ";"
+        );
+
+
+        Label or =
+                new Label(
+                        "OR"
+                );
+
+        or.setFont(
+                Font.font(
+                        "Segoe UI",
+                        FontWeight.BOLD,
+                        9
+                )
+        );
+
+        or.setTextFill(
+                Color.web(MUTED)
+        );
+
+
+        divider.getChildren().addAll(
+
+                line1,
+                or,
+                line2
+        );
+
+
+        return divider;
+    }
+
+
+    // =========================================================
+    // SPACING
+    // =========================================================
+
+    private static Region createSpacing(
+            double height
+    ) {
+
+        Region region =
+                new Region();
+
+        region.setPrefHeight(
+                height
+        );
+
+        return region;
+    }
+
+
+    // =========================================================
+    // PRIMARY BUTTON
+    // =========================================================
+
+    private static void applyPrimaryButton(
+
+            Button button,
+            boolean hover
+    ) {
+
+        if (hover) {
+
+            button.setStyle(
+
+                    "-fx-background-color:"
+                    + LIME + ";"
+
+                    + "-fx-text-fill:#050505;"
+
+                    + "-fx-background-radius:10;"
+
+                    + "-fx-font-weight:bold;"
+
+                    + "-fx-font-size:13px;"
+
+                    + "-fx-effect:dropshadow("
+                    + "gaussian,"
+                    + "rgba(198,233,47,0.45),"
+                    + "22,0,0,5);"
+            );
+
+        } else {
+
+            button.setStyle(
+
+                    "-fx-background-color:"
+                    + LIME_2 + ";"
+
+                    + "-fx-text-fill:#FFFFFF;"
+
+                    + "-fx-background-radius:10;"
+
+                    + "-fx-font-weight:bold;"
+
+                    + "-fx-font-size:13px;"
+
+                    + "-fx-effect:dropshadow("
+                    + "gaussian,"
+                    + "rgba(138,163,11,0.25),"
+                    + "15,0,0,4);"
+            );
+        }
+    }
+
+
+    // =========================================================
+    // SECONDARY BUTTON
+    // =========================================================
+
+    private static void applySecondaryButton(
+
+            Button button,
+            boolean hover
+    ) {
+
+        if (hover) {
+
+            button.setStyle(
+
+                    "-fx-background-color:"
+                    + "rgba(198,233,47,0.08);"
+
+                    + "-fx-text-fill:"
+                    + LIME + ";"
+
+                    + "-fx-background-radius:10;"
+
+                    + "-fx-border-color:"
+                    + LIME_2 + ";"
+
+                    + "-fx-border-radius:10;"
+
+                    + "-fx-border-width:1;"
+
+                    + "-fx-font-weight:bold;"
+
+                    + "-fx-font-size:12px;"
+            );
+
+        } else {
+
+            button.setStyle(
+
+                    "-fx-background-color:"
+                    + "rgba(255,255,255,0.025);"
+
+                    + "-fx-text-fill:"
+                    + WHITE + ";"
+
+                    + "-fx-background-radius:10;"
+
+                    + "-fx-border-color:"
+                    + BORDER + ";"
+
+                    + "-fx-border-radius:10;"
+
+                    + "-fx-border-width:1;"
+
+                    + "-fx-font-weight:bold;"
+
+                    + "-fx-font-size:12px;"
+            );
+        }
+    }
+
+
+    // =========================================================
+    // COUNSELLOR BUTTON
+    // =========================================================
+
+    private static void applyCounsellorButton(
+
+            Button button,
+            boolean hover
+    ) {
+
+        if (hover) {
+
+            button.setStyle(
+
+                    "-fx-background-color:"
+                    + "rgba(198,233,47,0.06);"
+
+                    + "-fx-text-fill:"
+                    + LIME + ";"
+
+                    + "-fx-background-radius:9;"
+
+                    + "-fx-border-color:"
+                    + "rgba(198,233,47,0.25);"
+
+                    + "-fx-border-radius:9;"
+
+                    + "-fx-border-width:1;"
+
+                    + "-fx-font-weight:bold;"
+
+                    + "-fx-font-size:11px;"
+            );
+
+        } else {
+
+            button.setStyle(
+
+                    "-fx-background-color:"
+                    + "transparent;"
+
+                    + "-fx-text-fill:"
+                    + GREY + ";"
+
+                    + "-fx-background-radius:9;"
+
+                    + "-fx-border-color:"
+                    + BORDER + ";"
+
+                    + "-fx-border-radius:9;"
+
+                    + "-fx-border-width:1;"
+
+                    + "-fx-font-weight:bold;"
+
+                    + "-fx-font-size:11px;"
+            );
+        }
+    }
+
+
+    // =========================================================
+    // GUIDE BUTTON
+    // =========================================================
+
+    private static void applyGuideStyle(
+
+            Button button,
+            boolean hover
+    ) {
+
+        if (hover) {
+
+            button.setStyle(
+
+                    "-fx-background-color:"
+                    + "rgba(198,233,47,0.06);"
+
+                    + "-fx-text-fill:"
+                    + LIME + ";"
+
+                    + "-fx-font-size:10px;"
+
+                    + "-fx-font-weight:bold;"
+
+                    + "-fx-background-radius:8;"
+
+                    + "-fx-border-color:"
+                    + "rgba(198,233,47,0.15);"
+
+                    + "-fx-border-radius:8;"
+
+                    + "-fx-border-width:1;"
+            );
+
+        } else {
+
+            button.setStyle(
+
+                    "-fx-background-color:"
+                    + "transparent;"
+
+                    + "-fx-text-fill:"
+                    + GREY + ";"
+
+                    + "-fx-font-size:10px;"
+
+                    + "-fx-font-weight:bold;"
+            );
+        }
+    }
+
+
+    // =========================================================
+    // USER GUIDE
+    // =========================================================
+
     private static void showGuide() {
-        // Implement guide dialog or navigation
-        System.out.println("User Guide clicked - implement guide view");
+
+        System.out.println(
+                "User Guide clicked - implement guide view"
+        );
     }
 }

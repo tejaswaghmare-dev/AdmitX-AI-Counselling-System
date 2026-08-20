@@ -1,8 +1,6 @@
-package com.example.view;
+package com.admitx.view;
 
-import com.example.view.Navigation;
-import com.example.view.StudentLayout;
-import com.example.model.ApplicationData;
+
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -15,6 +13,8 @@ import javafx.scene.layout.VBox;
 
 import java.io.File;
 import java.util.Map;
+
+import com.admitx.model.ApplicationData;
 
 public class PreviewApplicationPage {
 

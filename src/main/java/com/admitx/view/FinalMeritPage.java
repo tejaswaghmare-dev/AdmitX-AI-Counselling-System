@@ -1,7 +1,6 @@
 package com.admitx.view;
 
-import com.admitx.view.Navigation;
-import com.admitx.view.StudentLayout;
+
 import com.admitx.model.ApplicationData;
 
 import javafx.geometry.Insets;

@@ -1,6 +1,5 @@
 package com.admitx.view;
 
-import com.admitx.view.Navigation;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;

@@ -363,9 +363,9 @@ public class LandingPage extends Application {
                 LandingPagestage = stage;
                 
                 studentBtn.setOnAction(e->{
-                        StudentSignup studentSignup = new StudentSignup();
+                        StudentSignupPage studentSignup = new StudentSignupPage();
 
-                        LandingPagestage.setScene(studentSignup.getScenefromStudentsignup());
+                        LandingPagestage.setScene(studentSignup.getScene());
                 });
 
                 // navigation for cousellor button

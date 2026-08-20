@@ -359,8 +359,7 @@ public class CounselorSignup {
                         @Override
                         public void run() {
                                 LandingPage.LandingPagestage.setScene(counselorScene);
-                        }
-
+        
                 };
 
                 LandingPage.LandingPagestage.setScene(counselorLogin.getSceneFromCounselorLogin(callbacktosignup));

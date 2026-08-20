@@ -175,13 +175,13 @@ public class LandingPage extends Application {
                 // COUNSELOR IMAGE
                 // =========================================================
 
-                Image counselorImg = new Image(
+                Image counsellorImg = new Image(
                         getClass().getResourceAsStream(
                                 "/assets/images/counss.png"
                         )
                 );
 
-                ImageView counselorView = new ImageView(counselorImg);
+                ImageView counselorView = new ImageView(counsellorImg);
 
                 counselorView.setFitWidth(180);
                 counselorView.setFitHeight(180);
@@ -371,7 +371,7 @@ public class LandingPage extends Application {
                 // navigation for cousellor button
 
                 counselorBtn.setOnAction(e->{
-                        CounselorSignup counselorSignup = new CounselorSignup();
+                        CounsellorSignup counselorSignup = new CounsellorSignup();
 
                         LandingPagestage.setScene(counselorSignup.getScenefromCounselorsignup());
                 });

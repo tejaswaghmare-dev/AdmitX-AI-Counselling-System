@@ -15,7 +15,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 
-public class CounselorSignup {
+public class CounsellorSignup {
 
     private Scene counselorScene;
 
@@ -359,12 +359,11 @@ public class CounselorSignup {
                         @Override
                         public void run() {
                                 LandingPage.LandingPagestage.setScene(counselorScene);
-                        }
-
-                };
+        
+                }
 
                 //LandingPage.LandingPagestage.setScene(counselorLogin.getSceneFromCounselorLogin(callbacktosignup));
-        });
+      });
 
         signIn.setStyle("""
                 -fx-text-fill: #33a588;
@@ -475,5 +474,5 @@ public class CounselorSignup {
                 );
 
         return counselorScene;
-    }
-}
+        };  
+};

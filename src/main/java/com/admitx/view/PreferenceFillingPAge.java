@@ -1,7 +1,6 @@
-package com.example.view;
+package com.admitx.view;
 
-import com.example.view.Navigation;
-import com.example.view.StudentLayout;
+
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;

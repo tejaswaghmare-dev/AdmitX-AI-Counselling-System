@@ -352,7 +352,7 @@ public class CounselorSignup {
         // navigation for sign in
 
         signIn.setOnAction(e->{
-                CounselorLogin counselorLogin = new CounselorLogin();
+                //CounselorLogin counselorLogin = new CounselorLogin();
 
                 Runnable callbacktosignup = new Runnable(){
 
@@ -363,7 +363,7 @@ public class CounselorSignup {
 
                 };
 
-                LandingPage.LandingPagestage.setScene(counselorLogin.getSceneFromCounselorLogin(callbacktosignup));
+                //LandingPage.LandingPagestage.setScene(counselorLogin.getSceneFromCounselorLogin(callbacktosignup));
         });
 
         signIn.setStyle("""

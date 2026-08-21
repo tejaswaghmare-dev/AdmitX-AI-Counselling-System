@@ -84,7 +84,7 @@ public class WelcomePage {
 
             Image image =
                     new Image(
-                            "images/admitxstd.jpeg"
+                            "/assets/images/admitxstd.jpeg"
                     );
 
             studentImage.setImage(image);
@@ -246,7 +246,7 @@ public class WelcomePage {
 
             Image logo =
                     new Image(
-                            "images/admitxlogo.jpeg"
+                            "assets/images/admitxlogo.jpeg"
                     );
 
             logoView.setImage(logo);

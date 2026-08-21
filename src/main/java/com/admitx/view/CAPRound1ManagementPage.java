@@ -1,6 +1,6 @@
 package com.admitx.view;
 
-import com.example.view.Navigation;
+import com.admitx.view.Navigation;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;

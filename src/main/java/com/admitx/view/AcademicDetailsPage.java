@@ -1,17 +1,20 @@
 package com.admitx.view;
 
-import com.example.view.Navigation;
-import com.example.view.StudentLayout;
-import com.example.model.ApplicationData;
+import com.admitx.model.ApplicationData;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 
 public class AcademicDetailsPage {
+
+    private static final String BG = "#0B100B";
+    private static final String CARD = "#141B14";
+    private static final String BORDER = "#293529";
+    private static final String LIME = "#B7FF00";
+    private static final String WHITE = "#F5F7F2";
+    private static final String MUTED = "#9AA59A";
 
     public static Scene getScene() {
 
@@ -22,35 +25,96 @@ public class AcademicDetailsPage {
         title.setStyle(
                 "-fx-font-size: 26px;" +
                 "-fx-font-weight: bold;" +
-                "-fx-text-fill: #0A0A0A;"
+                "-fx-text-fill: " + WHITE + ";"
         );
 
-        TextField sscDetails = new TextField();
-        sscDetails.setPromptText("SSC Percentage / Details");
+        Label description = new Label(
+                "Enter your academic qualifications and entrance examination details."
+        );
 
-        TextField hscDetails = new TextField();
-        hscDetails.setPromptText("HSC Percentage / Details");
+        description.setStyle(
+                "-fx-font-size: 13px;" +
+                "-fx-text-fill: " + MUTED + ";"
+        );
 
-        TextField diplomaDetails = new TextField();
-        diplomaDetails.setPromptText("Diploma Percentage / Details");
+        VBox heading = new VBox(
+                6,
+                title,
+                description
+        );
 
-        TextField pcmMarks = new TextField();
-        pcmMarks.setPromptText("PCM Marks");
+        Label progressTitle = new Label(
+                "APPLICATION PROGRESS"
+        );
 
-        TextField cetPercentile = new TextField();
-        cetPercentile.setPromptText("MHT CET Percentile");
+        progressTitle.setStyle(
+                "-fx-font-size: 10px;" +
+                "-fx-font-weight: bold;" +
+                "-fx-text-fill: " + MUTED + ";"
+        );
 
-        TextField jeePercentile = new TextField();
-        jeePercentile.setPromptText("JEE Main Percentile");
+        HBox progress = new HBox(
+                8,
+                createStep("1", "Personal", true),
+                createLine(true),
+                createStep("2", "Address", true),
+                createLine(true),
+                createStep("3", "Academic", true),
+                createLine(true),
+                createStep("4", "Documents", false),
+                createLine(false),
+                createStep("5", "Preview", false)
+        );
 
-        TextField yearOfPassing = new TextField();
-        yearOfPassing.setPromptText("Year of Passing");
+        progress.setAlignment(Pos.CENTER_LEFT);
+
+        VBox progressCard = new VBox(
+                10,
+                progressTitle,
+                progress
+        );
+
+        progressCard.setPadding(new Insets(16));
+
+        progressCard.setStyle(
+                "-fx-background-color: " + CARD + ";" +
+                "-fx-border-color: " + BORDER + ";" +
+                "-fx-border-radius: 12px;" +
+                "-fx-background-radius: 12px;"
+        );
+
+        TextField sscDetails = createTextField(
+                "SSC Percentage / Details"
+        );
+
+        TextField hscDetails = createTextField(
+                "HSC Percentage / Details"
+        );
+
+        TextField diplomaDetails = createTextField(
+                "Diploma Percentage / Details"
+        );
+
+        TextField pcmMarks = createTextField(
+                "PCM Marks"
+        );
+
+        TextField cetPercentile = createTextField(
+                "MHT CET Percentile"
+        );
+
+        TextField jeePercentile = createTextField(
+                "JEE Main Percentile"
+        );
+
+        TextField yearOfPassing = createTextField(
+                "Year of Passing"
+        );
 
         GridPane form = new GridPane();
 
         form.setHgap(20);
         form.setVgap(20);
-        form.setPadding(new Insets(20));
 
         addField(
                 form,
@@ -64,7 +128,7 @@ public class AcademicDetailsPage {
                 form,
                 "HSC Details",
                 hscDetails,
-                2,
+                1,
                 0
         );
 
@@ -80,7 +144,7 @@ public class AcademicDetailsPage {
                 form,
                 "PCM Marks",
                 pcmMarks,
-                2,
+                1,
                 1
         );
 
@@ -96,7 +160,7 @@ public class AcademicDetailsPage {
                 form,
                 "JEE Main Percentile",
                 jeePercentile,
-                2,
+                1,
                 2
         );
 
@@ -108,29 +172,68 @@ public class AcademicDetailsPage {
                 3
         );
 
-        Button backButton = new Button("Back");
-        Button nextButton = new Button("Save & Continue");
+        ColumnConstraints firstColumn =
+                new ColumnConstraints();
 
-        backButton.setStyle(
-                "-fx-background-color: #4D7C0F;" +
-                "-fx-text-fill: white;" +
-                "-fx-font-size: 14px;" +
-                "-fx-pref-width: 140px;" +
-                "-fx-pref-height: 40px;" +
-                "-fx-background-radius: 6px;"
+        firstColumn.setPercentWidth(50);
+
+        ColumnConstraints secondColumn =
+                new ColumnConstraints();
+
+        secondColumn.setPercentWidth(50);
+
+        form.getColumnConstraints().addAll(
+                firstColumn,
+                secondColumn
         );
 
-        nextButton.setStyle(
-                "-fx-background-color: #65A30D;" +
-                "-fx-text-fill: white;" +
-                "-fx-font-size: 14px;" +
-                "-fx-pref-width: 160px;" +
-                "-fx-pref-height: 40px;" +
-                "-fx-background-radius: 6px;"
+        Label academicNote = new Label(
+                "Make sure the academic information matches your official marksheets."
+        );
+
+        academicNote.setWrapText(true);
+
+        academicNote.setStyle(
+                "-fx-text-fill: " + MUTED + ";" +
+                "-fx-font-size: 11px;"
+        );
+
+        VBox formCard = new VBox(
+                15,
+                createSectionTitle("ACADEMIC INFORMATION"),
+                form,
+                academicNote
+        );
+
+        formCard.setPadding(
+                new Insets(22)
+        );
+
+        formCard.setStyle(
+                "-fx-background-color: " + CARD + ";" +
+                "-fx-border-color: " + BORDER + ";" +
+                "-fx-border-radius: 12px;" +
+                "-fx-background-radius: 12px;"
+        );
+
+        Button backButton =
+                new Button("←  Back");
+
+        styleSecondaryButton(
+                backButton
+        );
+
+        Button nextButton =
+                new Button("Save & Continue  →");
+
+        stylePrimaryButton(
+                nextButton
         );
 
         backButton.setOnAction(e ->
-                Navigation.goTo(AddressDetailsPage.getScene())
+                Navigation.goTo(
+                        AddressDetailsPage.getScene()
+                )
         );
 
         nextButton.setOnAction(e -> {
@@ -167,41 +270,125 @@ public class AcademicDetailsPage {
                     HomeUniversityPage.getScene()
             );
         });
-        
+
+        Region spacer = new Region();
+
+        HBox.setHgrow(
+                spacer,
+                Priority.ALWAYS
+        );
 
         HBox buttons = new HBox(
-                15,
+                12,
                 backButton,
+                spacer,
                 nextButton
         );
 
-        buttons.setAlignment(Pos.CENTER_RIGHT);
+        buttons.setAlignment(
+                Pos.CENTER_LEFT
+        );
 
         VBox content = new VBox(
-                15,
-                title,
-                form,
+                22,
+                heading,
+                progressCard,
+                formCard,
                 buttons
         );
 
-        content.setPadding(new Insets(30));
-
-        content.setStyle(
-                "-fx-background-color: #F7FEE7;"
+        content.setPadding(
+                new Insets(5)
         );
 
-        ScrollPane scrollPane = new ScrollPane(content);
+        content.setFillWidth(true);
+
+        ScrollPane scrollPane =
+                new ScrollPane(content);
 
         scrollPane.setFitToWidth(true);
 
+        scrollPane.setHbarPolicy(
+                ScrollPane.ScrollBarPolicy.NEVER
+        );
+
         scrollPane.setStyle(
-                "-fx-background: #F7FEE7;"
+                "-fx-background: " + BG + ";" +
+                "-fx-background-color: " + BG + ";"
+        );
+
+        BorderPane page =
+                new BorderPane();
+
+        page.setCenter(
+                scrollPane
+        );
+
+        page.setStyle(
+                "-fx-background-color: " + BG + ";"
         );
 
         return new Scene(
                 StudentLayout.create(
                         "Academic Details",
-                        scrollPane
+                        page
+                )
+        );
+    }
+
+    private static TextField createTextField(
+            String prompt
+    ) {
+
+        TextField field =
+                new TextField();
+
+        field.setPromptText(
+                prompt
+        );
+
+        field.setPrefHeight(40);
+        field.setMaxWidth(
+                Double.MAX_VALUE
+        );
+
+        styleControl(field);
+
+        return field;
+    }
+
+    private static void styleControl(
+            Control control
+    ) {
+
+        control.setStyle(
+                "-fx-background-color: #0F150F;" +
+                "-fx-border-color: #344034;" +
+                "-fx-border-radius: 7px;" +
+                "-fx-background-radius: 7px;" +
+                "-fx-text-fill: " + WHITE + ";" +
+                "-fx-font-size: 13px;"
+        );
+
+        control.setOnMouseEntered(e ->
+                control.setStyle(
+                        "-fx-background-color: #111811;" +
+                        "-fx-border-color: " + LIME + ";" +
+                        "-fx-border-radius: 7px;" +
+                        "-fx-background-radius: 7px;" +
+                        "-fx-text-fill: " + WHITE + ";" +
+                        "-fx-font-size: 13px;"
+                )
+        );
+
+        control.setOnMouseExited(e ->
+                control.setStyle(
+                        "-fx-background-color: #0F150F;" +
+                        "-fx-border-color: #344034;" +
+                        "-fx-border-radius: 7px;" +
+                        "-fx-background-radius: 7px;" +
+                        "-fx-text-fill: " + WHITE + ";" +
+                        "-fx-font-size: 13px;"
                 )
         );
     }
@@ -214,23 +401,225 @@ public class AcademicDetailsPage {
             int row
     ) {
 
-        Label label = new Label(labelText);
+        Label label =
+                new Label(labelText);
 
         label.setStyle(
-                "-fx-font-size: 14px;" +
+                "-fx-font-size: 12px;" +
                 "-fx-font-weight: bold;" +
-                "-fx-text-fill: #1A1A1A;"
+                "-fx-text-fill: " + WHITE + ";"
         );
 
-        control.setPrefWidth(300);
-        control.setPrefHeight(38);
+        VBox box =
+                new VBox(
+                        7,
+                        label,
+                        control
+                );
 
-        VBox box = new VBox(
-                6,
-                label,
-                control
+        GridPane.setFillWidth(
+                box,
+                true
         );
 
-        grid.add(box, column, row);
+        grid.add(
+                box,
+                column,
+                row
+        );
+    }
+
+    private static Label createSectionTitle(
+            String text
+    ) {
+
+        Label title =
+                new Label(text);
+
+        title.setStyle(
+                "-fx-font-size: 12px;" +
+                "-fx-font-weight: bold;" +
+                "-fx-text-fill: " + LIME + ";"
+        );
+
+        return title;
+    }
+
+    private static HBox createStep(
+            String number,
+            String text,
+            boolean active
+    ) {
+
+        Label numberLabel =
+                new Label(number);
+
+        numberLabel.setMinSize(
+                26,
+                26
+        );
+
+        numberLabel.setAlignment(
+                Pos.CENTER
+        );
+
+        numberLabel.setStyle(
+                "-fx-background-color: " +
+                        (active
+                                ? LIME
+                                : "#252D25") + ";" +
+                "-fx-background-radius: 50%;" +
+                "-fx-text-fill: " +
+                        (active
+                                ? "#0B100B"
+                                : MUTED) + ";" +
+                "-fx-font-size: 10px;" +
+                "-fx-font-weight: bold;"
+        );
+
+        Label textLabel =
+                new Label(text);
+
+        textLabel.setStyle(
+                "-fx-text-fill: " +
+                        (active
+                                ? WHITE
+                                : MUTED) + ";" +
+                "-fx-font-size: 10px;" +
+                "-fx-font-weight: bold;"
+        );
+
+        HBox step =
+                new HBox(
+                        6,
+                        numberLabel,
+                        textLabel
+                );
+
+        step.setAlignment(
+                Pos.CENTER_LEFT
+        );
+
+        return step;
+    }
+
+    private static Region createLine(
+            boolean active
+    ) {
+
+        Region line =
+                new Region();
+
+        line.setPrefWidth(35);
+        line.setPrefHeight(2);
+
+        line.setStyle(
+                "-fx-background-color: " +
+                        (active
+                                ? LIME
+                                : "#293229") + ";"
+        );
+
+        return line;
+    }
+
+    private static void stylePrimaryButton(
+            Button button
+    ) {
+
+        button.setPrefHeight(42);
+
+        button.setPadding(
+                new Insets(
+                        0,
+                        20,
+                        0,
+                        20
+                )
+        );
+
+        button.setStyle(
+                "-fx-background-color: " + LIME + ";" +
+                "-fx-text-fill: #0B100B;" +
+                "-fx-font-size: 13px;" +
+                "-fx-font-weight: bold;" +
+                "-fx-background-radius: 8px;" +
+                "-fx-cursor: hand;"
+        );
+
+        button.setOnMouseEntered(e ->
+                button.setStyle(
+                        "-fx-background-color: #D0FF4D;" +
+                        "-fx-text-fill: #0B100B;" +
+                        "-fx-font-size: 13px;" +
+                        "-fx-font-weight: bold;" +
+                        "-fx-background-radius: 8px;" +
+                        "-fx-cursor: hand;"
+                )
+        );
+
+        button.setOnMouseExited(e ->
+                button.setStyle(
+                        "-fx-background-color: " + LIME + ";" +
+                        "-fx-text-fill: #0B100B;" +
+                        "-fx-font-size: 13px;" +
+                        "-fx-font-weight: bold;" +
+                        "-fx-background-radius: 8px;" +
+                        "-fx-cursor: hand;"
+                )
+        );
+    }
+
+    private static void styleSecondaryButton(
+            Button button
+    ) {
+
+        button.setPrefHeight(42);
+
+        button.setPadding(
+                new Insets(
+                        0,
+                        20,
+                        0,
+                        20
+                )
+        );
+
+        button.setStyle(
+                "-fx-background-color: #171F17;" +
+                "-fx-text-fill: " + WHITE + ";" +
+                "-fx-border-color: #344034;" +
+                "-fx-border-radius: 8px;" +
+                "-fx-background-radius: 8px;" +
+                "-fx-font-size: 13px;" +
+                "-fx-font-weight: bold;" +
+                "-fx-cursor: hand;"
+        );
+
+        button.setOnMouseEntered(e ->
+                button.setStyle(
+                        "-fx-background-color: #202B20;" +
+                        "-fx-text-fill: " + WHITE + ";" +
+                        "-fx-border-color: " + LIME + ";" +
+                        "-fx-border-radius: 8px;" +
+                        "-fx-background-radius: 8px;" +
+                        "-fx-font-size: 13px;" +
+                        "-fx-font-weight: bold;" +
+                        "-fx-cursor: hand;"
+                )
+        );
+
+        button.setOnMouseExited(e ->
+                button.setStyle(
+                        "-fx-background-color: #171F17;" +
+                        "-fx-text-fill: " + WHITE + ";" +
+                        "-fx-border-color: #344034;" +
+                        "-fx-border-radius: 8px;" +
+                        "-fx-background-radius: 8px;" +
+                        "-fx-font-size: 13px;" +
+                        "-fx-font-weight: bold;" +
+                        "-fx-cursor: hand;"
+                )
+        );
     }
 }

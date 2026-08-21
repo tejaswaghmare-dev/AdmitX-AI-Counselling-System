@@ -1,6 +1,6 @@
-package com.example.view;
+package com.admitx.view;
 
-import com.example.view.Navigation;
+import com.admitx.view.Navigation;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -9,8 +9,11 @@ import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 
 public class CounsellorLoginPage {
-
+        private static final String COUNSELLOR_ID = "YASH";
+        private static final String COUNSELLOR_PASSWORD = "123";
+        
     public static Scene getScene() {
+        
 
         Label title =
                 new Label("Counsellor Login");
@@ -68,6 +71,7 @@ public class CounsellorLoginPage {
                 "-fx-font-size: 15px;"
         );
 
+
         login.setOnAction(e -> {
 
             if (username.getText().isBlank()
@@ -79,11 +83,35 @@ public class CounsellorLoginPage {
 
                 return;
             }
+           
 
-            Navigation.goTo(
-                    CounsellorDashboardPage.getScene()
-            );
+            if (username.getText().equals(COUNSELLOR_ID)
+                && password.getText().equals(COUNSELLOR_PASSWORD)) {
+
+                Navigation.goTo(
+                        CounsellorDashboardPage.getScene()
+                );
+
+                } else {
+
+                Alert alert = new Alert(
+                        Alert.AlertType.ERROR
+                );
+
+                alert.setTitle("Login Failed");
+                alert.setHeaderText("Invalid Counsellor Credentials");
+                alert.setContentText(
+                        "Please enter a valid Counsellor ID and Password."
+                );
+
+                alert.showAndWait();
+                }
+
+            
+            
         });
+
+
 
         Button back =
                 new Button("Back to Welcome");

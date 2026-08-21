@@ -1,27 +1,52 @@
-package com.example.view;
-
-import com.example.view.Navigation;
+package com.admitx.view;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
 public class Sidebar {
 
+    private static final String BG = "#0A0F0A";
+    private static final String PANEL = "#121A12";
+    private static final String LIME = "#B7FF00";
+    private static final String TEXT = "#F5F7F2";
+    private static final String MUTED = "#9AA59A";
+    private static final String HOVER = "#1B2817";
+
     public static VBox create() {
 
-        Button dashboard = createButton("Dashboard");
-        Button application = createButton("Application");
-        Button merit = createButton("Merit List");
-        Button college = createButton("College Search");
-        Button preference = createButton("Preference Filling");
-        Button cap = createButton("CAP Rounds");
-        Button admission = createButton("Admission");
-        Button notices = createButton("Notices");
-        Button profile = createButton("Profile");
-        Button help = createButton("Help");
-        Button logout = createButton("Logout");
+        Label logo = new Label("ADMITX");
+        logo.setStyle(
+                "-fx-text-fill: " + LIME + ";" +
+                "-fx-font-size: 25px;" +
+                "-fx-font-weight: bold;"
+        );
+
+        Label subtitle = new Label("AI STUDENT PORTAL");
+        subtitle.setStyle(
+                "-fx-text-fill: " + MUTED + ";" +
+                "-fx-font-size: 10px;" +
+                "-fx-font-weight: bold;"
+        );
+
+        VBox branding = new VBox(2, logo, subtitle);
+        branding.setAlignment(Pos.CENTER_LEFT);
+        branding.setPadding(new Insets(5, 8, 25, 8));
+
+        Button dashboard = createButton("⌂", "Dashboard");
+        Button application = createButton("▣", "Application");
+        Button merit = createButton("★", "Merit List");
+        Button college = createButton("⌕", "College Search");
+        Button preference = createButton("☷", "Preference Filling");
+        Button cap = createButton("◉", "CAP Rounds");
+        Button admission = createButton("✓", "Admission");
+        Button notices = createButton("●", "Notices");
+        Button profile = createButton("●", "Profile");
+        Button help = createButton("?", "Help");
+        Button logout = createButton("⇥", "Logout");
 
         dashboard.setOnAction(e ->
                 Navigation.goTo(StudentDashboardPage.getScene())
@@ -32,9 +57,7 @@ public class Sidebar {
         );
 
         merit.setOnAction(e ->
-            Navigation.goTo(
-                    ProvisionalMeritPage.getScene()
-            )
+                Navigation.goTo(ProvisionalMeritPage.getScene())
         );
 
         college.setOnAction(e ->
@@ -69,8 +92,8 @@ public class Sidebar {
                 Navigation.goTo(WelcomePage.getScene())
         );
 
-        VBox sidebar = new VBox(
-                8,
+        VBox menu = new VBox(
+                5,
                 dashboard,
                 application,
                 merit,
@@ -80,56 +103,131 @@ public class Sidebar {
                 admission,
                 notices,
                 profile,
-                help,
+                help
+        );
+
+        menu.setFillWidth(true);
+
+        Region spacer = new Region();
+        VBox.setVgrow(spacer, javafx.scene.layout.Priority.ALWAYS);
+
+        Label accountLabel = new Label("ACCOUNT");
+        accountLabel.setStyle(
+                "-fx-text-fill: #596359;" +
+                "-fx-font-size: 10px;" +
+                "-fx-font-weight: bold;" +
+                "-fx-padding: 0 8 8 8;"
+        );
+
+        VBox bottom = new VBox(
+                8,
+                accountLabel,
                 logout
         );
 
-        sidebar.setPadding(new Insets(20));
-        sidebar.setPrefWidth(220);
+        bottom.setFillWidth(true);
+
+        VBox sidebar = new VBox(
+                branding,
+                menu,
+                spacer,
+                bottom
+        );
+
+        sidebar.setPadding(new Insets(22, 14, 18, 14));
+        sidebar.setPrefWidth(245);
+        sidebar.setMinWidth(245);
         sidebar.setAlignment(Pos.TOP_CENTER);
 
         sidebar.setStyle(
-                "-fx-background-color: #0A0A0A;"
+                "-fx-background-color: " + BG + ";" +
+                "-fx-border-color: #202820;" +
+                "-fx-border-width: 0 1 0 0;"
         );
 
         return sidebar;
     }
 
-    private static Button createButton(String text) {
+    private static Button createButton(String icon, String text) {
 
-        Button button = new Button(text);
+        Label iconLabel = new Label(icon);
+        iconLabel.setMinWidth(25);
+        iconLabel.setAlignment(Pos.CENTER);
+        iconLabel.setStyle(
+                "-fx-text-fill: " + MUTED + ";" +
+                "-fx-font-size: 16px;"
+        );
+
+        Label textLabel = new Label(text);
+        textLabel.setStyle(
+                "-fx-text-fill: " + TEXT + ";" +
+                "-fx-font-size: 13px;" +
+                "-fx-font-weight: bold;"
+        );
+
+        javafx.scene.layout.HBox content =
+                new javafx.scene.layout.HBox(12, iconLabel, textLabel);
+
+        content.setAlignment(Pos.CENTER_LEFT);
+
+        Button button = new Button();
+        button.setGraphic(content);
 
         button.setMaxWidth(Double.MAX_VALUE);
-        button.setPrefHeight(42);
+        button.setPrefHeight(46);
+        button.setMinHeight(46);
 
         button.setStyle(
                 "-fx-background-color: transparent;" +
-                "-fx-text-fill: #BEF264;" +
-                "-fx-font-size: 14px;" +
+                "-fx-background-radius: 9px;" +
+                "-fx-padding: 0 12 0 12;" +
                 "-fx-alignment: CENTER_LEFT;" +
-                "-fx-padding: 0 15 0 15;"
+                "-fx-cursor: hand;"
         );
 
-        button.setOnMouseEntered(e ->
-                button.setStyle(
-                        "-fx-background-color: #1A2E05;" +
-                        "-fx-text-fill: white;" +
-                        "-fx-font-size: 14px;" +
-                        "-fx-alignment: CENTER_LEFT;" +
-                        "-fx-padding: 0 15 0 15;" +
-                        "-fx-background-radius: 6px;"
-                )
-        );
+        button.setOnMouseEntered(e -> {
 
-        button.setOnMouseExited(e ->
-                button.setStyle(
-                        "-fx-background-color: transparent;" +
-                        "-fx-text-fill: #BEF264;" +
-                        "-fx-font-size: 14px;" +
-                        "-fx-alignment: CENTER_LEFT;" +
-                        "-fx-padding: 0 15 0 15;"
-                )
-        );
+            iconLabel.setStyle(
+                    "-fx-text-fill: " + LIME + ";" +
+                    "-fx-font-size: 16px;"
+            );
+
+            textLabel.setStyle(
+                    "-fx-text-fill: white;" +
+                    "-fx-font-size: 13px;" +
+                    "-fx-font-weight: bold;"
+            );
+
+            button.setStyle(
+                    "-fx-background-color: " + HOVER + ";" +
+                    "-fx-background-radius: 9px;" +
+                    "-fx-padding: 0 12 0 12;" +
+                    "-fx-alignment: CENTER_LEFT;" +
+                    "-fx-cursor: hand;"
+            );
+        });
+
+        button.setOnMouseExited(e -> {
+
+            iconLabel.setStyle(
+                    "-fx-text-fill: " + MUTED + ";" +
+                    "-fx-font-size: 16px;"
+            );
+
+            textLabel.setStyle(
+                    "-fx-text-fill: " + TEXT + ";" +
+                    "-fx-font-size: 13px;" +
+                    "-fx-font-weight: bold;"
+            );
+
+            button.setStyle(
+                    "-fx-background-color: transparent;" +
+                    "-fx-background-radius: 9px;" +
+                    "-fx-padding: 0 12 0 12;" +
+                    "-fx-alignment: CENTER_LEFT;" +
+                    "-fx-cursor: hand;"
+            );
+        });
 
         return button;
     }

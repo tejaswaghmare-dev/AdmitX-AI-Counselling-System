@@ -1,7 +1,8 @@
-package com.admitx.view;
+package com.example.view;
 
-
-import com.admitx.model.ApplicationData;
+import com.example.view.Navigation;
+import com.example.view.StudentLayout;
+import com.example.model.ApplicationData;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -12,130 +13,108 @@ import javafx.scene.layout.VBox;
 
 public class FinalMeritPage {
 
-    public static Scene getScene() {
+    public static Scene getScene(){
 
-        ApplicationData data = ApplicationData.getInstance();
+        ApplicationData data =
+                ApplicationData.getInstance();
 
-        VBox content = new VBox(25);
-        content.setPadding(new Insets(35, 40, 40, 40));
-        content.setAlignment(Pos.TOP_LEFT);
-        content.setStyle("-fx-background-color: #0A0A0F;");
+        Label title =
+                new Label("Final Merit List");
 
-        Label title = new Label("📊 Final Merit List");
         title.setStyle(
-                "-fx-font-size: 28px;" +
-                "-fx-font-weight: bold;" +
-                "-fx-text-fill: #E8EDF5;" +
-                "-fx-font-family: 'Segoe UI';"
+                "-fx-font-size:26;" +
+                "-fx-font-weight:bold;"
         );
 
-        Label subtitle = new Label("Your final merit rank and eligibility details");
-        subtitle.setStyle(
-                "-fx-font-size: 14px;" +
-                "-fx-text-fill: #8AA8C7;" +
-                "-fx-opacity: 0.7;" +
-                "-fx-padding: 0 0 10 0;"
-        );
+        VBox card =
+                new VBox(18);
 
-        // Card
-        VBox card = new VBox(16);
-        card.setPadding(new Insets(25, 30, 30, 30));
+        card.setPadding(new Insets(25));
+
         card.setAlignment(Pos.CENTER_LEFT);
-        card.setMaxWidth(500);
+
         card.setStyle(
-                "-fx-background-color: rgba(26, 26, 46, 0.6);" +
-                "-fx-background-radius: 16px;" +
-                "-fx-border-color: rgba(74, 127, 181, 0.15);" +
-                "-fx-border-radius: 16px;" +
-                "-fx-border-width: 1px;" +
-                "-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 20, 0, 0, 10);"
+                "-fx-background-color:white;" +
+                "-fx-background-radius:10;" +
+                "-fx-border-color:#D9F99D;" +
+                "-fx-border-radius:10;"
         );
 
         card.getChildren().addAll(
-                detail("👤 Candidate", value(data.getCandidateName())),
-                detail("🏅 Final Merit Rank", "1498"),
-                detail("📋 Category Rank", "Open - 701"),
-                detail("🔄 Eligible CAP Rounds", "CAP Round 1, 2 and 3")
+
+                detail(
+                        "Candidate",
+                        value(data.getCandidateName())
+                ),
+
+                detail(
+                        "Final Merit Rank",
+                        "1498"
+                ),
+
+                detail(
+                        "Category Rank",
+                        "Open - 701"
+                ),
+
+                detail(
+                        "Eligible CAP Rounds",
+                        "CAP Round 1, 2 and 3"
+                )
         );
 
-        Button optionForm = new Button("🏛️ Proceed to College Search →");
+        Button optionForm =
+                new Button("Proceed to College Search");
+
         optionForm.setStyle(
-                "-fx-background-color: #1E3A5F;" +
-                "-fx-text-fill: #E8EDF5;" +
-                "-fx-pref-width: 240px;" +
-                "-fx-pref-height: 44px;" +
-                "-fx-background-radius: 10px;" +
-                "-fx-font-weight: bold;" +
-                "-fx-cursor: hand;" +
-                "-fx-effect: dropshadow(gaussian, rgba(30, 58, 95, 0.4), 10, 0, 0, 4);" +
-                "-fx-border-color: rgba(74, 127, 181, 0.2);" +
-                "-fx-border-radius: 10px;" +
-                "-fx-border-width: 1px;" +
-                "-fx-font-size: 14px;"
+                "-fx-background-color:#65A30D;" +
+                "-fx-text-fill:white;" +
+                "-fx-pref-width:220;" +
+                "-fx-pref-height:40;"
         );
-        optionForm.setOnMouseEntered(e ->
-            optionForm.setStyle(
-                "-fx-background-color: #2A4A75;" +
-                "-fx-text-fill: #E8EDF5;" +
-                "-fx-pref-width: 240px;" +
-                "-fx-pref-height: 44px;" +
-                "-fx-background-radius: 10px;" +
-                "-fx-font-weight: bold;" +
-                "-fx-cursor: hand;" +
-                "-fx-effect: dropshadow(gaussian, rgba(42, 74, 117, 0.6), 15, 0, 0, 6);" +
-                "-fx-border-color: rgba(74, 127, 181, 0.4);" +
-                "-fx-border-radius: 10px;" +
-                "-fx-border-width: 1px;" +
-                "-fx-font-size: 14px;"
-            )
-        );
-        optionForm.setOnMouseExited(e ->
-            optionForm.setStyle(
-                "-fx-background-color: #1E3A5F;" +
-                "-fx-text-fill: #E8EDF5;" +
-                "-fx-pref-width: 240px;" +
-                "-fx-pref-height: 44px;" +
-                "-fx-background-radius: 10px;" +
-                "-fx-font-weight: bold;" +
-                "-fx-cursor: hand;" +
-                "-fx-effect: dropshadow(gaussian, rgba(30, 58, 95, 0.4), 10, 0, 0, 4);" +
-                "-fx-border-color: rgba(74, 127, 181, 0.2);" +
-                "-fx-border-radius: 10px;" +
-                "-fx-border-width: 1px;" +
-                "-fx-font-size: 14px;"
-            )
-        );
-        optionForm.setOnAction(e -> Navigation.goTo(CollegeSearchPage.getScene()));
 
-        content.getChildren().addAll(title, subtitle, card, optionForm);
+        optionForm.setOnAction(e->
+                Navigation.goTo(
+                        CollegeSearchPage.getScene()
+                )
+        );
+
+        VBox content =
+                new VBox(
+                        25,
+                        title,
+                        card,
+                        optionForm
+                );
+
+        content.setPadding(new Insets(35));
 
         return new Scene(
-                StudentLayout.create("Final Merit List", content)
+                StudentLayout.create(
+                        "Final Merit List",
+                        content
+                )
         );
     }
 
-    private static VBox detail(String label, String value) {
-        Label l1 = new Label(label);
-        l1.setStyle(
-                "-fx-font-weight: bold;" +
-                "-fx-text-fill: #8AA8C7;" +
-                "-fx-font-size: 13px;"
-        );
+    private static VBox detail(
+            String label,
+            String value){
 
-        Label l2 = new Label(value);
-        l2.setStyle(
-                "-fx-text-fill: #E8EDF5;" +
-                "-fx-font-size: 15px;"
-        );
+        Label l1=new Label(label);
 
-        VBox box = new VBox(4, l1, l2);
-        box.setPadding(new Insets(6, 0, 6, 0));
-        return box;
+        l1.setStyle("-fx-font-weight:bold;");
+
+        Label l2=new Label(value);
+
+        return new VBox(4,l1,l2);
     }
 
-    private static String value(String text) {
-        if (text == null || text.isBlank())
+    private static String value(String text){
+
+        if(text==null || text.isBlank())
             return "Not Available";
+
         return text;
     }
 }

@@ -1,6 +1,7 @@
-package com.admitx.view;
+package com.example.view;
 
-
+import com.example.view.Navigation;
+import com.example.view.StudentLayout;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -14,221 +15,177 @@ public class AdmissionConfirmationPage {
 
     public static Scene getScene() {
 
-        VBox content = new VBox(25);
-        content.setPadding(new Insets(35, 40, 40, 40));
-        content.setAlignment(Pos.TOP_CENTER);
-        content.setStyle("-fx-background-color: #0A0A0F;");
+        Label title =
+                new Label("Admission Confirmation");
 
-        Label title = new Label("✅ Admission Confirmation");
         title.setStyle(
-                "-fx-font-size: 28px;" +
+                "-fx-font-size: 26px;" +
                 "-fx-font-weight: bold;" +
-                "-fx-text-fill: #E8EDF5;" +
-                "-fx-font-family: 'Segoe UI';"
+                "-fx-text-fill: #0A0A0A;"
         );
 
-        Label subtitle = new Label("Your admission has been confirmed");
-        subtitle.setStyle(
-                "-fx-font-size: 14px;" +
-                "-fx-text-fill: #8AA8C7;" +
-                "-fx-opacity: 0.7;" +
-                "-fx-padding: 0 0 10 0;"
-        );
+        Label success =
+                new Label("✓ Admission Successfully Confirmed");
 
-        // Card
-        VBox card = new VBox(15);
-        card.setPadding(new Insets(30, 35, 35, 35));
-        card.setMaxWidth(650);
-        card.setStyle(
-                "-fx-background-color: rgba(26, 26, 46, 0.6);" +
-                "-fx-background-radius: 16px;" +
-                "-fx-border-color: rgba(74, 127, 181, 0.15);" +
-                "-fx-border-radius: 16px;" +
-                "-fx-border-width: 1px;" +
-                "-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 20, 0, 0, 10);"
-        );
-
-        Label success = new Label("🎉 Admission Successfully Confirmed");
         success.setStyle(
                 "-fx-font-size: 22px;" +
                 "-fx-font-weight: bold;" +
-                "-fx-text-fill: #4ADE80;"
+                "-fx-text-fill: #65A30D;"
         );
 
-        Label seat = new Label("Final Seat: ✅ Allotted");
-        seat.setStyle("-fx-text-fill: #E8EDF5; -fx-font-size: 15px;");
+        Label seat =
+                new Label(
+                        "Final Seat: Allotted"
+                );
 
-        Label college = new Label("College: Vishwakarma Institute of Technology");
-        college.setStyle("-fx-text-fill: #E8EDF5; -fx-font-size: 15px;");
+        Label college =
+                new Label(
+                        "College: Vishwakarma Institute of Technology"
+                );
 
-        Label branch = new Label("Branch: Information Technology");
-        branch.setStyle("-fx-text-fill: #E8EDF5; -fx-font-size: 15px;");
+        Label branch =
+                new Label(
+                        "Branch: Information Technology"
+                );
 
-        Label reporting = new Label("Reporting Status: ⏳ Pending");
-        reporting.setStyle("-fx-text-fill: #FBBF24; -fx-font-size: 15px;");
+        Label reporting =
+                new Label(
+                        "Reporting Status: Pending"
+                );
 
-        Label admission = new Label("Admission Status: ✅ Complete");
-        admission.setStyle("-fx-text-fill: #4ADE80; -fx-font-size: 15px;");
+        Label admission =
+                new Label(
+                        "Admission Status: Complete"
+                );
 
-        card.getChildren().addAll(
-                success,
-                seat,
-                college,
-                branch,
-                reporting,
-                admission
+        VBox card =
+                new VBox(
+                        15,
+                        success,
+                        seat,
+                        college,
+                        branch,
+                        reporting,
+                        admission
+                );
+
+        card.setPadding(
+                new Insets(30)
         );
 
-        // Buttons
-        VBox buttons = new VBox(12);
-        buttons.setAlignment(Pos.CENTER);
+        card.setMaxWidth(650);
 
-        Button allotmentLetter = new Button("📄 Download Allotment Letter");
+        card.setStyle(
+                "-fx-background-color: white;" +
+                "-fx-background-radius: 10px;" +
+                "-fx-border-color: #D9F99D;" +
+                "-fx-border-radius: 10px;"
+        );
+
+        Button allotmentLetter =
+                new Button(
+                        "Download Dummy Allotment Letter"
+                );
+
         allotmentLetter.setStyle(
-                "-fx-background-color: #1E3A5F;" +
-                "-fx-text-fill: #E8EDF5;" +
+                "-fx-background-color: #65A30D;" +
+                "-fx-text-fill: white;" +
                 "-fx-pref-width: 230px;" +
-                "-fx-pref-height: 40px;" +
-                "-fx-background-radius: 8px;" +
-                "-fx-font-weight: bold;" +
-                "-fx-cursor: hand;" +
-                "-fx-border-color: rgba(74, 127, 181, 0.2);" +
-                "-fx-border-radius: 8px;" +
-                "-fx-border-width: 1px;" +
-                "-fx-font-size: 14px;"
+                "-fx-pref-height: 40px;"
         );
-        allotmentLetter.setOnMouseEntered(e ->
-            allotmentLetter.setStyle(
-                "-fx-background-color: #2A4A75;" +
-                "-fx-text-fill: #E8EDF5;" +
-                "-fx-pref-width: 230px;" +
-                "-fx-pref-height: 40px;" +
-                "-fx-background-radius: 8px;" +
-                "-fx-font-weight: bold;" +
-                "-fx-cursor: hand;" +
-                "-fx-border-color: rgba(74, 127, 181, 0.4);" +
-                "-fx-border-radius: 8px;" +
-                "-fx-border-width: 1px;" +
-                "-fx-font-size: 14px;"
-            )
-        );
-        allotmentLetter.setOnMouseExited(e ->
-            allotmentLetter.setStyle(
-                "-fx-background-color: #1E3A5F;" +
-                "-fx-text-fill: #E8EDF5;" +
-                "-fx-pref-width: 230px;" +
-                "-fx-pref-height: 40px;" +
-                "-fx-background-radius: 8px;" +
-                "-fx-font-weight: bold;" +
-                "-fx-cursor: hand;" +
-                "-fx-border-color: rgba(74, 127, 181, 0.2);" +
-                "-fx-border-radius: 8px;" +
-                "-fx-border-width: 1px;" +
-                "-fx-font-size: 14px;"
-            )
-        );
-        allotmentLetter.setOnAction(e -> showMessage("Download", "Dummy Allotment Letter downloaded."));
 
-        Button receipt = new Button("🧾 Download Admission Receipt");
+        allotmentLetter.setOnAction(e ->
+                showMessage(
+                        "Download",
+                        "Dummy Allotment Letter downloaded."
+                )
+        );
+
+        Button receipt =
+                new Button(
+                        "Download Admission Receipt"
+                );
+
         receipt.setStyle(
-                "-fx-background-color: #064E3B;" +
-                "-fx-text-fill: #6EE7B7;" +
+                "-fx-background-color: #3F6212;" +
+                "-fx-text-fill: white;" +
                 "-fx-pref-width: 220px;" +
-                "-fx-pref-height: 40px;" +
-                "-fx-background-radius: 8px;" +
-                "-fx-font-weight: bold;" +
-                "-fx-cursor: hand;" +
-                "-fx-border-color: rgba(110, 231, 183, 0.2);" +
-                "-fx-border-radius: 8px;" +
-                "-fx-border-width: 1px;" +
-                "-fx-font-size: 14px;"
+                "-fx-pref-height: 40px;"
         );
-        receipt.setOnMouseEntered(e ->
-            receipt.setStyle(
-                "-fx-background-color: #078A5C;" +
-                "-fx-text-fill: #6EE7B7;" +
-                "-fx-pref-width: 220px;" +
-                "-fx-pref-height: 40px;" +
-                "-fx-background-radius: 8px;" +
-                "-fx-font-weight: bold;" +
-                "-fx-cursor: hand;" +
-                "-fx-border-color: rgba(110, 231, 183, 0.4);" +
-                "-fx-border-radius: 8px;" +
-                "-fx-border-width: 1px;" +
-                "-fx-font-size: 14px;"
-            )
-        );
-        receipt.setOnMouseExited(e ->
-            receipt.setStyle(
-                "-fx-background-color: #064E3B;" +
-                "-fx-text-fill: #6EE7B7;" +
-                "-fx-pref-width: 220px;" +
-                "-fx-pref-height: 40px;" +
-                "-fx-background-radius: 8px;" +
-                "-fx-font-weight: bold;" +
-                "-fx-cursor: hand;" +
-                "-fx-border-color: rgba(110, 231, 183, 0.2);" +
-                "-fx-border-radius: 8px;" +
-                "-fx-border-width: 1px;" +
-                "-fx-font-size: 14px;"
-            )
-        );
-        receipt.setOnAction(e -> showMessage("Download", "Dummy Admission Receipt downloaded."));
 
-        Button dashboard = new Button("← Dashboard");
+        receipt.setOnAction(e ->
+                showMessage(
+                        "Download",
+                        "Dummy Admission Receipt downloaded."
+                )
+        );
+
+        Button dashboard =
+                new Button("Go to Dashboard");
+
         dashboard.setStyle(
-                "-fx-background-color: transparent;" +
-                "-fx-text-fill: #8AA8C7;" +
+                "-fx-background-color: #4D7C0F;" +
+                "-fx-text-fill: white;" +
                 "-fx-pref-width: 180px;" +
-                "-fx-pref-height: 40px;" +
-                "-fx-background-radius: 8px;" +
-                "-fx-border-color: rgba(74, 127, 181, 0.2);" +
-                "-fx-border-radius: 8px;" +
-                "-fx-border-width: 1px;" +
-                "-fx-font-size: 14px;" +
-                "-fx-cursor: hand;"
+                "-fx-pref-height: 40px;"
         );
-        dashboard.setOnMouseEntered(e ->
-            dashboard.setStyle(
-                "-fx-background-color: rgba(74, 127, 181, 0.1);" +
-                "-fx-text-fill: #A8C4DF;" +
-                "-fx-pref-width: 180px;" +
-                "-fx-pref-height: 40px;" +
-                "-fx-background-radius: 8px;" +
-                "-fx-border-color: rgba(74, 127, 181, 0.4);" +
-                "-fx-border-radius: 8px;" +
-                "-fx-border-width: 1px;" +
-                "-fx-font-size: 14px;" +
-                "-fx-cursor: hand;"
-            )
-        );
-        dashboard.setOnMouseExited(e ->
-            dashboard.setStyle(
-                "-fx-background-color: transparent;" +
-                "-fx-text-fill: #8AA8C7;" +
-                "-fx-pref-width: 180px;" +
-                "-fx-pref-height: 40px;" +
-                "-fx-background-radius: 8px;" +
-                "-fx-border-color: rgba(74, 127, 181, 0.2);" +
-                "-fx-border-radius: 8px;" +
-                "-fx-border-width: 1px;" +
-                "-fx-font-size: 14px;" +
-                "-fx-cursor: hand;"
-            )
-        );
-        dashboard.setOnAction(e -> Navigation.goTo(StudentDashboardPage.getScene()));
 
-        buttons.getChildren().addAll(allotmentLetter, receipt, dashboard);
+        dashboard.setOnAction(e ->
+                Navigation.goTo(
+                        StudentDashboardPage.getScene()
+                )
+        );
 
-        content.getChildren().addAll(title, subtitle, card, buttons);
+        VBox buttons =
+                new VBox(
+                        12,
+                        allotmentLetter,
+                        receipt,
+                        dashboard
+                );
+
+        buttons.setAlignment(
+                Pos.CENTER
+        );
+
+        VBox content =
+                new VBox(
+                        25,
+                        title,
+                        card,
+                        buttons
+                );
+
+        content.setAlignment(
+                Pos.TOP_CENTER
+        );
+
+        content.setPadding(
+                new Insets(30)
+        );
+
+        content.setStyle(
+                "-fx-background-color: #F7FEE7;"
+        );
 
         return new Scene(
-                StudentLayout.create("Admission Confirmation", content)
+                StudentLayout.create(
+                        "Admission Confirmation",
+                        content
+                )
         );
     }
 
-    private static void showMessage(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+    private static void showMessage(
+            String title,
+            String message
+    ) {
+
+        Alert alert =
+                new Alert(
+                        Alert.AlertType.INFORMATION
+                );
+
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(message);

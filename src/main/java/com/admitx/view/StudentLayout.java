@@ -1,4 +1,4 @@
-package com.admitx.view;
+package com.example.view;
 
 import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;

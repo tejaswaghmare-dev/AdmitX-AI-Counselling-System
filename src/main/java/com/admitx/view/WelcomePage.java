@@ -1,10 +1,13 @@
-package com.admitx.view;
+package com.example.view;
+
+import com.example.view.Navigation;
 
 import javafx.animation.FadeTransition;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
@@ -22,89 +25,56 @@ import javafx.util.Duration;
 
 public class WelcomePage {
 
-    // =========================================================
-    // ADMITX COLOR SYSTEM
-    // =========================================================
+    private static final String BLACK = "#050705";
+    private static final String DARK = "#0C110B";
+    private static final String PANEL = "#121812";
+    private static final String CARD = "#171E16";
 
-    private static final String BLACK = "#040505";
-    private static final String DARK = "#161613";
-    private static final String CARD = "#2B2C2B";
+    private static final String LIME = "#B7FF00";
+    private static final String LIME_DARK = "#8CC900";
+    private static final String LIME_SOFT = "#263800";
 
-    private static final String LIME = "#C6E92F";
-    private static final String LIME_2 = "#8AA30B";
-    private static final String LIME_3 = "#5E7107";
-
-    private static final String OLIVE = "#3F340D";
-
-    private static final String WHITE = "#FBFBFB";
-    private static final String BEIGE = "#D4CBB6";
-
-    private static final String GREY = "#9A9D91";
-    private static final String MUTED = "#60645B";
-    private static final String BORDER = "#2B2C2B";
-
-
-    // =========================================================
-    // MAIN SCENE
-    // =========================================================
+    private static final String WHITE = "#F8FAF5";
+    private static final String TEXT = "#DDE5D7";
+    private static final String GREY = "#9BA69A";
+    private static final String MUTED = "#687266";
+    private static final String BORDER = "#283326";
 
     public static Scene getScene() {
 
-        // =====================================================
-        // ROOT
-        // =====================================================
-
         StackPane root = new StackPane();
 
-
-        // =====================================================
-        // DARK BACKGROUND
-        // =====================================================
-
-        BackgroundFill backgroundFill =
-                new BackgroundFill(
-
-                        new LinearGradient(
-                                0,
-                                0,
-                                1,
-                                1,
-                                true,
-                                CycleMethod.NO_CYCLE,
-
-                                new Stop(
-                                        0.0,
-                                        Color.web(BLACK)
-                                ),
-
-                                new Stop(
-                                        0.40,
-                                        Color.web("#080907")
-                                ),
-
-                                new Stop(
-                                        0.70,
-                                        Color.web(DARK)
-                                ),
-
-                                new Stop(
-                                        1.0,
-                                        Color.web(BLACK)
-                                )
-                        ),
-
-                        CornerRadii.EMPTY,
-                        Insets.EMPTY
-                );
-
-
         root.setBackground(
-                new Background(backgroundFill)
+                new Background(
+                        new BackgroundFill(
+                                new LinearGradient(
+                                        0,
+                                        0,
+                                        1,
+                                        1,
+                                        true,
+                                        CycleMethod.NO_CYCLE,
+                                        new Stop(
+                                                0,
+                                                Color.web(BLACK)
+                                        ),
+                                        new Stop(
+                                                0.45,
+                                                Color.web(DARK)
+                                        ),
+                                        new Stop(
+                                                1,
+                                                Color.web("#172016")
+                                        )
+                                ),
+                                CornerRadii.EMPTY,
+                                Insets.EMPTY
+                        )
+                )
         );
 
-
         // =====================================================
-        // FULL SCREEN STUDENT IMAGE
+        // BACKGROUND IMAGE
         // =====================================================
 
         ImageView studentImage =
@@ -114,37 +84,21 @@ public class WelcomePage {
 
             Image image =
                     new Image(
-                            "assets/images/admitxstd.jpeg"
+                            "images/admitxstd.jpeg"
                     );
 
             studentImage.setImage(image);
 
             studentImage.setPreserveRatio(true);
-
             studentImage.setSmooth(true);
-
-            /*
-             * The image is intentionally large.
-             * It will cover most of the screen.
-             */
-
-            studentImage.setOpacity(0.55);
+            studentImage.setOpacity(0.42);
 
         } catch (Exception e) {
 
             System.out.println(
                     "Student image could not be loaded."
             );
-
-            System.out.println(
-                    e.getMessage()
-            );
         }
-
-
-        // =====================================================
-        // RESPONSIVE STUDENT IMAGE SIZE
-        // =====================================================
 
         studentImage.fitWidthProperty()
                 .bind(
@@ -158,146 +112,108 @@ public class WelcomePage {
                                 .multiply(0.95)
                 );
 
-
         StackPane.setAlignment(
                 studentImage,
                 Pos.CENTER
         );
 
-
         // =====================================================
-        // IMAGE DARK OVERLAY
+        // IMAGE OVERLAY
         // =====================================================
 
         Region imageOverlay =
                 new Region();
 
-        imageOverlay.setMouseTransparent(
-                true
-        );
+        imageOverlay.setMouseTransparent(true);
 
         imageOverlay.setStyle(
-
-                "-fx-background-color: " +
-
+                "-fx-background-color:" +
                 "linear-gradient(" +
-
                 "to right," +
-
-                "rgba(4,5,5,0.18)," +
-
-                "rgba(4,5,5,0.42)," +
-
-                "rgba(4,5,5,0.82)," +
-
-                "rgba(4,5,5,0.97)" +
-
+                "rgba(5,7,5,0.10)," +
+                "rgba(5,7,5,0.50)," +
+                "rgba(5,7,5,0.94)" +
                 ");"
         );
-
 
         imageOverlay.prefWidthProperty()
-                .bind(
-                        root.widthProperty()
-                );
+                .bind(root.widthProperty());
 
         imageOverlay.prefHeightProperty()
-                .bind(
-                        root.heightProperty()
-                );
-
+                .bind(root.heightProperty());
 
         // =====================================================
-        // SECOND DARK OVERLAY
+        // TOP OVERLAY
         // =====================================================
 
-        Region topDarkOverlay =
+        Region topOverlay =
                 new Region();
 
-        topDarkOverlay.setMouseTransparent(
-                true
-        );
+        topOverlay.setMouseTransparent(true);
 
-        topDarkOverlay.setStyle(
-
-                "-fx-background-color: " +
-
+        topOverlay.setStyle(
+                "-fx-background-color:" +
                 "linear-gradient(" +
-
                 "to bottom," +
-
-                "rgba(4,5,5,0.65)," +
-
-                "transparent 35%," +
-
-                "rgba(4,5,5,0.60)" +
-
+                "rgba(5,7,5,0.85)," +
+                "transparent 38%," +
+                "rgba(5,7,5,0.65)" +
                 ");"
         );
 
+        topOverlay.prefWidthProperty()
+                .bind(root.widthProperty());
 
-        topDarkOverlay.prefWidthProperty()
-                .bind(
-                        root.widthProperty()
-                );
-
-        topDarkOverlay.prefHeightProperty()
-                .bind(
-                        root.heightProperty()
-                );
-
+        topOverlay.prefHeightProperty()
+                .bind(root.heightProperty());
 
         // =====================================================
-        // DECORATIVE DIAGONAL SHAPES
+        // DECORATIVE LIME SHAPES
         // =====================================================
 
-        Polygon diagonal1 =
+        Polygon shape1 =
                 new Polygon(
-
-                        700, 0,
-                        1100, 0,
-                        1100, 160,
-                        780, 60
+                        800, 0,
+                        1200, 0,
+                        1200, 160,
+                        930, 55
                 );
 
-        diagonal1.setFill(
-                Color.web(
-                        LIME_3,
-                        0.18
-                )
-        );
-
-
-        Polygon diagonal2 =
-                new Polygon(
-
-                        850, 0,
-                        1100, 0,
-                        1100, 90
-                );
-
-        diagonal2.setFill(
+        shape1.setFill(
                 Color.web(
                         LIME,
                         0.08
-                ));
+                )
+        );
 
-
-        Polygon diagonal3 =
+        Polygon shape2 =
                 new Polygon(
-
-                        0, 650,
-                        0, 800,
-                        330, 800,
-                        110, 660
+                        950, 0,
+                        1200, 0,
+                        1200, 90
                 );
 
-        diagonal3.setFill(
+        shape2.setFill(
                 Color.web(
-                        OLIVE,
-                        0.20
-                ));
+                        LIME,
+                        0.12
+                )
+        );
 
+        Polygon shape3 =
+                new Polygon(
+                        0, 650,
+                        0, 800,
+                        350, 800,
+                        120, 660
+                );
+
+        shape3.setFill(
+                Color.web(
+                        LIME_DARK,
+                        0.12
+                )
+        );
 
         // =====================================================
         // TOP BAR
@@ -313,16 +229,14 @@ public class WelcomePage {
         topBar.setPadding(
                 new Insets(
                         20,
-                        50,
+                        55,
                         0,
                         55
                 )
         );
 
-
         // =====================================================
-        // LARGE ADMITX LOGO
-        // ORIGINAL SIZE: 1600 x 570
+        // LOGO
         // =====================================================
 
         ImageView logoView =
@@ -332,68 +246,40 @@ public class WelcomePage {
 
             Image logo =
                     new Image(
-                            "/assets/images/admitxlogo.jpeg"
+                            "images/admitxlogo.jpeg"
                     );
 
-            logoView.setImage(
-                    logo
-            );
+            logoView.setImage(logo);
 
-            /*
-             * LARGE LOGO
-             *
-             * Original:
-             * 1600 x 570
-             *
-             * Display:
-             * approximately 300 x 107
-             */
+            logoView.setFitWidth(220);
+            logoView.setFitHeight(80);
 
-            logoView.setFitWidth(
-                    300
-            );
-
-            logoView.setFitHeight(
-                    107
-            );
-
-            logoView.setPreserveRatio(
-                    true
-            );
-
-            logoView.setSmooth(
-                    true
-            );
+            logoView.setPreserveRatio(true);
+            logoView.setSmooth(true);
 
         } catch (Exception e) {
 
-            System.out.println(
-                    "Logo could not be loaded."
-            );
+            Label logoText =
+                    new Label("ADMITX AI");
 
-            System.out.println(
-                    e.getMessage()
+            logoText.setStyle(
+                    "-fx-text-fill:" + LIME + ";" +
+                    "-fx-font-size:28px;" +
+                    "-fx-font-weight:bold;"
             );
         }
-
 
         topBar.getChildren().add(
                 logoView
         );
 
-
-        // =====================================================
-        // TOP SPACER
-        // =====================================================
-
-        Region topSpacer =
+        Region spacer =
                 new Region();
 
         HBox.setHgrow(
-                topSpacer,
+                spacer,
                 Priority.ALWAYS
         );
-
 
         // =====================================================
         // USER GUIDE
@@ -408,22 +294,43 @@ public class WelcomePage {
                 Cursor.HAND
         );
 
-        applyGuideStyle(
-                guideButton,
-                false
+        guideButton.setPrefHeight(38);
+        guideButton.setPrefWidth(120);
+
+        guideButton.setStyle(
+                "-fx-background-color:transparent;" +
+                "-fx-text-fill:" + TEXT + ";" +
+                "-fx-border-color:" + BORDER + ";" +
+                "-fx-border-radius:9;" +
+                "-fx-background-radius:9;" +
+                "-fx-font-size:11px;" +
+                "-fx-font-weight:bold;"
         );
 
         guideButton.setOnMouseEntered(
-                e -> applyGuideStyle(
-                        guideButton,
-                        true
+                e -> guideButton.setStyle(
+                        "-fx-background-color:" +
+                        LIME + ";" +
+                        "-fx-text-fill:" +
+                        BLACK + ";" +
+                        "-fx-border-color:" +
+                        LIME + ";" +
+                        "-fx-border-radius:9;" +
+                        "-fx-background-radius:9;" +
+                        "-fx-font-size:11px;" +
+                        "-fx-font-weight:bold;"
                 )
         );
 
         guideButton.setOnMouseExited(
-                e -> applyGuideStyle(
-                        guideButton,
-                        false
+                e -> guideButton.setStyle(
+                        "-fx-background-color:transparent;" +
+                        "-fx-text-fill:" + TEXT + ";" +
+                        "-fx-border-color:" + BORDER + ";" +
+                        "-fx-border-radius:9;" +
+                        "-fx-background-radius:9;" +
+                        "-fx-font-size:11px;" +
+                        "-fx-font-weight:bold;"
                 )
         );
 
@@ -431,39 +338,27 @@ public class WelcomePage {
                 e -> showGuide()
         );
 
-
         topBar.getChildren().addAll(
-
-                topSpacer,
+                spacer,
                 guideButton
         );
-
 
         // =====================================================
         // LEFT CONTENT
         // =====================================================
 
         VBox leftContent =
-                new VBox(
-                        18
-                );
+                new VBox(16);
 
         leftContent.setAlignment(
                 Pos.CENTER_LEFT
         );
 
-        leftContent.setMaxWidth(
-                540
-        );
-
-
-        // =====================================================
-        // SMALL LABEL
-        // =====================================================
+        leftContent.setMaxWidth(570);
 
         Label smallLabel =
                 new Label(
-                        "MHT CET • CAP ADMISSION PLATFORM"
+                        "MHT CET  •  CAP ADMISSION PLATFORM"
                 );
 
         smallLabel.setFont(
@@ -479,13 +374,8 @@ public class WelcomePage {
         );
 
         smallLabel.setStyle(
-                "-fx-letter-spacing: 2px;"
+                "-fx-letter-spacing:2px;"
         );
-
-
-        // =====================================================
-        // MAIN HEADING
-        // =====================================================
 
         Label heading =
                 new Label(
@@ -496,7 +386,7 @@ public class WelcomePage {
                 Font.font(
                         "Segoe UI",
                         FontWeight.EXTRA_BOLD,
-                        55
+                        54
                 )
         );
 
@@ -504,54 +394,41 @@ public class WelcomePage {
                 Color.web(WHITE)
         );
 
-        heading.setLineSpacing(
-                -5
-        );
+        heading.setLineSpacing(-5);
 
         heading.setEffect(
                 new DropShadow(
-                        30,
+                        28,
                         Color.web(
                                 LIME,
-                                0.10
+                                0.12
                         )
                 )
         );
 
-
-        // =====================================================
-        // LIME HEADING
-        // =====================================================
-
-        Label limeText =
+        Label limeHeading =
                 new Label(
                         "MAKE THE RIGHT CHOICE."
                 );
 
-        limeText.setFont(
+        limeHeading.setFont(
                 Font.font(
                         "Segoe UI",
                         FontWeight.EXTRA_BOLD,
-                        18
+                        19
                 )
         );
 
-        limeText.setTextFill(
+        limeHeading.setTextFill(
                 Color.web(LIME)
         );
 
-        limeText.setStyle(
-                "-fx-letter-spacing: 1px;"
+        limeHeading.setStyle(
+                "-fx-letter-spacing:1px;"
         );
-
-
-        // =====================================================
-        // DESCRIPTION
-        // =====================================================
 
         Label description =
                 new Label(
-
                         "AI-powered counselling that helps you " +
                         "understand colleges, track CAP rounds " +
                         "and make smarter admission decisions."
@@ -565,26 +442,19 @@ public class WelcomePage {
         );
 
         description.setTextFill(
-                Color.web(BEIGE)
+                Color.web(TEXT)
         );
 
-        description.setWrapText(
-                true
-        );
+        description.setWrapText(true);
 
-        description.setMaxWidth(
-                470
-        );
-
+        description.setMaxWidth(500);
 
         // =====================================================
         // FEATURES
         // =====================================================
 
         VBox features =
-                new VBox(
-                        12
-                );
+                new VBox(13);
 
         features.getChildren().addAll(
 
@@ -607,20 +477,13 @@ public class WelcomePage {
                 )
         );
 
-
         leftContent.getChildren().addAll(
-
                 smallLabel,
                 heading,
-                limeText,
+                limeHeading,
                 description,
                 features
         );
-
-
-        // =====================================================
-        // LEFT SECTION
-        // =====================================================
 
         StackPane leftSection =
                 new StackPane();
@@ -629,39 +492,29 @@ public class WelcomePage {
                 Pos.CENTER_LEFT
         );
 
-        leftSection.setMaxWidth(
-                590
-        );
+        leftSection.setMaxWidth(600);
 
         leftSection.getChildren().add(
                 leftContent
         );
-
 
         // =====================================================
         // RIGHT ACTION CARD
         // =====================================================
 
         VBox actionCard =
-                new VBox(
-                        17
-                );
+                new VBox(15);
 
         actionCard.setAlignment(
                 Pos.TOP_CENTER
         );
 
-        actionCard.setPrefWidth(
-                380
-        );
-
-        actionCard.setMaxWidth(
-                380
-        );
+        actionCard.setPrefWidth(390);
+        actionCard.setMaxWidth(390);
 
         actionCard.setPadding(
                 new Insets(
-                        36,
+                        35,
                         32,
                         32,
                         32
@@ -669,20 +522,14 @@ public class WelcomePage {
         );
 
         actionCard.setStyle(
-
                 "-fx-background-color:" +
-                "rgba(16,18,17,0.96);" +
-
-                "-fx-background-radius:20;" +
-
+                "rgba(18,24,18,0.97);" +
+                "-fx-background-radius:22;" +
                 "-fx-border-color:" +
-                "rgba(198,233,47,0.15);" +
-
-                "-fx-border-radius:20;" +
-
+                "rgba(183,255,0,0.20);" +
+                "-fx-border-radius:22;" +
                 "-fx-border-width:1;"
         );
-
 
         actionCard.setEffect(
                 new DropShadow(
@@ -691,22 +538,21 @@ public class WelcomePage {
                                 0,
                                 0,
                                 0,
-                                0.75
+                                0.80
                         )
                 )
         );
-
 
         // =====================================================
         // CARD HEADER
         // =====================================================
 
-        Label cardSmall =
+        Label welcome =
                 new Label(
                         "WELCOME TO"
                 );
 
-        cardSmall.setFont(
+        welcome.setFont(
                 Font.font(
                         "Segoe UI",
                         FontWeight.BOLD,
@@ -714,49 +560,46 @@ public class WelcomePage {
                 )
         );
 
-        cardSmall.setTextFill(
+        welcome.setTextFill(
                 Color.web(MUTED)
         );
 
-        cardSmall.setStyle(
+        welcome.setStyle(
                 "-fx-letter-spacing:2px;"
         );
 
-
-        Label cardTitle =
+        Label admitx =
                 new Label(
-                        "ADMITX"
+                        "ADMITX AI"
                 );
 
-        cardTitle.setFont(
+        admitx.setFont(
                 Font.font(
                         "Segoe UI",
                         FontWeight.EXTRA_BOLD,
-                        30
+                        31
                 )
         );
 
-        cardTitle.setTextFill(
+        admitx.setTextFill(
                 Color.web(WHITE)
         );
 
-
-        Label cardDescription =
+        Label choose =
                 new Label(
                         "Choose how you want to continue"
                 );
 
-        cardDescription.setFont(
+        choose.setFont(
                 Font.font(
                         "Segoe UI",
                         12
                 )
         );
 
-        cardDescription.setTextFill(
+        choose.setTextFill(
                 Color.web(GREY)
         );
-
 
         // =====================================================
         // STUDENT LABEL
@@ -783,58 +626,39 @@ public class WelcomePage {
                 "-fx-letter-spacing:2px;"
         );
 
-
         // =====================================================
         // STUDENT LOGIN
         // =====================================================
 
         Button loginButton =
                 new Button(
-                        "STUDENT LOGIN   →"
+                        "STUDENT LOGIN     →"
                 );
 
-        loginButton.setMaxWidth(
-                Double.MAX_VALUE
-        );
-
-        loginButton.setPrefHeight(
-                52
-        );
-
-        loginButton.setCursor(
-                Cursor.HAND
-        );
-
-        loginButton.setFont(
-                Font.font(
-                        "Segoe UI",
-                        FontWeight.BOLD,
-                        13
-                )
-        );
-
-        applyPrimaryButton(
-                loginButton,
-                false
+        stylePrimaryButton(
+                loginButton
         );
 
         loginButton.setOnMouseEntered(
-                e -> applyPrimaryButton(
-                        loginButton,
-                        true
+                e -> primaryHover(
+                        loginButton
                 )
         );
 
         loginButton.setOnMouseExited(
-                e -> applyPrimaryButton(
-                        loginButton,
-                        false
+                e -> stylePrimaryButton(
+                        loginButton
                 )
         );
 
+        loginButton.setOnAction(
+                e -> Navigation.goTo(
+                        StudentLoginPage.getScene()
+                )
+        );
 
         // =====================================================
-        // STUDENT REGISTRATION
+        // REGISTRATION
         // =====================================================
 
         Button registerButton =
@@ -842,45 +666,27 @@ public class WelcomePage {
                         "CREATE STUDENT ACCOUNT"
                 );
 
-        registerButton.setMaxWidth(
-                Double.MAX_VALUE
-        );
-
-        registerButton.setPrefHeight(
-                48
-        );
-
-        registerButton.setCursor(
-                Cursor.HAND
-        );
-
-        registerButton.setFont(
-                Font.font(
-                        "Segoe UI",
-                        FontWeight.BOLD,
-                        12
-                )
-        );
-
-        applySecondaryButton(
-                registerButton,
-                false
+        styleSecondaryButton(
+                registerButton
         );
 
         registerButton.setOnMouseEntered(
-                e -> applySecondaryButton(
-                        registerButton,
-                        true
+                e -> secondaryHover(
+                        registerButton
                 )
         );
 
         registerButton.setOnMouseExited(
-                e -> applySecondaryButton(
-                        registerButton,
-                        false
+                e -> styleSecondaryButton(
+                        registerButton
                 )
         );
 
+        registerButton.setOnAction(
+                e -> Navigation.goTo(
+                        StudentRegistrationPage.getScene()
+                )
+        );
 
         // =====================================================
         // DIVIDER
@@ -888,7 +694,6 @@ public class WelcomePage {
 
         HBox divider =
                 createDivider();
-
 
         // =====================================================
         // COUNSELLOR
@@ -908,76 +713,33 @@ public class WelcomePage {
         );
 
         counsellorLabel.setTextFill(
-                Color.web(MUTED)
+                Color.web(GREY)
         );
 
         counsellorLabel.setStyle(
                 "-fx-letter-spacing:1.5px;"
         );
 
-
         Button counsellorButton =
                 new Button(
-                        "COUNSELLOR LOGIN   →"
+                        "COUNSELLOR LOGIN     →"
                 );
 
-        counsellorButton.setMaxWidth(
-                Double.MAX_VALUE
-        );
-
-        counsellorButton.setPrefHeight(
-                43
-        );
-
-        counsellorButton.setCursor(
-                Cursor.HAND
-        );
-
-        counsellorButton.setFont(
-                Font.font(
-                        "Segoe UI",
-                        FontWeight.BOLD,
-                        11
-                )
-        );
-
-        applyCounsellorButton(
-                counsellorButton,
-                false
+        styleCounsellorButton(
+                counsellorButton
         );
 
         counsellorButton.setOnMouseEntered(
-                e -> applyCounsellorButton(
-                        counsellorButton,
-                        true
+                e -> counsellorHover(
+                        counsellorButton
                 )
         );
 
         counsellorButton.setOnMouseExited(
-                e -> applyCounsellorButton(
-                        counsellorButton,
-                        false
+                e -> styleCounsellorButton(
+                        counsellorButton
                 )
         );
-
-
-        // =====================================================
-        // NAVIGATION
-        // =====================================================
-
-        loginButton.setOnAction(
-                e -> Navigation.goTo(
-                        StudentLoginPage.getScene()
-                )
-        );
-
-
-        registerButton.setOnAction(
-                e -> Navigation.goTo(
-                        StudentSignupPage.getScene()
-                )
-        );
-
 
         counsellorButton.setOnAction(
                 e -> Navigation.goTo(
@@ -985,38 +747,29 @@ public class WelcomePage {
                 )
         );
 
-
         // =====================================================
         // CARD CONTENT
         // =====================================================
 
         actionCard.getChildren().addAll(
-
-                cardSmall,
-                cardTitle,
-                cardDescription,
-
+                welcome,
+                admitx,
+                choose,
                 createSpacing(8),
-
                 studentLabel,
                 loginButton,
                 registerButton,
-
                 divider,
-
                 counsellorLabel,
                 counsellorButton
         );
-
 
         // =====================================================
         // MAIN CONTENT
         // =====================================================
 
         HBox mainContent =
-                new HBox(
-                        80
-                );
+                new HBox(75);
 
         mainContent.setAlignment(
                 Pos.CENTER
@@ -1024,26 +777,22 @@ public class WelcomePage {
 
         mainContent.setPadding(
                 new Insets(
-                        20,
+                        25,
                         70,
                         20,
                         70
                 )
         );
 
-
         HBox.setHgrow(
                 leftSection,
                 Priority.ALWAYS
         );
 
-
         mainContent.getChildren().addAll(
-
                 leftSection,
                 actionCard
         );
-
 
         // =====================================================
         // FOOTER
@@ -1051,7 +800,7 @@ public class WelcomePage {
 
         Label footer =
                 new Label(
-                        "© 2026 ADMITX  •  SMARTER ADMISSIONS"
+                        "© 2026 ADMITX AI  •  SMARTER ADMISSIONS"
                 );
 
         footer.setFont(
@@ -1070,7 +819,6 @@ public class WelcomePage {
                 "-fx-letter-spacing:1px;"
         );
 
-
         // =====================================================
         // PAGE
         // =====================================================
@@ -1086,58 +834,45 @@ public class WelcomePage {
                 mainContent
         );
 
-
         BorderPane.setAlignment(
                 footer,
                 Pos.CENTER
         );
-
 
         BorderPane.setMargin(
                 footer,
                 new Insets(
                         0,
                         0,
-                        20,
+                        18,
                         0
                 )
         );
-
 
         page.setBottom(
                 footer
         );
 
-
         // =====================================================
-        // ROOT LAYERS
+        // ROOT
         // =====================================================
 
         root.getChildren().addAll(
-
                 studentImage,
-
                 imageOverlay,
-
-                topDarkOverlay,
-
-                diagonal1,
-                diagonal2,
-                diagonal3,
-
+                topOverlay,
+                shape1,
+                shape2,
+                shape3,
                 page
         );
 
-
         // =====================================================
-        // FULL SCREEN SCENE
+        // SCENE
         // =====================================================
 
         Scene scene =
-                new Scene(
-                        root
-                );
-
+                new Scene(root);
 
         // =====================================================
         // FADE ANIMATION
@@ -1145,60 +880,44 @@ public class WelcomePage {
 
         FadeTransition fade =
                 new FadeTransition(
-                        Duration.millis(700),
+                        Duration.millis(650),
                         root
                 );
 
-        fade.setFromValue(
-                0
-        );
-
-        fade.setToValue(
-                1
-        );
-
+        fade.setFromValue(0);
+        fade.setToValue(1);
         fade.play();
-
 
         return scene;
     }
-
 
     // =========================================================
     // FEATURE
     // =========================================================
 
     private static HBox createFeature(
-
             String number,
             String title,
             String description
     ) {
 
         HBox box =
-                new HBox(
-                        12
-                );
+                new HBox(13);
 
         box.setAlignment(
                 Pos.CENTER_LEFT
         );
 
-
         Label numberLabel =
-                new Label(
-                        number
-                );
+                new Label(number);
 
-        numberLabel.setPrefWidth(
-                25
-        );
+        numberLabel.setPrefWidth(27);
 
         numberLabel.setFont(
                 Font.font(
                         "Segoe UI",
                         FontWeight.BOLD,
-                        10
+                        11
                 )
         );
 
@@ -1206,17 +925,11 @@ public class WelcomePage {
                 Color.web(LIME)
         );
 
-
         VBox text =
-                new VBox(
-                        2
-                );
-
+                new VBox(2);
 
         Label titleLabel =
-                new Label(
-                        title
-                );
+                new Label(title);
 
         titleLabel.setFont(
                 Font.font(
@@ -1230,11 +943,8 @@ public class WelcomePage {
                 Color.web(WHITE)
         );
 
-
         Label descriptionLabel =
-                new Label(
-                        description
-                );
+                new Label(description);
 
         descriptionLabel.setFont(
                 Font.font(
@@ -1244,27 +954,21 @@ public class WelcomePage {
         );
 
         descriptionLabel.setTextFill(
-                Color.web(MUTED)
+                Color.web(GREY)
         );
 
-
         text.getChildren().addAll(
-
                 titleLabel,
                 descriptionLabel
         );
 
-
         box.getChildren().addAll(
-
                 numberLabel,
                 text
         );
 
-
         return box;
     }
-
 
     // =========================================================
     // DIVIDER
@@ -1273,21 +977,17 @@ public class WelcomePage {
     private static HBox createDivider() {
 
         HBox divider =
-                new HBox(
-                        10
-                );
+                new HBox(10);
 
         divider.setAlignment(
                 Pos.CENTER
         );
-
 
         Region line1 =
                 new Region();
 
         Region line2 =
                 new Region();
-
 
         HBox.setHgrow(
                 line1,
@@ -1299,31 +999,21 @@ public class WelcomePage {
                 Priority.ALWAYS
         );
 
-
-        line1.setPrefHeight(
-                1
-        );
-
-        line2.setPrefHeight(
-                1
-        );
-
+        line1.setPrefHeight(1);
+        line2.setPrefHeight(1);
 
         line1.setStyle(
-                "-fx-background-color:"
-                + BORDER + ";"
+                "-fx-background-color:" +
+                BORDER + ";"
         );
 
         line2.setStyle(
-                "-fx-background-color:"
-                + BORDER + ";"
+                "-fx-background-color:" +
+                BORDER + ";"
         );
 
-
         Label or =
-                new Label(
-                        "OR"
-                );
+                new Label("OR");
 
         or.setFont(
                 Font.font(
@@ -1337,18 +1027,14 @@ public class WelcomePage {
                 Color.web(MUTED)
         );
 
-
         divider.getChildren().addAll(
-
                 line1,
                 or,
                 line2
         );
 
-
         return divider;
     }
-
 
     // =========================================================
     // SPACING
@@ -1368,235 +1054,177 @@ public class WelcomePage {
         return region;
     }
 
-
     // =========================================================
     // PRIMARY BUTTON
     // =========================================================
 
-    private static void applyPrimaryButton(
-
-            Button button,
-            boolean hover
+    private static void stylePrimaryButton(
+            Button button
     ) {
 
-        if (hover) {
+        button.setMaxWidth(
+                Double.MAX_VALUE
+        );
 
-            button.setStyle(
+        button.setPrefHeight(52);
 
-                    "-fx-background-color:"
-                    + LIME + ";"
+        button.setCursor(
+                Cursor.HAND
+        );
 
-                    + "-fx-text-fill:#050505;"
+        button.setFont(
+                Font.font(
+                        "Segoe UI",
+                        FontWeight.BOLD,
+                        13
+                )
+        );
 
-                    + "-fx-background-radius:10;"
-
-                    + "-fx-font-weight:bold;"
-
-                    + "-fx-font-size:13px;"
-
-                    + "-fx-effect:dropshadow("
-                    + "gaussian,"
-                    + "rgba(198,233,47,0.45),"
-                    + "22,0,0,5);"
-            );
-
-        } else {
-
-            button.setStyle(
-
-                    "-fx-background-color:"
-                    + LIME_2 + ";"
-
-                    + "-fx-text-fill:#FFFFFF;"
-
-                    + "-fx-background-radius:10;"
-
-                    + "-fx-font-weight:bold;"
-
-                    + "-fx-font-size:13px;"
-
-                    + "-fx-effect:dropshadow("
-                    + "gaussian,"
-                    + "rgba(138,163,11,0.25),"
-                    + "15,0,0,4);"
-            );
-        }
+        button.setStyle(
+                "-fx-background-color:" +
+                LIME_DARK + ";" +
+                "-fx-text-fill:white;" +
+                "-fx-background-radius:10;" +
+                "-fx-font-weight:bold;" +
+                "-fx-font-size:13px;"
+        );
     }
 
+    private static void primaryHover(
+            Button button
+    ) {
+
+        button.setStyle(
+                "-fx-background-color:" +
+                LIME + ";" +
+                "-fx-text-fill:" +
+                BLACK + ";" +
+                "-fx-background-radius:10;" +
+                "-fx-font-weight:bold;" +
+                "-fx-font-size:13px;" +
+                "-fx-effect:dropshadow(" +
+                "gaussian," +
+                "rgba(183,255,0,0.40)," +
+                "20,0,0,4);"
+        );
+    }
 
     // =========================================================
     // SECONDARY BUTTON
     // =========================================================
 
-    private static void applySecondaryButton(
-
-            Button button,
-            boolean hover
+    private static void styleSecondaryButton(
+            Button button
     ) {
 
-        if (hover) {
+        button.setMaxWidth(
+                Double.MAX_VALUE
+        );
 
-            button.setStyle(
+        button.setPrefHeight(48);
 
-                    "-fx-background-color:"
-                    + "rgba(198,233,47,0.08);"
+        button.setCursor(
+                Cursor.HAND
+        );
 
-                    + "-fx-text-fill:"
-                    + LIME + ";"
+        button.setFont(
+                Font.font(
+                        "Segoe UI",
+                        FontWeight.BOLD,
+                        12
+                )
+        );
 
-                    + "-fx-background-radius:10;"
-
-                    + "-fx-border-color:"
-                    + LIME_2 + ";"
-
-                    + "-fx-border-radius:10;"
-
-                    + "-fx-border-width:1;"
-
-                    + "-fx-font-weight:bold;"
-
-                    + "-fx-font-size:12px;"
-            );
-
-        } else {
-
-            button.setStyle(
-
-                    "-fx-background-color:"
-                    + "rgba(255,255,255,0.025);"
-
-                    + "-fx-text-fill:"
-                    + WHITE + ";"
-
-                    + "-fx-background-radius:10;"
-
-                    + "-fx-border-color:"
-                    + BORDER + ";"
-
-                    + "-fx-border-radius:10;"
-
-                    + "-fx-border-width:1;"
-
-                    + "-fx-font-weight:bold;"
-
-                    + "-fx-font-size:12px;"
-            );
-        }
+        button.setStyle(
+                "-fx-background-color:" +
+                "rgba(255,255,255,0.025);" +
+                "-fx-text-fill:" +
+                WHITE + ";" +
+                "-fx-background-radius:10;" +
+                "-fx-border-color:" +
+                BORDER + ";" +
+                "-fx-border-radius:10;" +
+                "-fx-border-width:1;" +
+                "-fx-font-size:12px;"
+        );
     }
 
+    private static void secondaryHover(
+            Button button
+    ) {
+
+        button.setStyle(
+                "-fx-background-color:" +
+                "rgba(183,255,0,0.08);" +
+                "-fx-text-fill:" +
+                LIME + ";" +
+                "-fx-background-radius:10;" +
+                "-fx-border-color:" +
+                LIME_DARK + ";" +
+                "-fx-border-radius:10;" +
+                "-fx-border-width:1;" +
+                "-fx-font-size:12px;" +
+                "-fx-font-weight:bold;"
+        );
+    }
 
     // =========================================================
     // COUNSELLOR BUTTON
     // =========================================================
 
-    private static void applyCounsellorButton(
-
-            Button button,
-            boolean hover
+    private static void styleCounsellorButton(
+            Button button
     ) {
 
-        if (hover) {
+        button.setMaxWidth(
+                Double.MAX_VALUE
+        );
 
-            button.setStyle(
+        button.setPrefHeight(44);
 
-                    "-fx-background-color:"
-                    + "rgba(198,233,47,0.06);"
+        button.setCursor(
+                Cursor.HAND
+        );
 
-                    + "-fx-text-fill:"
-                    + LIME + ";"
+        button.setFont(
+                Font.font(
+                        "Segoe UI",
+                        FontWeight.BOLD,
+                        11
+                )
+        );
 
-                    + "-fx-background-radius:9;"
-
-                    + "-fx-border-color:"
-                    + "rgba(198,233,47,0.25);"
-
-                    + "-fx-border-radius:9;"
-
-                    + "-fx-border-width:1;"
-
-                    + "-fx-font-weight:bold;"
-
-                    + "-fx-font-size:11px;"
-            );
-
-        } else {
-
-            button.setStyle(
-
-                    "-fx-background-color:"
-                    + "transparent;"
-
-                    + "-fx-text-fill:"
-                    + GREY + ";"
-
-                    + "-fx-background-radius:9;"
-
-                    + "-fx-border-color:"
-                    + BORDER + ";"
-
-                    + "-fx-border-radius:9;"
-
-                    + "-fx-border-width:1;"
-
-                    + "-fx-font-weight:bold;"
-
-                    + "-fx-font-size:11px;"
-            );
-        }
+        button.setStyle(
+                "-fx-background-color:transparent;" +
+                "-fx-text-fill:" +
+                GREY + ";" +
+                "-fx-background-radius:9;" +
+                "-fx-border-color:" +
+                BORDER + ";" +
+                "-fx-border-radius:9;" +
+                "-fx-border-width:1;" +
+                "-fx-font-size:11px;"
+        );
     }
 
-
-    // =========================================================
-    // GUIDE BUTTON
-    // =========================================================
-
-    private static void applyGuideStyle(
-
-            Button button,
-            boolean hover
+    private static void counsellorHover(
+            Button button
     ) {
 
-        if (hover) {
-
-            button.setStyle(
-
-                    "-fx-background-color:"
-                    + "rgba(198,233,47,0.06);"
-
-                    + "-fx-text-fill:"
-                    + LIME + ";"
-
-                    + "-fx-font-size:10px;"
-
-                    + "-fx-font-weight:bold;"
-
-                    + "-fx-background-radius:8;"
-
-                    + "-fx-border-color:"
-                    + "rgba(198,233,47,0.15);"
-
-                    + "-fx-border-radius:8;"
-
-                    + "-fx-border-width:1;"
-            );
-
-        } else {
-
-            button.setStyle(
-
-                    "-fx-background-color:"
-                    + "transparent;"
-
-                    + "-fx-text-fill:"
-                    + GREY + ";"
-
-                    + "-fx-font-size:10px;"
-
-                    + "-fx-font-weight:bold;"
-            );
-        }
+        button.setStyle(
+                "-fx-background-color:" +
+                "rgba(183,255,0,0.07);" +
+                "-fx-text-fill:" +
+                LIME + ";" +
+                "-fx-background-radius:9;" +
+                "-fx-border-color:" +
+                LIME_DARK + ";" +
+                "-fx-border-radius:9;" +
+                "-fx-border-width:1;" +
+                "-fx-font-size:11px;" +
+                "-fx-font-weight:bold;"
+        );
     }
-
 
     // =========================================================
     // USER GUIDE
@@ -1604,8 +1232,30 @@ public class WelcomePage {
 
     private static void showGuide() {
 
-        System.out.println(
-                "User Guide clicked - implement guide view"
+        Alert alert =
+                new Alert(
+                        Alert.AlertType.INFORMATION
+                );
+
+        alert.setTitle(
+                "AdmitX AI - User Guide"
         );
+
+        alert.setHeaderText(
+                "How to use AdmitX AI"
+        );
+
+        alert.setContentText(
+                "1. Student Login - Login using your Application ID or Email.\n\n" +
+                "2. Student Registration - Create your student account.\n\n" +
+                "3. Complete Application - Fill your personal, academic and reservation details.\n\n" +
+                "4. Upload Documents - Upload the required documents.\n\n" +
+                "5. Merit List - Check your provisional and final merit status.\n\n" +
+                "6. Option Form - Search colleges and fill your preferences.\n\n" +
+                "7. CAP Rounds - Track allotment, freeze or request betterment.\n\n" +
+                "8. Admission - Complete the final admission process."
+        );
+
+        alert.showAndWait();
     }
 }

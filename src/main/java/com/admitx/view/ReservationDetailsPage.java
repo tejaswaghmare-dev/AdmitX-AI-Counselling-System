@@ -1,8 +1,8 @@
-package com.admitx.view;
+package com.example.view;
 
-
-import com.admitx.model.ApplicationData;
-
+import com.example.view.Navigation;
+import com.example.view.StudentLayout;
+import com.example.model.ApplicationData;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -17,66 +17,45 @@ public class ReservationDetailsPage {
 
         ApplicationData data = ApplicationData.getInstance();
 
-        VBox content = new VBox(20);
-        content.setPadding(new Insets(35, 40, 40, 40));
-        content.setAlignment(Pos.TOP_LEFT);
-        content.setStyle("-fx-background-color: #0A0A0F;");
-
         Label title = new Label("Reservation Details");
+
         title.setStyle(
-                "-fx-font-size: 28px;" +
+                "-fx-font-size: 26px;" +
                 "-fx-font-weight: bold;" +
-                "-fx-text-fill: #E8EDF5;" +
-                "-fx-font-family: 'Segoe UI';"
+                "-fx-text-fill: #0A0A0A;"
         );
-
-        Label subtitle = new Label("Please provide your reservation/category details");
-        subtitle.setStyle(
-                "-fx-font-size: 14px;" +
-                "-fx-text-fill: #8AA8C7;" +
-                "-fx-opacity: 0.7;" +
-                "-fx-padding: 0 0 10 0;"
-        );
-
-        // Form Card
-        VBox formCard = new VBox(20);
-        formCard.setPadding(new Insets(25, 30, 30, 30));
-        formCard.setStyle(
-                "-fx-background-color: rgba(26, 26, 46, 0.6);" +
-                "-fx-background-radius: 16px;" +
-                "-fx-border-color: rgba(74, 127, 181, 0.15);" +
-                "-fx-border-radius: 16px;" +
-                "-fx-border-width: 1px;" +
-                "-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 20, 0, 0, 10);"
-        );
-
-        GridPane form = new GridPane();
-        form.setHgap(40);
-        form.setVgap(20);
-        form.setPadding(new Insets(10, 0, 5, 0));
 
         ComboBox<String> category = createYesNoCombo();
         TextField caste = new TextField();
-        caste.setPromptText("Enter caste");
-        caste.setStyle(getFieldStyle());
 
         ComboBox<String> validityCertificate = createYesNoCombo();
         ComboBox<String> ncl = createYesNoCombo();
 
         ComboBox<String> ews = createYesNoCombo();
         TextField income = new TextField();
-        income.setPromptText("Enter income");
-        income.setStyle(getFieldStyle());
 
         ComboBox<String> minority = createYesNoCombo();
         ComboBox<String> defence = createYesNoCombo();
 
         ComboBox<String> orphan = createYesNoCombo();
 
+        GridPane form = new GridPane();
+
+        form.setHgap(20);
+        form.setVgap(20);
+        form.setPadding(new Insets(20));
+
         addField(form, "Category", category, 0, 0);
         addField(form, "Caste", caste, 2, 0);
 
-        addField(form, "Validity Certificate", validityCertificate, 0, 1);
+        addField(
+                form,
+                "Validity Certificate",
+                validityCertificate,
+                0,
+                1
+        );
+
         addField(form, "NCL", ncl, 2, 1);
 
         addField(form, "EWS", ews, 0, 2);
@@ -87,175 +66,150 @@ public class ReservationDetailsPage {
 
         addField(form, "Orphan", orphan, 0, 4);
 
-        formCard.getChildren().add(form);
+        Button backButton = new Button("Back");
+        Button nextButton = new Button("Save & Continue");
 
-        // Buttons
-        HBox buttons = new HBox(15);
-        buttons.setAlignment(Pos.CENTER_RIGHT);
-
-        Button backButton = new Button("← Back");
         backButton.setStyle(
-                "-fx-background-color: transparent;" +
-                "-fx-text-fill: #8AA8C7;" +
+                "-fx-background-color: #4D7C0F;" +
+                "-fx-text-fill: white;" +
                 "-fx-font-size: 14px;" +
                 "-fx-pref-width: 140px;" +
-                "-fx-pref-height: 42px;" +
-                "-fx-background-radius: 8px;" +
-                "-fx-border-color: rgba(74, 127, 181, 0.2);" +
-                "-fx-border-radius: 8px;" +
-                "-fx-border-width: 1px;" +
-                "-fx-cursor: hand;"
+                "-fx-pref-height: 40px;" +
+                "-fx-background-radius: 6px;"
         );
-        backButton.setOnMouseEntered(e ->
-            backButton.setStyle(
-                "-fx-background-color: rgba(74, 127, 181, 0.1);" +
-                "-fx-text-fill: #A8C4DF;" +
-                "-fx-font-size: 14px;" +
-                "-fx-pref-width: 140px;" +
-                "-fx-pref-height: 42px;" +
-                "-fx-background-radius: 8px;" +
-                "-fx-border-color: rgba(74, 127, 181, 0.4);" +
-                "-fx-border-radius: 8px;" +
-                "-fx-border-width: 1px;" +
-                "-fx-cursor: hand;"
-            )
-        );
-        backButton.setOnMouseExited(e ->
-            backButton.setStyle(
-                "-fx-background-color: transparent;" +
-                "-fx-text-fill: #8AA8C7;" +
-                "-fx-font-size: 14px;" +
-                "-fx-pref-width: 140px;" +
-                "-fx-pref-height: 42px;" +
-                "-fx-background-radius: 8px;" +
-                "-fx-border-color: rgba(74, 127, 181, 0.2);" +
-                "-fx-border-radius: 8px;" +
-                "-fx-border-width: 1px;" +
-                "-fx-cursor: hand;"
-            )
-        );
-        backButton.setOnAction(e -> Navigation.goTo(HomeUniversityPage.getScene()));
 
-        Button nextButton = new Button("Save & Continue →");
         nextButton.setStyle(
-                "-fx-background-color: #1E3A5F;" +
-                "-fx-text-fill: #E8EDF5;" +
+                "-fx-background-color: #65A30D;" +
+                "-fx-text-fill: white;" +
                 "-fx-font-size: 14px;" +
                 "-fx-pref-width: 160px;" +
-                "-fx-pref-height: 42px;" +
-                "-fx-background-radius: 8px;" +
-                "-fx-font-weight: bold;" +
-                "-fx-cursor: hand;" +
-                "-fx-effect: dropshadow(gaussian, rgba(30, 58, 95, 0.4), 10, 0, 0, 4);" +
-                "-fx-border-color: rgba(74, 127, 181, 0.2);" +
-                "-fx-border-radius: 8px;" +
-                "-fx-border-width: 1px;"
-        );
-        nextButton.setOnMouseEntered(e ->
-            nextButton.setStyle(
-                "-fx-background-color: #2A4A75;" +
-                "-fx-text-fill: #E8EDF5;" +
-                "-fx-font-size: 14px;" +
-                "-fx-pref-width: 160px;" +
-                "-fx-pref-height: 42px;" +
-                "-fx-background-radius: 8px;" +
-                "-fx-font-weight: bold;" +
-                "-fx-cursor: hand;" +
-                "-fx-effect: dropshadow(gaussian, rgba(42, 74, 117, 0.6), 15, 0, 0, 6);" +
-                "-fx-border-color: rgba(74, 127, 181, 0.4);" +
-                "-fx-border-radius: 8px;" +
-                "-fx-border-width: 1px;"
-            )
-        );
-        nextButton.setOnMouseExited(e ->
-            nextButton.setStyle(
-                "-fx-background-color: #1E3A5F;" +
-                "-fx-text-fill: #E8EDF5;" +
-                "-fx-font-size: 14px;" +
-                "-fx-pref-width: 160px;" +
-                "-fx-pref-height: 42px;" +
-                "-fx-background-radius: 8px;" +
-                "-fx-font-weight: bold;" +
-                "-fx-cursor: hand;" +
-                "-fx-effect: dropshadow(gaussian, rgba(30, 58, 95, 0.4), 10, 0, 0, 4);" +
-                "-fx-border-color: rgba(74, 127, 181, 0.2);" +
-                "-fx-border-radius: 8px;" +
-                "-fx-border-width: 1px;"
-            )
+                "-fx-pref-height: 40px;" +
+                "-fx-background-radius: 6px;"
         );
 
-        // Keep original logic
+        backButton.setOnAction(e ->
+                Navigation.goTo(HomeUniversityPage.getScene())
+        );
+
         nextButton.setOnAction(e -> {
-            data.setCategory(category.getValue());
-            data.setCaste(caste.getText());
-            data.setValidityCertificate(validityCertificate.getValue());
-            data.setNcl(ncl.getValue());
-            data.setEws(ews.getValue());
-            data.setIncome(income.getText());
-            data.setMinority(minority.getValue());
-            data.setDefence(defence.getValue());
-            data.setOrphan(orphan.getValue());
-            Navigation.goTo(DocumentUploadPage.getScene());
+
+            data.setCategory(
+                    category.getValue()
+            );
+
+            data.setCaste(
+                    caste.getText()
+            );
+
+            data.setValidityCertificate(
+                    validityCertificate.getValue()
+            );
+
+            data.setNcl(
+                    ncl.getValue()
+            );
+
+            data.setEws(
+                    ews.getValue()
+            );
+
+            data.setIncome(
+                    income.getText()
+            );
+
+            data.setMinority(
+                    minority.getValue()
+            );
+
+            data.setDefence(
+                    defence.getValue()
+            );
+
+            data.setOrphan(
+                    orphan.getValue()
+            );
+
+            Navigation.goTo(
+                    DocumentUploadPage.getScene()
+            );
         });
 
-        buttons.getChildren().addAll(backButton, nextButton);
+        HBox buttons = new HBox(
+                15,
+                backButton,
+                nextButton
+        );
 
-        content.getChildren().addAll(title, subtitle, formCard, buttons);
+        buttons.setAlignment(Pos.CENTER_RIGHT);
+
+        VBox content = new VBox(
+                15,
+                title,
+                form,
+                buttons
+        );
+
+        content.setPadding(new Insets(30));
+
+        content.setStyle(
+                "-fx-background-color: #F7FEE7;"
+        );
 
         ScrollPane scrollPane = new ScrollPane(content);
+
         scrollPane.setFitToWidth(true);
+
         scrollPane.setStyle(
-                "-fx-background: #0A0A0F;" +
-                "-fx-background-color: #0A0A0F;"
+                "-fx-background: #F7FEE7;"
         );
 
         return new Scene(
-                StudentLayout.create("Reservation Details", scrollPane)
+                StudentLayout.create(
+                        "Reservation Details",
+                        scrollPane
+                )
         );
     }
 
     private static ComboBox<String> createYesNoCombo() {
+
         ComboBox<String> comboBox = new ComboBox<>();
-        comboBox.getItems().addAll("Yes", "No");
-        comboBox.setPromptText("Select");
-        comboBox.setStyle(
-                "-fx-background-color: rgba(10, 10, 15, 0.6);" +
-                "-fx-text-fill: #E8EDF5;" +
-                "-fx-prompt-text-fill: #5A7D9E;" +
-                "-fx-pref-height: 38px;" +
-                "-fx-background-radius: 8px;" +
-                "-fx-border-color: rgba(74, 127, 181, 0.2);" +
-                "-fx-border-radius: 8px;" +
-                "-fx-border-width: 1px;" +
-                "-fx-padding: 0 10 0 10;" +
-                "-fx-font-size: 14px;"
+
+        comboBox.getItems().addAll(
+                "Yes",
+                "No"
         );
+
+        comboBox.setPromptText("Select");
+
         return comboBox;
     }
 
-    private static String getFieldStyle() {
-        return "-fx-background-color: rgba(10, 10, 15, 0.6);" +
-               "-fx-text-fill: #E8EDF5;" +
-               "-fx-prompt-text-fill: #5A7D9E;" +
-               "-fx-pref-height: 38px;" +
-               "-fx-background-radius: 8px;" +
-               "-fx-border-color: rgba(74, 127, 181, 0.2);" +
-               "-fx-border-radius: 8px;" +
-               "-fx-border-width: 1px;" +
-               "-fx-padding: 0 15 0 15;" +
-               "-fx-font-size: 14px;";
-    }
+    private static void addField(
+            GridPane grid,
+            String labelText,
+            Control control,
+            int column,
+            int row
+    ) {
 
-    private static void addField(GridPane grid, String labelText, Control control, int column, int row) {
         Label label = new Label(labelText);
+
         label.setStyle(
-                "-fx-font-size: 13px;" +
+                "-fx-font-size: 14px;" +
                 "-fx-font-weight: bold;" +
-                "-fx-text-fill: #8AA8C7;"
+                "-fx-text-fill: #1A1A1A;"
         );
+
         control.setPrefWidth(300);
         control.setPrefHeight(38);
-        VBox box = new VBox(6, label, control);
+
+        VBox box = new VBox(
+                6,
+                label,
+                control
+        );
+
         grid.add(box, column, row);
     }
 }

@@ -1,4 +1,4 @@
-package com.admitx.view;
+package com.example.view;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -20,8 +20,8 @@ public class Navigation extends Application{
         stage = primaryStage;
 
         stage.setTitle("Dummy MHT CET CAP Counselling Portal");
-        stage.setWidth(1366);
-        stage.setHeight(700);
+        stage.setWidth(1200);
+        stage.setHeight(750);
         stage.setResizable(true);
 
         Navigation.goTo(WelcomePage.getScene());

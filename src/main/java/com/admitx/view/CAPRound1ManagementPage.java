@@ -1,6 +1,6 @@
-package com.admitx.view;
+package com.example.view;
 
-
+import com.example.view.Navigation;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -8,173 +8,150 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 
 public class CAPRound1ManagementPage {
 
     public static Scene getScene() {
 
-        VBox root = new VBox(25);
-        root.setAlignment(Pos.TOP_CENTER);
-        root.setPadding(new Insets(40));
-        root.setStyle("-fx-background-color: #0A0A0F;");
+        Label title =
+                new Label("CAP Round 1 Management");
 
-        Label title = new Label("🔄 CAP Round 1 Management");
         title.setStyle(
-                "-fx-font-size: 28px;" +
+                "-fx-font-size: 26px;" +
                 "-fx-font-weight: bold;" +
-                "-fx-text-fill: #E8EDF5;" +
-                "-fx-font-family: 'Segoe UI';"
+                "-fx-text-fill: #0A0A0A;"
         );
 
-        Label subtitle = new Label("Run allotment and publish results");
-        subtitle.setStyle(
-                "-fx-font-size: 14px;" +
-                "-fx-text-fill: #8AA8C7;" +
-                "-fx-opacity: 0.7;" +
-                "-fx-padding: 0 0 10 0;"
-        );
+        Label status =
+                new Label(
+                        "CAP Round 1 Status: Ready"
+                );
 
-        // Card
-        VBox card = new VBox(16);
-        card.setAlignment(Pos.CENTER);
-        card.setPadding(new Insets(30, 35, 35, 35));
-        card.setMaxWidth(600);
-        card.setStyle(
-                "-fx-background-color: rgba(26, 26, 46, 0.6);" +
-                "-fx-background-radius: 16px;" +
-                "-fx-border-color: rgba(74, 127, 181, 0.15);" +
-                "-fx-border-radius: 16px;" +
-                "-fx-border-width: 1px;" +
-                "-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 20, 0, 0, 10);"
-        );
-
-        Label status = new Label("📊 CAP Round 1 Status: Ready");
         status.setStyle(
                 "-fx-font-size: 17px;" +
                 "-fx-font-weight: bold;" +
-                "-fx-text-fill: #4ADE80;"
+                "-fx-text-fill: #1A1A1A;"
         );
 
-        Button run = createButton("🎯 Run Seat Allotment");
-        Button publish = createButton("📢 Publish Results");
-        Button report = createButton("📋 View Allotment Report");
+        Button run =
+                createButton("Run Seat Allotment");
 
-        run.setOnAction(e -> showMessage("Seat Allotment", "CAP Round 1 seat allotment completed."));
-        publish.setOnAction(e -> showMessage("Results", "CAP Round 1 results published."));
-        report.setOnAction(e -> showMessage("Allotment Report", "CAP Round 1 allotment report opened."));
+        Button publish =
+                createButton("Publish Results");
 
-        card.getChildren().addAll(status, run, publish, report);
+        Button report =
+                createButton("View Allotment Report");
 
-        Button back = new Button("← Back to Dashboard");
-        back.setStyle(
-                "-fx-background-color: transparent;" +
-                "-fx-text-fill: #8AA8C7;" +
-                "-fx-pref-width: 200px;" +
-                "-fx-pref-height: 42px;" +
-                "-fx-background-radius: 8px;" +
-                "-fx-border-color: rgba(74, 127, 181, 0.2);" +
-                "-fx-border-radius: 8px;" +
-                "-fx-border-width: 1px;" +
-                "-fx-font-size: 14px;" +
-                "-fx-cursor: hand;"
-        );
-        back.setOnMouseEntered(e ->
-            back.setStyle(
-                "-fx-background-color: rgba(74, 127, 181, 0.1);" +
-                "-fx-text-fill: #A8C4DF;" +
-                "-fx-pref-width: 200px;" +
-                "-fx-pref-height: 42px;" +
-                "-fx-background-radius: 8px;" +
-                "-fx-border-color: rgba(74, 127, 181, 0.4);" +
-                "-fx-border-radius: 8px;" +
-                "-fx-border-width: 1px;" +
-                "-fx-font-size: 14px;" +
-                "-fx-cursor: hand;"
-            )
-        );
-        back.setOnMouseExited(e ->
-            back.setStyle(
-                "-fx-background-color: transparent;" +
-                "-fx-text-fill: #8AA8C7;" +
-                "-fx-pref-width: 200px;" +
-                "-fx-pref-height: 42px;" +
-                "-fx-background-radius: 8px;" +
-                "-fx-border-color: rgba(74, 127, 181, 0.2);" +
-                "-fx-border-radius: 8px;" +
-                "-fx-border-width: 1px;" +
-                "-fx-font-size: 14px;" +
-                "-fx-cursor: hand;"
-            )
-        );
-        back.setOnAction(e -> Navigation.goTo(CounsellorDashboardPage.getScene()));
-
-        // Footer
-        Label footer = new Label("© 2026 AdmitX · CAP Round 1 Management");
-        footer.setStyle(
-                "-fx-text-fill: #2A3D55;" +
-                "-fx-font-size: 11px;" +
-                "-fx-opacity: 0.5;" +
-                "-fx-padding: 20 0 0 0;"
+        run.setOnAction(e ->
+                showMessage(
+                        "Seat Allotment",
+                        "CAP Round 1 seat allotment completed."
+                )
         );
 
-        root.getChildren().addAll(title, subtitle, card, back, footer);
+        publish.setOnAction(e ->
+                showMessage(
+                        "Results",
+                        "CAP Round 1 results published."
+                )
+        );
 
-        return new Scene(root, 1000, 700);
+        report.setOnAction(e ->
+                showMessage(
+                        "Allotment Report",
+                        "CAP Round 1 allotment report opened."
+                )
+        );
+
+        
+        VBox card =
+                new VBox(
+                        18,
+                        status,
+                        run,
+                        publish,
+                        report
+                );
+
+        card.setAlignment(
+                Pos.CENTER
+        );
+
+        card.setPadding(
+                new Insets(30)
+        );
+
+        card.setMaxWidth(600);
+
+        card.setStyle(
+                "-fx-background-color: white;" +
+                "-fx-background-radius: 10px;" +
+                "-fx-border-color: #D9F99D;" +
+                "-fx-border-radius: 10px;"
+        );
+
+        VBox root =
+                new VBox(
+                        25,
+                        title,
+                        card
+                );
+
+        root.setAlignment(
+                Pos.TOP_CENTER
+        );
+
+        root.setPadding(
+                new Insets(30)
+        );
+
+        root.setStyle(
+                "-fx-background-color: #F7FEE7;"
+        );
+
+        BorderPane layout =
+        CounsellorLayout.create(
+                "Cap Round 1",
+                root
+        );
+
+        return new Scene(
+                layout,
+                1400,
+                800
+        );
     }
 
-    private static Button createButton(String text) {
-        Button button = new Button(text);
-        button.setPrefWidth(280);
-        button.setPrefHeight(44);
+    private static Button createButton(
+            String text
+    ) {
+
+        Button button =
+                new Button(text);
+
+        button.setPrefWidth(260);
+        button.setPrefHeight(42);
+
         button.setStyle(
-                "-fx-background-color: #1E3A5F;" +
-                "-fx-text-fill: #E8EDF5;" +
-                "-fx-background-radius: 8px;" +
-                "-fx-font-size: 14px;" +
-                "-fx-font-weight: bold;" +
-                "-fx-cursor: hand;" +
-                "-fx-border-color: rgba(74, 127, 181, 0.2);" +
-                "-fx-border-radius: 8px;" +
-                "-fx-border-width: 1px;" +
-                "-fx-alignment: CENTER_LEFT;" +
-                "-fx-padding: 0 0 0 15;"
+                "-fx-background-color: #0A0A0A;" +
+                "-fx-text-fill: white;"
         );
-        button.setOnMouseEntered(e ->
-            button.setStyle(
-                "-fx-background-color: #2A4A75;" +
-                "-fx-text-fill: #E8EDF5;" +
-                "-fx-background-radius: 8px;" +
-                "-fx-font-size: 14px;" +
-                "-fx-font-weight: bold;" +
-                "-fx-cursor: hand;" +
-                "-fx-border-color: rgba(74, 127, 181, 0.4);" +
-                "-fx-border-radius: 8px;" +
-                "-fx-border-width: 1px;" +
-                "-fx-alignment: CENTER_LEFT;" +
-                "-fx-padding: 0 0 0 15;"
-            )
-        );
-        button.setOnMouseExited(e ->
-            button.setStyle(
-                "-fx-background-color: #1E3A5F;" +
-                "-fx-text-fill: #E8EDF5;" +
-                "-fx-background-radius: 8px;" +
-                "-fx-font-size: 14px;" +
-                "-fx-font-weight: bold;" +
-                "-fx-cursor: hand;" +
-                "-fx-border-color: rgba(74, 127, 181, 0.2);" +
-                "-fx-border-radius: 8px;" +
-                "-fx-border-width: 1px;" +
-                "-fx-alignment: CENTER_LEFT;" +
-                "-fx-padding: 0 0 0 15;"
-            )
-        );
+
         return button;
     }
 
-    private static void showMessage(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+    private static void showMessage(
+            String title,
+            String message
+    ) {
+
+        Alert alert =
+                new Alert(
+                        Alert.AlertType.INFORMATION
+                );
+
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(message);

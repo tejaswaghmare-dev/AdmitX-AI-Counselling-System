@@ -1,15 +1,27 @@
 package com.admitx.view;
 
-import com.admitx.view.Navigation;
-
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
 public class CounsellorProfilePage {
+
+    private static final String BG = "#0B100B";
+    private static final String CARD = "#131A13";
+    private static final String INPUT = "#0D120D";
+    private static final String ROW = "#0F150F";
+    private static final String BORDER = "#293529";
+    private static final String LIME = "#B7FF00";
+    private static final String TEXT = "#F5F7F2";
+    private static final String MUTED = "#9AA59A";
 
     public static Scene getScene() {
 
@@ -17,45 +29,165 @@ public class CounsellorProfilePage {
                 new Label("Counsellor Profile");
 
         title.setStyle(
-                "-fx-font-size: 26px;" +
+                "-fx-font-size: 28px;" +
                 "-fx-font-weight: bold;" +
-                "-fx-text-fill: #0A0A0A;"
+                "-fx-text-fill: " + TEXT + ";"
         );
 
-        Label name =
+        Label subtitle =
                 new Label(
-                        "Name: Counsellor Admin"
+                        "View your counsellor account information and manage your password."
                 );
 
-        Label email =
-                new Label(
-                        "Email: counsellor@example.com"
-                );
-
-        Label id =
-                new Label(
-                        "Counsellor ID: COUN001"
-                );
-
-        name.setStyle(
-                "-fx-font-size: 16px;" +
-                "-fx-text-fill: #1A1A1A;"
+        subtitle.setStyle(
+                "-fx-font-size: 13px;" +
+                "-fx-text-fill: " + MUTED + ";"
         );
 
-        email.setStyle(
-                "-fx-font-size: 16px;" +
-                "-fx-text-fill: #1A1A1A;"
+        VBox heading =
+                new VBox(
+                        4,
+                        title,
+                        subtitle
+                );
+
+        Label avatar =
+                new Label("CA");
+
+        avatar.setMinSize(
+                64,
+                64
         );
 
-        id.setStyle(
-                "-fx-font-size: 16px;" +
-                "-fx-text-fill: #1A1A1A;"
+        avatar.setMaxSize(
+                64,
+                64
+        );
+
+        avatar.setAlignment(
+                Pos.CENTER
+        );
+
+        avatar.setStyle(
+                "-fx-background-color: " + LIME + ";" +
+                "-fx-background-radius: 50%;" +
+                "-fx-text-fill: #0B100B;" +
+                "-fx-font-size: 20px;" +
+                "-fx-font-weight: bold;"
+        );
+
+        Label counsellorName =
+                new Label("Counsellor Admin");
+
+        counsellorName.setStyle(
+                "-fx-font-size: 20px;" +
+                "-fx-font-weight: bold;" +
+                "-fx-text-fill: " + TEXT + ";"
+        );
+
+        Label counsellorId =
+                new Label("COUN001");
+
+        counsellorId.setStyle(
+                "-fx-font-size: 11px;" +
+                "-fx-text-fill: " + MUTED + ";"
+        );
+
+        VBox identity =
+                new VBox(
+                        4,
+                        counsellorName,
+                        counsellorId
+                );
+
+        HBox profileHeader =
+                new HBox(
+                        16,
+                        avatar,
+                        identity
+                );
+
+        profileHeader.setAlignment(
+                Pos.CENTER_LEFT
+        );
+
+        GridPane details =
+                new GridPane();
+
+        details.setHgap(16);
+        details.setVgap(14);
+
+        addDetail(
+                details,
+                "Full Name",
+                "Counsellor Admin",
+                0,
+                0
+        );
+
+        addDetail(
+                details,
+                "Counsellor ID",
+                "COUN001",
+                1,
+                0
+        );
+
+        addDetail(
+                details,
+                "Email",
+                "counsellor@example.com",
+                0,
+                1
+        );
+
+        addDetail(
+                details,
+                "Role",
+                "Counsellor",
+                1,
+                1
+        );
+
+        ColumnConstraints c1 =
+                new ColumnConstraints();
+
+        c1.setPercentWidth(50);
+
+        ColumnConstraints c2 =
+                new ColumnConstraints();
+
+        c2.setPercentWidth(50);
+
+        details.getColumnConstraints()
+                .addAll(
+                        c1,
+                        c2
+                );
+
+        VBox profileCard =
+                new VBox(
+                        16,
+                        createSectionTitle(
+                                "PROFILE INFORMATION"
+                        ),
+                        profileHeader,
+                        details
+                );
+
+        profileCard.setPadding(
+                new Insets(20)
+        );
+
+        profileCard.setStyle(
+                "-fx-background-color: " + CARD + ";" +
+                "-fx-background-radius: 10px;" +
+                "-fx-border-color: " + BORDER + ";" +
+                "-fx-border-radius: 10px;"
         );
 
         PasswordField oldPassword =
                 new PasswordField();
-
-        oldPassword.setMaxWidth(Double.MAX_VALUE);
 
         oldPassword.setPromptText(
                 "Current Password"
@@ -64,8 +196,6 @@ public class CounsellorProfilePage {
         PasswordField newPassword =
                 new PasswordField();
 
-        newPassword.setMaxWidth(Double.MAX_VALUE);
-
         newPassword.setPromptText(
                 "New Password"
         );
@@ -73,24 +203,126 @@ public class CounsellorProfilePage {
         PasswordField confirmPassword =
                 new PasswordField();
 
-        confirmPassword.setMaxWidth(Double.MAX_VALUE);
-
         confirmPassword.setPromptText(
-                "Confirm Password"
+                "Confirm New Password"
         );
 
-        Button changePassword =
-                button("Change Password");
+        stylePasswordField(
+                oldPassword
+        );
 
-        changePassword.setOnAction(e ->
+        stylePasswordField(
+                newPassword
+        );
+
+        stylePasswordField(
+                confirmPassword
+        );
+
+        VBox currentBox =
+                createPasswordBox(
+                        "Current Password",
+                        oldPassword
+                );
+
+        VBox newBox =
+                createPasswordBox(
+                        "New Password",
+                        newPassword
+                );
+
+        VBox confirmBox =
+                createPasswordBox(
+                        "Confirm New Password",
+                        confirmPassword
+                );
+
+        Button changePassword =
+                createPrimaryButton(
+                        "Change Password",
+                        170
+                );
+
+        changePassword.setOnAction(e -> {
+
+            if (
+                    oldPassword.getText().isBlank()
+                    || newPassword.getText().isBlank()
+                    || confirmPassword.getText().isBlank()
+            ) {
+
                 show(
                         "Password",
-                        "Password changed successfully."
-                )
+                        "Please fill all password fields."
+                );
+
+                return;
+            }
+
+            if (
+                    !newPassword.getText()
+                            .equals(
+                                    confirmPassword.getText()
+                            )
+            ) {
+
+                show(
+                        "Password",
+                        "New password and confirmation do not match."
+                );
+
+                return;
+            }
+
+            show(
+                    "Password",
+                    "Password changed successfully."
+            );
+
+            oldPassword.clear();
+            newPassword.clear();
+            confirmPassword.clear();
+        });
+
+        Label passwordDescription =
+                new Label(
+                        "Use a strong password and confirm it before saving."
+                );
+
+        passwordDescription.setStyle(
+                "-fx-font-size: 12px;" +
+                "-fx-text-fill: " + MUTED + ";"
+        );
+
+        VBox passwordCard =
+                new VBox(
+                        12,
+                        createSectionTitle(
+                                "CHANGE PASSWORD"
+                        ),
+                        passwordDescription,
+                        currentBox,
+                        newBox,
+                        confirmBox,
+                        changePassword
+                );
+
+        passwordCard.setPadding(
+                new Insets(20)
+        );
+
+        passwordCard.setStyle(
+                "-fx-background-color: " + CARD + ";" +
+                "-fx-background-radius: 10px;" +
+                "-fx-border-color: " + BORDER + ";" +
+                "-fx-border-radius: 10px;"
         );
 
         Button logout =
-                button("Logout");
+                createDangerButton(
+                        "Logout",
+                        120
+                );
 
         logout.setOnAction(e ->
                 Navigation.goTo(
@@ -98,59 +330,46 @@ public class CounsellorProfilePage {
                 )
         );
 
-       
+        Region spacer =
+                new Region();
 
-        VBox card =
-                new VBox(
-                        15,
-                        name,
-                        email,
-                        id,
-                        new Separator(),
-                        oldPassword,
-                        newPassword,
-                        confirmPassword,
-                        changePassword
-                );
-
-        card.setPadding(
-                new Insets(30)
+        HBox.setHgrow(
+                spacer,
+                Priority.ALWAYS
         );
 
-        card.setMaxWidth(500);
+        HBox bottom =
+                new HBox(
+                        spacer,
+                        logout
+                );
 
-        card.setStyle(
-                "-fx-background-color: white;" +
-                "-fx-background-radius: 10px;" +
-                "-fx-border-color: #D9F99D;"
+        bottom.setAlignment(
+                Pos.CENTER_RIGHT
         );
 
         VBox root =
                 new VBox(
-                        25,
-                        title,
-                        card,
-                        
-                        logout
+                        20,
+                        heading,
+                        profileCard,
+                        passwordCard,
+                        bottom
                 );
 
-        root.setAlignment(
-                Pos.TOP_CENTER
-        );
-
         root.setPadding(
-                new Insets(30)
+                new Insets(5)
         );
 
         root.setStyle(
-                "-fx-background-color: #F7FEE7;"
+                "-fx-background-color: " + BG + ";"
         );
 
         BorderPane layout =
-        CounsellorLayout.create(
-                "Profile",
-                root
-        );
+                CounsellorLayout.create(
+                        "Profile",
+                        root
+                );
 
         return new Scene(
                 layout,
@@ -159,19 +378,165 @@ public class CounsellorProfilePage {
         );
     }
 
-    private static Button button(
+    private static Label createSectionTitle(
             String text
+    ) {
+
+        Label label =
+                new Label(text);
+
+        label.setStyle(
+                "-fx-font-size: 10px;" +
+                "-fx-font-weight: bold;" +
+                "-fx-text-fill: " + LIME + ";"
+        );
+
+        return label;
+    }
+
+    private static void addDetail(
+            GridPane grid,
+            String labelText,
+            String value,
+            int column,
+            int row
+    ) {
+
+        Label label =
+                new Label(labelText);
+
+        label.setStyle(
+                "-fx-font-size: 11px;" +
+                "-fx-font-weight: bold;" +
+                "-fx-text-fill: " + MUTED + ";"
+        );
+
+        Label valueLabel =
+                new Label(value);
+
+        valueLabel.setStyle(
+                "-fx-font-size: 14px;" +
+                "-fx-font-weight: bold;" +
+                "-fx-text-fill: " + TEXT + ";"
+        );
+
+        VBox box =
+                new VBox(
+                        5,
+                        label,
+                        valueLabel
+                );
+
+        box.setPadding(
+                new Insets(12)
+        );
+
+        box.setMaxWidth(
+                Double.MAX_VALUE
+        );
+
+        box.setStyle(
+                "-fx-background-color: " + ROW + ";" +
+                "-fx-background-radius: 8px;" +
+                "-fx-border-color: " + BORDER + ";" +
+                "-fx-border-radius: 8px;"
+        );
+
+        GridPane.setHgrow(
+                box,
+                Priority.ALWAYS
+        );
+
+        grid.add(
+                box,
+                column,
+                row
+        );
+    }
+
+    private static VBox createPasswordBox(
+            String text,
+            PasswordField field
+    ) {
+
+        Label label =
+                new Label(text);
+
+        label.setStyle(
+                "-fx-font-size: 11px;" +
+                "-fx-font-weight: bold;" +
+                "-fx-text-fill: " + MUTED + ";"
+        );
+
+        return new VBox(
+                6,
+                label,
+                field
+        );
+    }
+
+    private static void stylePasswordField(
+            PasswordField field
+    ) {
+
+        field.setPrefHeight(
+                40
+        );
+
+        field.setMaxWidth(
+                420
+        );
+
+        field.setStyle(
+                "-fx-background-color: " + INPUT + ";" +
+                "-fx-text-fill: white;" +
+                "-fx-prompt-text-fill: #687268;" +
+                "-fx-border-color: " + BORDER + ";" +
+                "-fx-border-radius: 7px;" +
+                "-fx-background-radius: 7px;" +
+                "-fx-padding: 0 12 0 12;"
+        );
+    }
+
+    private static Button createPrimaryButton(
+            String text,
+            double width
     ) {
 
         Button button =
                 new Button(text);
 
-        button.setPrefWidth(200);
+        button.setPrefWidth(width);
         button.setPrefHeight(40);
 
         button.setStyle(
-                "-fx-background-color: #0A0A0A;" +
-                "-fx-text-fill: white;"
+                "-fx-background-color: " + LIME + ";" +
+                "-fx-text-fill: #0B100B;" +
+                "-fx-font-weight: bold;" +
+                "-fx-background-radius: 7px;" +
+                "-fx-cursor: hand;"
+        );
+
+        return button;
+    }
+
+    private static Button createDangerButton(
+            String text,
+            double width
+    ) {
+
+        Button button =
+                new Button(text);
+
+        button.setPrefWidth(width);
+        button.setPrefHeight(40);
+
+        button.setStyle(
+                "-fx-background-color: #DC2626;" +
+                "-fx-text-fill: white;" +
+                "-fx-font-weight: bold;" +
+                "-fx-background-radius: 7px;" +
+                "-fx-cursor: hand;"
         );
 
         return button;

@@ -1,24 +1,31 @@
 package com.admitx.view;
 
-import com.admitx.view.Navigation;
-import com.admitx.view.StudentLayout;
-
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
 public class OptionConfirmationPage {
 
+    private static final String BG = "#0B100B";
+    private static final String CARD = "#141B14";
+    private static final String ROW = "#0F150F";
+    private static final String BORDER = "#293529";
+    private static final String LIME = "#B7FF00";
+    private static final String WHITE = "#F5F7F2";
+    private static final String MUTED = "#9AA59A";
+
     public static Scene getScene() {
 
-        ObservableList<
-                PreferenceFillingPage.Preference
-                > preferences =
+        ObservableList<PreferenceFillingPage.Preference> preferences =
                 PreferenceFillingPage.getPreferences();
 
         Label title =
@@ -27,41 +34,127 @@ public class OptionConfirmationPage {
         title.setStyle(
                 "-fx-font-size: 26px;" +
                 "-fx-font-weight: bold;" +
-                "-fx-text-fill: #0A0A0A;"
+                "-fx-text-fill: " + WHITE + ";"
+        );
+
+        Label subtitle =
+                new Label(
+                        "Your preference list has been locked successfully."
+                );
+
+        subtitle.setStyle(
+                "-fx-font-size: 13px;" +
+                "-fx-text-fill: " + MUTED + ";"
+        );
+
+        VBox heading =
+                new VBox(
+                        6,
+                        title,
+                        subtitle
+                );
+
+        Label check =
+                new Label("✓");
+
+        check.setMinSize(
+                60,
+                60
+        );
+
+        check.setMaxSize(
+                60,
+                60
+        );
+
+        check.setAlignment(
+                Pos.CENTER
+        );
+
+        check.setStyle(
+                "-fx-background-color: " + LIME + ";" +
+                "-fx-background-radius: 50%;" +
+                "-fx-text-fill: #0B100B;" +
+                "-fx-font-size: 28px;" +
+                "-fx-font-weight: bold;"
         );
 
         Label success =
-                new Label("✓ Option Form Successfully Locked");
+                new Label(
+                        "Option Form Successfully Locked"
+                );
 
         success.setStyle(
                 "-fx-font-size: 22px;" +
                 "-fx-font-weight: bold;" +
-                "-fx-text-fill: #65A30D;"
+                "-fx-text-fill: " + WHITE + ";"
         );
 
         Label message =
                 new Label(
-                        "Your college and branch preferences have been " +
-                        "successfully locked for CAP counselling."
+                        "Your college and branch preferences have been "
+                        + "submitted for CAP counselling."
                 );
 
         message.setWrapText(true);
 
         message.setStyle(
-                "-fx-font-size: 15px;" +
-                "-fx-text-fill: #3F6212;"
+                "-fx-font-size: 13px;" +
+                "-fx-text-fill: " + MUTED + ";"
+        );
+
+        VBox successText =
+                new VBox(
+                        5,
+                        success,
+                        message
+                );
+
+        HBox successRow =
+                new HBox(
+                        16,
+                        check,
+                        successText
+                );
+
+        successRow.setAlignment(
+                Pos.CENTER_LEFT
+        );
+
+        VBox successCard =
+                new VBox(
+                        successRow
+                );
+
+        successCard.setPadding(
+                new Insets(22)
+        );
+
+        successCard.setStyle(
+                "-fx-background-color: #18220F;" +
+                "-fx-background-radius: 12px;" +
+                "-fx-border-color: #3D5520;" +
+                "-fx-border-radius: 12px;"
+        );
+
+        Label countTitle =
+                new Label("LOCKED PREFERENCES");
+
+        countTitle.setStyle(
+                "-fx-font-size: 11px;" +
+                "-fx-font-weight: bold;" +
+                "-fx-text-fill: " + LIME + ";"
         );
 
         Label preferenceCount =
                 new Label(
-                        "Total Preferences Locked: "
-                                + preferences.size()
+                        preferences.size()
+                        + " preferences locked"
                 );
 
         preferenceCount.setStyle(
-                "-fx-font-size: 16px;" +
-                "-fx-font-weight: bold;" +
-                "-fx-text-fill: #1A1A1A;"
+                "-fx-font-size: 12px;" +
+                "-fx-text-fill: " + MUTED + ";"
         );
 
         VBox preferenceList =
@@ -72,52 +165,144 @@ public class OptionConfirmationPage {
                 preferences
         ) {
 
-            Label item =
+            Label number =
                     new Label(
-                            preference.getPreferenceNumber()
-                                    + ". "
-                                    + preference.getCollege()
-                                    + " - "
-                                    + preference.getBranch()
+                            String.valueOf(
+                                    preference.getPreferenceNumber()
+                            )
                     );
 
-            item.setMaxWidth(Double.MAX_VALUE);
+            number.setMinSize(
+                    32,
+                    32
+            );
+
+            number.setAlignment(
+                    Pos.CENTER
+            );
+
+            number.setStyle(
+                    "-fx-background-color: " + LIME + ";" +
+                    "-fx-background-radius: 50%;" +
+                    "-fx-text-fill: #0B100B;" +
+                    "-fx-font-size: 11px;" +
+                    "-fx-font-weight: bold;"
+            );
+
+            Label college =
+                    new Label(
+                            preference.getCollege()
+                    );
+
+            college.setStyle(
+                    "-fx-font-size: 13px;" +
+                    "-fx-font-weight: bold;" +
+                    "-fx-text-fill: " + WHITE + ";"
+            );
+
+            Label branch =
+                    new Label(
+                            preference.getBranch()
+                    );
+
+            branch.setStyle(
+                    "-fx-font-size: 11px;" +
+                    "-fx-text-fill: " + MUTED + ";"
+            );
+
+            VBox text =
+                    new VBox(
+                            3,
+                            college,
+                            branch
+                    );
+
+            HBox item =
+                    new HBox(
+                            14,
+                            number,
+                            text
+                    );
+
+            item.setAlignment(
+                    Pos.CENTER_LEFT
+            );
 
             item.setPadding(
                     new Insets(12)
             );
 
             item.setStyle(
-                    "-fx-background-color: white;" +
-                    "-fx-border-color: #D9F99D;" +
-                    "-fx-border-radius: 6px;" +
-                    "-fx-background-radius: 6px;" +
-                    "-fx-text-fill: #1A1A1A;"
+                    "-fx-background-color: " + ROW + ";" +
+                    "-fx-background-radius: 8px;" +
+                    "-fx-border-color: " + BORDER + ";" +
+                    "-fx-border-radius: 8px;"
             );
 
             preferenceList.getChildren()
                     .add(item);
         }
 
-        Button downloadButton =
-                new Button("Download Preference List");
+        VBox preferenceCard =
+                new VBox(
+                        12,
+                        countTitle,
+                        preferenceCount,
+                        preferenceList
+                );
 
-        downloadButton.setStyle(
-                "-fx-background-color: #3F6212;" +
-                "-fx-text-fill: white;" +
-                "-fx-pref-width: 210px;" +
-                "-fx-pref-height: 40px;"
+        preferenceCard.setPadding(
+                new Insets(22)
+        );
+
+        preferenceCard.setStyle(
+                "-fx-background-color: " + CARD + ";" +
+                "-fx-background-radius: 12px;" +
+                "-fx-border-color: " + BORDER + ";" +
+                "-fx-border-radius: 12px;"
+        );
+
+        Label note =
+                new Label(
+                        "Your locked preferences will now be considered during CAP seat allotment."
+                );
+
+        note.setWrapText(true);
+
+        note.setStyle(
+                "-fx-background-color: #151B10;" +
+                "-fx-text-fill: #B9C5B2;" +
+                "-fx-padding: 14px;" +
+                "-fx-background-radius: 8px;" +
+                "-fx-border-color: #38452B;" +
+                "-fx-border-radius: 8px;" +
+                "-fx-font-size: 12px;"
+        );
+
+        Button downloadButton =
+                new Button(
+                        "Download Preference List"
+                );
+
+        styleSecondaryButton(
+                downloadButton
         );
 
         downloadButton.setOnAction(e -> {
 
-            javafx.scene.control.Alert alert =
-                    new javafx.scene.control.Alert(
-                            javafx.scene.control.Alert.AlertType.INFORMATION
+            Alert alert =
+                    new Alert(
+                            Alert.AlertType.INFORMATION
                     );
 
-            alert.setTitle("Preference List");
-            alert.setHeaderText(null);
+            alert.setTitle(
+                    "Preference List"
+            );
+
+            alert.setHeaderText(
+                    null
+            );
+
             alert.setContentText(
                     "Dummy preference list download completed."
             );
@@ -126,13 +311,10 @@ public class OptionConfirmationPage {
         });
 
         Button dashboardButton =
-                new Button("Go to Dashboard");
+                new Button("← Dashboard");
 
-        dashboardButton.setStyle(
-                "-fx-background-color: #4D7C0F;" +
-                "-fx-text-fill: white;" +
-                "-fx-pref-width: 170px;" +
-                "-fx-pref-height: 40px;"
+        styleSecondaryButton(
+                dashboardButton
         );
 
         dashboardButton.setOnAction(e ->
@@ -142,13 +324,12 @@ public class OptionConfirmationPage {
         );
 
         Button capRoundButton =
-                new Button("Continue to CAP Round 1");
+                new Button(
+                        "Continue to CAP Round 1 →"
+                );
 
-        capRoundButton.setStyle(
-                "-fx-background-color: #65A30D;" +
-                "-fx-text-fill: white;" +
-                "-fx-pref-width: 210px;" +
-                "-fx-pref-height: 40px;"
+        stylePrimaryButton(
+                capRoundButton
         );
 
         capRoundButton.setOnAction(e ->
@@ -157,70 +338,114 @@ public class OptionConfirmationPage {
                 )
         );
 
-        VBox buttons =
-                new VBox(
+        Region spacer =
+                new Region();
+
+        HBox.setHgrow(
+                spacer,
+                Priority.ALWAYS
+        );
+
+        HBox buttons =
+                new HBox(
                         12,
+                        dashboardButton,
                         downloadButton,
-                        capRoundButton,
-                        dashboardButton
+                        spacer,
+                        capRoundButton
                 );
 
         buttons.setAlignment(
-                Pos.CENTER
-        );
-
-        VBox card =
-                new VBox(
-                        20,
-                        success,
-                        message,
-                        preferenceCount,
-                        preferenceList,
-                        buttons
-                );
-
-        card.setPadding(
-                new Insets(30)
-        );
-
-        card.setMaxWidth(700);
-
-        card.setStyle(
-                "-fx-background-color: white;" +
-                "-fx-background-radius: 10px;" +
-                "-fx-border-color: #D9F99D;" +
-                "-fx-border-radius: 10px;"
+                Pos.CENTER_LEFT
         );
 
         VBox content =
                 new VBox(
-                        20,
-                        title,
-                        card
+                        22,
+                        heading,
+                        successCard,
+                        preferenceCard,
+                        note,
+                        buttons
                 );
-
-        content.setAlignment(
-                Pos.TOP_CENTER
-        );
 
         content.setPadding(
                 new Insets(30)
         );
 
         content.setStyle(
-                "-fx-background-color: #F7FEE7;"
+                "-fx-background-color: " + BG + ";"
         );
 
         ScrollPane scrollPane =
                 new ScrollPane(content);
 
-        scrollPane.setFitToWidth(true);
+        scrollPane.setFitToWidth(
+                true
+        );
+
+        scrollPane.setStyle(
+                "-fx-background: " + BG + ";" +
+                "-fx-background-color: " + BG + ";"
+        );
 
         return new Scene(
                 StudentLayout.create(
                         "Option Form Confirmation",
                         scrollPane
                 )
+        );
+    }
+
+    private static void stylePrimaryButton(
+            Button button
+    ) {
+
+        button.setPrefHeight(42);
+
+        button.setPadding(
+                new Insets(
+                        0,
+                        20,
+                        0,
+                        20
+                )
+        );
+
+        button.setStyle(
+                "-fx-background-color: " + LIME + ";" +
+                "-fx-text-fill: #0B100B;" +
+                "-fx-font-size: 13px;" +
+                "-fx-font-weight: bold;" +
+                "-fx-background-radius: 8px;" +
+                "-fx-cursor: hand;"
+        );
+    }
+
+    private static void styleSecondaryButton(
+            Button button
+    ) {
+
+        button.setPrefHeight(42);
+
+        button.setPadding(
+                new Insets(
+                        0,
+                        18,
+                        0,
+                        18
+                )
+        );
+
+        button.setStyle(
+                "-fx-background-color: #171F17;" +
+                "-fx-text-fill: " + WHITE + ";" +
+                "-fx-border-color: #344034;" +
+                "-fx-border-radius: 8px;" +
+                "-fx-background-radius: 8px;" +
+                "-fx-font-size: 12px;" +
+                "-fx-font-weight: bold;" +
+                "-fx-cursor: hand;"
         );
     }
 }

@@ -1,7 +1,5 @@
 package com.admitx.view;
 
-import com.admitx.view.Navigation;
-
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -13,34 +11,92 @@ import javafx.scene.layout.*;
 
 public class StudentManagementPage {
 
+    private static final String BG = "#0B100B";
+    private static final String CARD = "#131A13";
+    private static final String LIME = "#B7FF00";
+    private static final String TEXT = "#F5F7F2";
+    private static final String MUTED = "#9AA59A";
+    private static final String BORDER = "#293529";
+
     public static Scene getScene() {
 
         Label title = new Label("Student Management");
 
         title.setStyle(
-                "-fx-font-size: 26px;" +
+                "-fx-font-size: 28px;" +
                 "-fx-font-weight: bold;" +
-                "-fx-text-fill: #0A0A0A;"
+                "-fx-text-fill: " + TEXT + ";"
         );
 
-        TextField search =
-                new TextField();
+        Label subtitle = new Label(
+                "Search, verify and manage registered students."
+        );
 
-        search.setMaxWidth(Double.MAX_VALUE);
+        subtitle.setStyle(
+                "-fx-font-size: 13px;" +
+                "-fx-text-fill: " + MUTED + ";"
+        );
+
+        VBox heading = new VBox(
+                4,
+                title,
+                subtitle
+        );
+
+        // =========================
+        // SEARCH
+        // =========================
+
+        TextField search = new TextField();
 
         search.setPromptText(
-                "Search by Application ID or Name"
+                "Search by Application ID or Student Name"
+        );
+
+        search.setPrefHeight(42);
+
+        search.setStyle(
+                "-fx-background-color: #0D120D;" +
+                "-fx-text-fill: white;" +
+                "-fx-prompt-text-fill: #6F7A6F;" +
+                "-fx-border-color: " + BORDER + ";" +
+                "-fx-border-radius: 7px;" +
+                "-fx-background-radius: 7px;" +
+                "-fx-padding: 0 14 0 14;"
+        );
+
+        HBox.setHgrow(
+                search,
+                Priority.ALWAYS
         );
 
         Button searchButton =
-                new Button("Search");
+                createPrimaryButton("Search", 110);
 
-        searchButton.setStyle(
-                "-fx-background-color: #65A30D;" +
-                "-fx-text-fill: white;" +
-                "-fx-pref-width: 110px;" +
-                "-fx-pref-height: 36px;"
+        HBox searchBox = new HBox(
+                10,
+                search,
+                searchButton
         );
+
+        searchBox.setAlignment(
+                Pos.CENTER_LEFT
+        );
+
+        searchBox.setPadding(
+                new Insets(18)
+        );
+
+        searchBox.setStyle(
+                "-fx-background-color: " + CARD + ";" +
+                "-fx-background-radius: 10px;" +
+                "-fx-border-color: " + BORDER + ";" +
+                "-fx-border-radius: 10px;"
+        );
+
+        // =========================
+        // TABLE
+        // =========================
 
         TableView<Student> table =
                 new TableView<>();
@@ -49,29 +105,42 @@ public class StudentManagementPage {
                 new TableColumn<>("Application ID");
 
         idColumn.setCellValueFactory(
-                new PropertyValueFactory<>("applicationId")
+                new PropertyValueFactory<>(
+                        "applicationId"
+                )
         );
 
         TableColumn<Student, String> nameColumn =
                 new TableColumn<>("Student Name");
 
         nameColumn.setCellValueFactory(
-                new PropertyValueFactory<>("name")
+                new PropertyValueFactory<>(
+                        "name"
+                )
         );
 
         TableColumn<Student, String> categoryColumn =
                 new TableColumn<>("Category");
 
         categoryColumn.setCellValueFactory(
-                new PropertyValueFactory<>("category")
+                new PropertyValueFactory<>(
+                        "category"
+                )
         );
 
         TableColumn<Student, String> statusColumn =
                 new TableColumn<>("Document Status");
 
         statusColumn.setCellValueFactory(
-                new PropertyValueFactory<>("status")
+                new PropertyValueFactory<>(
+                        "status"
+                )
         );
+
+        idColumn.setPrefWidth(200);
+        nameColumn.setPrefWidth(300);
+        categoryColumn.setPrefWidth(150);
+        statusColumn.setPrefWidth(200);
 
         table.getColumns().addAll(
                 idColumn,
@@ -82,24 +151,28 @@ public class StudentManagementPage {
 
         ObservableList<Student> students =
                 FXCollections.observableArrayList(
+
                         new Student(
                                 "MHTCET20260001",
                                 "Yash Batte",
                                 "Open",
                                 "Pending"
                         ),
+
                         new Student(
                                 "MHTCET20260002",
                                 "Rahul Patil",
                                 "OBC",
                                 "Verified"
                         ),
+
                         new Student(
                                 "MHTCET20260003",
                                 "Sneha Sharma",
                                 "EWS",
                                 "Pending"
                         ),
+
                         new Student(
                                 "MHTCET20260004",
                                 "Amit Kulkarni",
@@ -110,26 +183,52 @@ public class StudentManagementPage {
 
         table.setItems(students);
 
-        table.setPrefHeight(400);
+        table.setPrefHeight(380);
+
+        table.setColumnResizePolicy(
+                TableView.CONSTRAINED_RESIZE_POLICY
+        );
+
+        table.setStyle(
+                "-fx-background-color: " + CARD + ";" +
+                "-fx-border-color: " + BORDER + ";" +
+                "-fx-border-radius: 8px;" +
+                "-fx-background-radius: 8px;"
+        );
+
+        // =========================
+        // SEARCH FUNCTION
+        // =========================
 
         searchButton.setOnAction(e -> {
 
             String text =
                     search.getText()
+                            .trim()
                             .toLowerCase();
+
+            if (text.isEmpty()) {
+
+                table.setItems(students);
+                return;
+            }
 
             ObservableList<Student> filtered =
                     FXCollections.observableArrayList();
 
             for (Student student : students) {
 
-                if (student.getApplicationId()
-                        .toLowerCase()
-                        .contains(text)
+                if (
+                        student.getApplicationId()
+                                .toLowerCase()
+                                .contains(text)
+
                         ||
-                    student.getName()
-                        .toLowerCase()
-                        .contains(text)) {
+
+                        student.getName()
+                                .toLowerCase()
+                                .contains(text)
+                ) {
 
                     filtered.add(student);
                 }
@@ -138,8 +237,37 @@ public class StudentManagementPage {
             table.setItems(filtered);
         });
 
+        search.setOnAction(e ->
+                searchButton.fire()
+        );
+
+        // =========================
+        // ACTION BUTTONS
+        // =========================
+
         Button viewProfile =
-                createButton("View Profile");
+                createDarkButton(
+                        "View Profile",
+                        135
+                );
+
+        Button verify =
+                createDarkButton(
+                        "Verify Documents",
+                        155
+                );
+
+        Button approve =
+                createPrimaryButton(
+                        "Approve",
+                        120
+                );
+
+        Button reject =
+                createDangerButton(
+                        "Reject",
+                        110
+                );
 
         viewProfile.setOnAction(e -> {
 
@@ -147,23 +275,32 @@ public class StudentManagementPage {
                     table.getSelectionModel()
                             .getSelectedItem();
 
-            if (selected != null) {
+            if (selected == null) {
 
                 showMessage(
-                        "Student Profile",
-                        "Name: " + selected.getName()
-                        + "\nApplication ID: "
-                        + selected.getApplicationId()
-                        + "\nCategory: "
-                        + selected.getCategory()
-                        + "\nDocument Status: "
-                        + selected.getStatus()
+                        "Student Management",
+                        "Please select a student."
                 );
-            }
-        });
 
-        Button verify =
-                createButton("Verify Documents");
+                return;
+            }
+
+            showMessage(
+                    "Student Profile",
+
+                    "Name: "
+                            + selected.getName()
+
+                            + "\nApplication ID: "
+                            + selected.getApplicationId()
+
+                            + "\nCategory: "
+                            + selected.getCategory()
+
+                            + "\nDocument Status: "
+                            + selected.getStatus()
+            );
+        });
 
         verify.setOnAction(e -> {
 
@@ -171,21 +308,27 @@ public class StudentManagementPage {
                     table.getSelectionModel()
                             .getSelectedItem();
 
-            if (selected != null) {
-
-                selected.setStatus("Verified");
-
-                table.refresh();
+            if (selected == null) {
 
                 showMessage(
-                        "Verification",
-                        "Student documents verified successfully."
+                        "Student Management",
+                        "Please select a student."
                 );
-            }
-        });
 
-        Button approve =
-                createButton("Approve");
+                return;
+            }
+
+            selected.setStatus(
+                    "Verified"
+            );
+
+            table.refresh();
+
+            showMessage(
+                    "Verification",
+                    "Student documents verified successfully."
+            );
+        });
 
         approve.setOnAction(e -> {
 
@@ -193,24 +336,21 @@ public class StudentManagementPage {
                     table.getSelectionModel()
                             .getSelectedItem();
 
-            if (selected != null) {
+            if (selected == null) {
 
                 showMessage(
-                        "Approved",
-                        "Student application approved successfully."
+                        "Student Management",
+                        "Please select a student."
                 );
+
+                return;
             }
+
+            showMessage(
+                    "Approved",
+                    "Student application approved successfully."
+            );
         });
-
-        Button reject =
-                createButton("Reject");
-
-        reject.setStyle(
-                "-fx-background-color: #DC2626;" +
-                "-fx-text-fill: white;" +
-                "-fx-pref-width: 130px;" +
-                "-fx-pref-height: 40px;"
-        );
 
         reject.setOnAction(e -> {
 
@@ -218,51 +358,21 @@ public class StudentManagementPage {
                     table.getSelectionModel()
                             .getSelectedItem();
 
-            if (selected != null) {
+            if (selected == null) {
 
                 showMessage(
-                        "Rejected",
-                        "Student application rejected."
+                        "Student Management",
+                        "Please select a student."
                 );
+
+                return;
             }
+
+            showMessage(
+                    "Rejected",
+                    "Student application rejected."
+            );
         });
-
-        TextArea comments =
-                new TextArea();
-
-        comments.setMaxWidth(Double.MAX_VALUE);
-
-        comments.setPromptText(
-                "Enter comments for selected student"
-        );
-
-        comments.setPrefRowCount(3);
-
-        Button saveComment =
-                createButton("Save Comment");
-
-        saveComment.setOnAction(e -> {
-
-            if (table.getSelectionModel()
-                    .getSelectedItem() != null) {
-
-                showMessage(
-                        "Comment",
-                        "Comment saved successfully."
-                );
-            }
-        });
-
-        HBox searchBox =
-                new HBox(
-                        10,
-                        search,
-                        searchButton
-                );
-
-        searchBox.setAlignment(
-                Pos.CENTER_LEFT
-        );
 
         HBox actionButtons =
                 new HBox(
@@ -277,18 +387,126 @@ public class StudentManagementPage {
                 Pos.CENTER_LEFT
         );
 
+        // =========================
+        // COMMENTS
+        // =========================
+
+        Label commentTitle =
+                new Label("Counsellor Comments");
+
+        commentTitle.setStyle(
+                "-fx-font-size: 15px;" +
+                "-fx-font-weight: bold;" +
+                "-fx-text-fill: " + TEXT + ";"
+        );
+
+        Label commentDescription =
+                new Label(
+                        "Add remarks for the selected student."
+                );
+
+        commentDescription.setStyle(
+                "-fx-font-size: 12px;" +
+                "-fx-text-fill: " + MUTED + ";"
+        );
+
+        TextArea comments =
+                new TextArea();
+
+        comments.setPromptText(
+                "Enter verification remarks or comments..."
+        );
+
+        comments.setPrefRowCount(3);
+
+        comments.setWrapText(true);
+
+        comments.setStyle(
+                "-fx-control-inner-background: #0D120D;" +
+                "-fx-text-fill: white;" +
+                "-fx-prompt-text-fill: #6F7A6F;" +
+                "-fx-border-color: " + BORDER + ";" +
+                "-fx-border-radius: 7px;" +
+                "-fx-background-radius: 7px;"
+        );
+
+        Button saveComment =
+                createPrimaryButton(
+                        "Save Comment",
+                        140
+                );
+
+        saveComment.setOnAction(e -> {
+
+            Student selected =
+                    table.getSelectionModel()
+                            .getSelectedItem();
+
+            if (selected == null) {
+
+                showMessage(
+                        "Student Management",
+                        "Please select a student first."
+                );
+
+                return;
+            }
+
+            if (comments.getText()
+                    .trim()
+                    .isEmpty()) {
+
+                showMessage(
+                        "Comments",
+                        "Please enter a comment."
+                );
+
+                return;
+            }
+
+            showMessage(
+                    "Comment",
+                    "Comment saved successfully."
+            );
+
+            comments.clear();
+        });
+
+        HBox commentButtonBox =
+                new HBox(saveComment);
+
+        commentButtonBox.setAlignment(
+                Pos.CENTER_RIGHT
+        );
+
         VBox commentBox =
                 new VBox(
                         8,
-                        new Label("Comments"),
+                        commentTitle,
+                        commentDescription,
                         comments,
-                        saveComment
+                        commentButtonBox
                 );
+
+        commentBox.setPadding(
+                new Insets(20)
+        );
+
+        commentBox.setStyle(
+                "-fx-background-color: " + CARD + ";" +
+                "-fx-background-radius: 10px;" +
+                "-fx-border-color: " + BORDER + ";" +
+                "-fx-border-radius: 10px;"
+        );
+
+        // =========================
+        // CONTENT
+        // =========================
 
         VBox content =
                 new VBox(
                         20,
-                        title,
+                        heading,
                         searchBox,
                         table,
                         actionButtons,
@@ -296,22 +514,18 @@ public class StudentManagementPage {
                 );
 
         content.setPadding(
-                new Insets(30)
+                new Insets(5)
         );
 
         content.setStyle(
-                "-fx-background-color: #F7FEE7;"
+                "-fx-background-color: " + BG + ";"
         );
-
-        
-
-        
 
         BorderPane layout =
-        CounsellorLayout.create(
-                "Students",
-                content
-        );
+                CounsellorLayout.create(
+                        "Students",
+                        content
+                );
 
         return new Scene(
                 layout,
@@ -320,23 +534,81 @@ public class StudentManagementPage {
         );
     }
 
-    private static Button createButton(
-            String text
+    // =========================
+    // BUTTONS
+    // =========================
+
+    private static Button createPrimaryButton(
+            String text,
+            double width
     ) {
 
         Button button =
                 new Button(text);
 
-        button.setPrefWidth(140);
+        button.setPrefWidth(width);
         button.setPrefHeight(40);
 
         button.setStyle(
-                "-fx-background-color: #0A0A0A;" +
-                "-fx-text-fill: white;"
+                "-fx-background-color: " + LIME + ";" +
+                "-fx-text-fill: #0B100B;" +
+                "-fx-font-weight: bold;" +
+                "-fx-background-radius: 7px;" +
+                "-fx-cursor: hand;"
         );
 
         return button;
     }
+
+    private static Button createDarkButton(
+            String text,
+            double width
+    ) {
+
+        Button button =
+                new Button(text);
+
+        button.setPrefWidth(width);
+        button.setPrefHeight(40);
+
+        button.setStyle(
+                "-fx-background-color: #1C251C;" +
+                "-fx-text-fill: white;" +
+                "-fx-font-weight: bold;" +
+                "-fx-border-color: #354235;" +
+                "-fx-border-radius: 7px;" +
+                "-fx-background-radius: 7px;" +
+                "-fx-cursor: hand;"
+        );
+
+        return button;
+    }
+
+    private static Button createDangerButton(
+            String text,
+            double width
+    ) {
+
+        Button button =
+                new Button(text);
+
+        button.setPrefWidth(width);
+        button.setPrefHeight(40);
+
+        button.setStyle(
+                "-fx-background-color: #DC2626;" +
+                "-fx-text-fill: white;" +
+                "-fx-font-weight: bold;" +
+                "-fx-background-radius: 7px;" +
+                "-fx-cursor: hand;"
+        );
+
+        return button;
+    }
+
+    // =========================
+    // ALERT
+    // =========================
 
     private static void showMessage(
             String title,
@@ -351,14 +623,20 @@ public class StudentManagementPage {
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(message);
+
         alert.showAndWait();
     }
+
+    // =========================
+    // STUDENT MODEL
+    // =========================
 
     public static class Student {
 
         private final String applicationId;
         private final String name;
         private final String category;
+
         private String status;
 
         public Student(
@@ -371,29 +649,42 @@ public class StudentManagementPage {
             this.applicationId =
                     applicationId;
 
-            this.name = name;
-            this.category = category;
-            this.status = status;
+            this.name =
+                    name;
+
+            this.category =
+                    category;
+
+            this.status =
+                    status;
         }
 
         public String getApplicationId() {
+
             return applicationId;
         }
 
         public String getName() {
+
             return name;
         }
 
         public String getCategory() {
+
             return category;
         }
 
         public String getStatus() {
+
             return status;
         }
 
-        public void setStatus(String status) {
-            this.status = status;
+        public void setStatus(
+                String status
+        ) {
+
+            this.status =
+                    status;
         }
     }
 }

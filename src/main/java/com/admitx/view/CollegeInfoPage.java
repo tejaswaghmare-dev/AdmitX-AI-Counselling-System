@@ -30,12 +30,46 @@ public class CollegeInfoPage {
                 new Label(college.getName());
 
         collegeName.setStyle(
-                "-fx-font-size: 22px;" +
+                "-fx-font-size: 23px;" +
                 "-fx-font-weight: bold;" +
                 "-fx-text-fill: #65A30D;"
         );
 
-        GridPane details = new GridPane();
+        Label subtitle =
+                new Label(
+                        college.getDistrict() +
+                        " • " +
+                        college.getType()
+                );
+
+        subtitle.setStyle(
+                "-fx-font-size: 14px;" +
+                "-fx-text-fill: #3F6212;"
+        );
+
+        VBox collegeHeader =
+                new VBox(
+                        6,
+                        collegeName,
+                        subtitle
+                );
+
+        collegeHeader.setPadding(
+                new Insets(20)
+        );
+
+        collegeHeader.setStyle(
+                "-fx-background-color: white;" +
+                "-fx-background-radius: 10px;" +
+                "-fx-border-color: #D9F99D;" +
+                "-fx-border-radius: 10px;"
+        );
+
+        Label basicTitle =
+                createSectionTitle("College Details");
+
+        GridPane details =
+                new GridPane();
 
         details.setHgap(25);
         details.setVgap(18);
@@ -89,14 +123,25 @@ public class CollegeInfoPage {
                 2
         );
 
-        Label branchesTitle =
-                new Label("Branches");
+        VBox detailsCard =
+                new VBox(
+                        basicTitle,
+                        details
+                );
 
-        branchesTitle.setStyle(
-                "-fx-font-size: 18px;" +
-                "-fx-font-weight: bold;" +
-                "-fx-text-fill: #1A1A1A;"
+        detailsCard.setPadding(
+                new Insets(5, 0, 5, 0)
         );
+
+        detailsCard.setStyle(
+                "-fx-background-color: white;" +
+                "-fx-background-radius: 10px;" +
+                "-fx-border-color: #D9F99D;" +
+                "-fx-border-radius: 10px;"
+        );
+
+        Label branchesTitle =
+                createSectionTitle("Available Branches");
 
         VBox branches =
                 new VBox(10);
@@ -133,20 +178,33 @@ public class CollegeInfoPage {
                 )
         );
 
-        Label cutoffTitle =
-                new Label("Previous Year Dummy Cutoffs");
+        VBox branchCard =
+                new VBox(
+                        branchesTitle,
+                        branches
+                );
 
-        cutoffTitle.setStyle(
-                "-fx-font-size: 18px;" +
-                "-fx-font-weight: bold;" +
-                "-fx-text-fill: #1A1A1A;"
+        branchCard.setPadding(
+                new Insets(20)
         );
+
+        branchCard.setStyle(
+                "-fx-background-color: white;" +
+                "-fx-background-radius: 10px;" +
+                "-fx-border-color: #D9F99D;" +
+                "-fx-border-radius: 10px;"
+        );
+
+        Label cutoffTitle =
+                createSectionTitle(
+                        "Previous Year Dummy Cutoffs"
+                );
 
         GridPane cutoff =
                 new GridPane();
 
-        cutoff.setHgap(30);
-        cutoff.setVgap(12);
+        cutoff.setHgap(25);
+        cutoff.setVgap(15);
 
         addDetail(
                 cutoff,
@@ -180,14 +238,34 @@ public class CollegeInfoPage {
                 1
         );
 
+        VBox cutoffCard =
+                new VBox(
+                        cutoffTitle,
+                        cutoff
+                );
+
+        cutoffCard.setPadding(
+                new Insets(20)
+        );
+
+        cutoffCard.setStyle(
+                "-fx-background-color: white;" +
+                "-fx-background-radius: 10px;" +
+                "-fx-border-color: #D9F99D;" +
+                "-fx-border-radius: 10px;"
+        );
+
         Button backButton =
                 new Button("Back");
 
         backButton.setStyle(
                 "-fx-background-color: #4D7C0F;" +
                 "-fx-text-fill: white;" +
+                "-fx-font-size: 14px;" +
+                "-fx-font-weight: bold;" +
                 "-fx-pref-width: 120px;" +
-                "-fx-pref-height: 40px;"
+                "-fx-pref-height: 40px;" +
+                "-fx-background-radius: 6px;"
         );
 
         backButton.setOnAction(e ->
@@ -202,8 +280,11 @@ public class CollegeInfoPage {
         preferenceButton.setStyle(
                 "-fx-background-color: #65A30D;" +
                 "-fx-text-fill: white;" +
+                "-fx-font-size: 14px;" +
+                "-fx-font-weight: bold;" +
                 "-fx-pref-width: 190px;" +
-                "-fx-pref-height: 40px;"
+                "-fx-pref-height: 40px;" +
+                "-fx-background-radius: 6px;"
         );
 
         preferenceButton.setOnAction(e ->
@@ -227,12 +308,10 @@ public class CollegeInfoPage {
                 new VBox(
                         20,
                         title,
-                        collegeName,
-                        details,
-                        branchesTitle,
-                        branches,
-                        cutoffTitle,
-                        cutoff,
+                        collegeHeader,
+                        detailsCard,
+                        branchCard,
+                        cutoffCard,
                         buttons
                 );
 
@@ -248,6 +327,9 @@ public class CollegeInfoPage {
                 new ScrollPane(content);
 
         scrollPane.setFitToWidth(true);
+        scrollPane.setStyle(
+                "-fx-background: #F7FEE7;"
+        );
 
         return new Scene(
                 StudentLayout.create(
@@ -255,6 +337,21 @@ public class CollegeInfoPage {
                         scrollPane
                 )
         );
+    }
+
+    private static Label createSectionTitle(
+            String text) {
+
+        Label label =
+                new Label(text);
+
+        label.setStyle(
+                "-fx-font-size: 18px;" +
+                "-fx-font-weight: bold;" +
+                "-fx-text-fill: #65A30D;"
+        );
+
+        return label;
     }
 
     private static void addDetail(
@@ -268,6 +365,7 @@ public class CollegeInfoPage {
                 new Label(labelText);
 
         label.setStyle(
+                "-fx-font-size: 14px;" +
                 "-fx-font-weight: bold;" +
                 "-fx-text-fill: #1A1A1A;"
         );
@@ -276,6 +374,7 @@ public class CollegeInfoPage {
                 new Label(value);
 
         valueLabel.setStyle(
+                "-fx-font-size: 14px;" +
                 "-fx-text-fill: #3F6212;"
         );
 
@@ -306,6 +405,7 @@ public class CollegeInfoPage {
         branchLabel.setPrefWidth(300);
 
         branchLabel.setStyle(
+                "-fx-font-size: 14px;" +
                 "-fx-font-weight: bold;" +
                 "-fx-text-fill: #1A1A1A;"
         );
@@ -315,8 +415,19 @@ public class CollegeInfoPage {
 
         intakeLabel.setPrefWidth(130);
 
+        intakeLabel.setStyle(
+                "-fx-font-size: 14px;" +
+                "-fx-text-fill: #3F6212;"
+        );
+
         Label cutoffLabel =
                 new Label("Cutoff: " + cutoff);
+
+        cutoffLabel.setStyle(
+                "-fx-font-size: 14px;" +
+                "-fx-font-weight: bold;" +
+                "-fx-text-fill: #65A30D;"
+        );
 
         HBox row =
                 new HBox(
@@ -335,7 +446,7 @@ public class CollegeInfoPage {
         );
 
         row.setStyle(
-                "-fx-background-color: white;" +
+                "-fx-background-color: #F7FEE7;" +
                 "-fx-background-radius: 7px;" +
                 "-fx-border-color: #D9F99D;" +
                 "-fx-border-radius: 7px;"

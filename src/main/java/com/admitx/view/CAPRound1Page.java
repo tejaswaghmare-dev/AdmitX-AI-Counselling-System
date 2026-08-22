@@ -1,50 +1,77 @@
 package com.admitx.view;
 
-import com.admitx.view.Navigation;
-import com.admitx.view.StudentLayout;
-
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.*;
 
 public class CAPRound1Page {
 
+    private static final String BG = "#0B100B";
+    private static final String CARD = "#141B14";
+    private static final String ROW = "#0F150F";
+    private static final String BORDER = "#293529";
+    private static final String LIME = "#B7FF00";
+    private static final String WHITE = "#F5F7F2";
+    private static final String MUTED = "#9AA59A";
+    private static final String RED = "#DC2626";
+
     public static Scene getScene() {
 
-        Label title = new Label("CAP Round 1");
+        Label title =
+                new Label("CAP Round 1");
 
         title.setStyle(
                 "-fx-font-size: 26px;" +
                 "-fx-font-weight: bold;" +
-                "-fx-text-fill: #0A0A0A;"
+                "-fx-text-fill: " + WHITE + ";"
         );
 
-        Label roundStatus = new Label("Round Status");
+        Label subtitle =
+                new Label(
+                        "View your Round 1 allotment and choose your preferred action."
+                );
 
-        roundStatus.setStyle(
-                "-fx-font-size: 18px;" +
+        subtitle.setStyle(
+                "-fx-font-size: 13px;" +
+                "-fx-text-fill: " + MUTED + ";"
+        );
+
+        VBox heading =
+                new VBox(
+                        6,
+                        title,
+                        subtitle
+                );
+
+        Label roundBadge =
+                new Label("●  ALLOTMENT PUBLISHED");
+
+        roundBadge.setStyle(
+                "-fx-background-color: #1D2A10;" +
+                "-fx-text-fill: " + LIME + ";" +
+                "-fx-font-size: 11px;" +
                 "-fx-font-weight: bold;" +
-                "-fx-text-fill: #1A1A1A;"
+                "-fx-padding: 8 14 8 14;" +
+                "-fx-background-radius: 20px;" +
+                "-fx-border-color: #3D5520;" +
+                "-fx-border-radius: 20px;"
         );
 
-        Label status = new Label("Allotment Published");
+        Label allotmentTitle =
+                createSectionTitle(
+                        "ROUND 1 ALLOTMENT"
+                );
 
-        status.setStyle(
-                "-fx-font-size: 18px;" +
-                "-fx-font-weight: bold;" +
-                "-fx-text-fill: #65A30D;"
-        );
+        GridPane details =
+                new GridPane();
 
-        GridPane details = new GridPane();
-
-        details.setHgap(30);
-        details.setVgap(18);
+        details.setHgap(18);
+        details.setVgap(15);
 
         addDetail(
                 details,
@@ -58,7 +85,7 @@ public class CAPRound1Page {
                 details,
                 "Allotment Status",
                 "Seat Allotted",
-                2,
+                1,
                 0
         );
 
@@ -74,7 +101,7 @@ public class CAPRound1Page {
                 details,
                 "Branch",
                 "Computer Engineering",
-                2,
+                1,
                 1
         );
 
@@ -90,59 +117,93 @@ public class CAPRound1Page {
                 details,
                 "Allotted Preference",
                 "Preference No. 1",
-                2,
+                1,
                 2
         );
 
+        ColumnConstraints first =
+                new ColumnConstraints();
+
+        first.setPercentWidth(50);
+
+        ColumnConstraints second =
+                new ColumnConstraints();
+
+        second.setPercentWidth(50);
+
+        details.getColumnConstraints()
+                .addAll(
+                        first,
+                        second
+                );
+
         VBox resultCard =
                 new VBox(
-                        20,
-                        roundStatus,
-                        status,
+                        16,
+                        allotmentTitle,
+                        roundBadge,
                         details
                 );
 
         resultCard.setPadding(
-                new Insets(25)
+                new Insets(22)
         );
 
         resultCard.setStyle(
-                "-fx-background-color: white;" +
-                "-fx-background-radius: 10px;" +
-                "-fx-border-color: #D9F99D;" +
-                "-fx-border-radius: 10px;"
+                "-fx-background-color: " + CARD + ";" +
+                "-fx-background-radius: 12px;" +
+                "-fx-border-color: " + BORDER + ";" +
+                "-fx-border-radius: 12px;"
         );
 
         Label actionTitle =
-                new Label("Choose Your Action");
-
-        actionTitle.setStyle(
-                "-fx-font-size: 18px;" +
-                "-fx-font-weight: bold;" +
-                "-fx-text-fill: #1A1A1A;"
-        );
+                createSectionTitle(
+                        "CHOOSE YOUR ACTION"
+                );
 
         Label actionDescription =
                 new Label(
-                        "Select Freeze to accept the current seat, " +
-                        "Betterment to participate in the next round, " +
-                        "or Reject to decline the allotted seat."
+                        "Choose carefully. Freeze accepts the current seat, " +
+                        "Betterment keeps the seat while allowing you to participate " +
+                        "in the next round, and Reject declines the allotment."
                 );
 
         actionDescription.setWrapText(true);
 
         actionDescription.setStyle(
-                "-fx-text-fill: #4D7C0F;"
+                "-fx-font-size: 12px;" +
+                "-fx-text-fill: " + MUTED + ";"
         );
 
-        Button freezeButton =
-                new Button("Freeze");
+        VBox freezeCard =
+                createActionCard(
+                        "FREEZE",
+                        "Accept Current Seat",
+                        "Confirm this allotment and proceed towards admission.",
+                        LIME
+                );
 
-        freezeButton.setStyle(
-                "-fx-background-color: #65A30D;" +
-                "-fx-text-fill: white;" +
-                "-fx-pref-width: 140px;" +
-                "-fx-pref-height: 42px;"
+        VBox bettermentCard =
+                createActionCard(
+                        "BETTERMENT",
+                        "Try for Higher Preference",
+                        "Keep this seat while participating in the next CAP round.",
+                        "#A3E635"
+                );
+
+        VBox rejectCard =
+                createActionCard(
+                        "REJECT",
+                        "Decline Allotted Seat",
+                        "Reject the current allotment and do not accept this seat.",
+                        "#FF6B6B"
+                );
+
+        Button freezeButton =
+                new Button("Freeze Seat");
+
+        stylePrimaryButton(
+                freezeButton
         );
 
         freezeButton.setOnAction(e -> {
@@ -159,14 +220,14 @@ public class CAPRound1Page {
             );
         });
 
-        Button bettermentButton =
-                new Button("Betterment");
+        freezeCard.getChildren()
+                .add(freezeButton);
 
-        bettermentButton.setStyle(
-                "-fx-background-color: #65A30D;" +
-                "-fx-text-fill: white;" +
-                "-fx-pref-width: 140px;" +
-                "-fx-pref-height: 42px;"
+        Button bettermentButton =
+                new Button("Request Betterment");
+
+        styleSecondaryActionButton(
+                bettermentButton
         );
 
         bettermentButton.setOnAction(e -> {
@@ -183,14 +244,14 @@ public class CAPRound1Page {
             );
         });
 
-        Button rejectButton =
-                new Button("Reject");
+        bettermentCard.getChildren()
+                .add(bettermentButton);
 
-        rejectButton.setStyle(
-                "-fx-background-color: #DC2626;" +
-                "-fx-text-fill: white;" +
-                "-fx-pref-width: 140px;" +
-                "-fx-pref-height: 42px;"
+        Button rejectButton =
+                new Button("Reject Seat");
+
+        styleDangerButton(
+                rejectButton
         );
 
         rejectButton.setOnAction(e -> {
@@ -207,45 +268,74 @@ public class CAPRound1Page {
             );
         });
 
-        HBox actionButtons =
+        rejectCard.getChildren()
+                .add(rejectButton);
+
+        HBox actionCards =
                 new HBox(
-                        15,
-                        freezeButton,
-                        bettermentButton,
-                        rejectButton
+                        14,
+                        freezeCard,
+                        bettermentCard,
+                        rejectCard
                 );
 
-        actionButtons.setAlignment(
-                Pos.CENTER
+        HBox.setHgrow(
+                freezeCard,
+                Priority.ALWAYS
+        );
+
+        HBox.setHgrow(
+                bettermentCard,
+                Priority.ALWAYS
+        );
+
+        HBox.setHgrow(
+                rejectCard,
+                Priority.ALWAYS
         );
 
         VBox actionCard =
                 new VBox(
-                        15,
+                        14,
                         actionTitle,
                         actionDescription,
-                        actionButtons
+                        actionCards
                 );
 
         actionCard.setPadding(
-                new Insets(25)
+                new Insets(22)
         );
 
         actionCard.setStyle(
-                "-fx-background-color: white;" +
-                "-fx-background-radius: 10px;" +
-                "-fx-border-color: #D9F99D;" +
-                "-fx-border-radius: 10px;"
+                "-fx-background-color: " + CARD + ";" +
+                "-fx-background-radius: 12px;" +
+                "-fx-border-color: " + BORDER + ";" +
+                "-fx-border-radius: 12px;"
+        );
+
+        Label note =
+                new Label(
+                        "Important: Your selected action will determine your participation "
+                        + "in the next CAP round."
+                );
+
+        note.setWrapText(true);
+
+        note.setStyle(
+                "-fx-background-color: #211F0F;" +
+                "-fx-text-fill: #D9E6C8;" +
+                "-fx-font-size: 12px;" +
+                "-fx-padding: 14px;" +
+                "-fx-background-radius: 8px;" +
+                "-fx-border-color: #665F20;" +
+                "-fx-border-radius: 8px;"
         );
 
         Button dashboardButton =
-                new Button("Go to Dashboard");
+                new Button("← Dashboard");
 
-        dashboardButton.setStyle(
-                "-fx-background-color: #4D7C0F;" +
-                "-fx-text-fill: white;" +
-                "-fx-pref-width: 170px;" +
-                "-fx-pref-height: 40px;"
+        styleSecondaryButton(
+                dashboardButton
         );
 
         dashboardButton.setOnAction(e ->
@@ -254,33 +344,69 @@ public class CAPRound1Page {
                 )
         );
 
-        VBox content =
-                new VBox(
-                        25,
-                        title,
-                        resultCard,
-                        actionCard,
+        HBox bottomButtons =
+                new HBox(
                         dashboardButton
                 );
 
-        content.setAlignment(
-                Pos.TOP_CENTER
+        bottomButtons.setAlignment(
+                Pos.CENTER_LEFT
         );
+
+        VBox content =
+                new VBox(
+                        22,
+                        heading,
+                        resultCard,
+                        actionCard,
+                        note,
+                        bottomButtons
+                );
 
         content.setPadding(
                 new Insets(30)
         );
 
         content.setStyle(
-                "-fx-background-color: #F7FEE7;"
+                "-fx-background-color: " + BG + ";"
+        );
+
+        ScrollPane scrollPane =
+                new ScrollPane(content);
+
+        scrollPane.setFitToWidth(true);
+
+        scrollPane.setHbarPolicy(
+                ScrollPane.ScrollBarPolicy.NEVER
+        );
+
+        scrollPane.setStyle(
+                "-fx-background: " + BG + ";" +
+                "-fx-background-color: " + BG + ";"
         );
 
         return new Scene(
                 StudentLayout.create(
                         "CAP Round 1",
-                        content
+                        scrollPane
                 )
         );
+    }
+
+    private static Label createSectionTitle(
+            String text
+    ) {
+
+        Label label =
+                new Label(text);
+
+        label.setStyle(
+                "-fx-font-size: 11px;" +
+                "-fx-font-weight: bold;" +
+                "-fx-text-fill: " + LIME + ";"
+        );
+
+        return label;
     }
 
     private static void addDetail(
@@ -295,15 +421,20 @@ public class CAPRound1Page {
                 new Label(labelText);
 
         label.setStyle(
+                "-fx-font-size: 11px;" +
                 "-fx-font-weight: bold;" +
-                "-fx-text-fill: #1A1A1A;"
+                "-fx-text-fill: " + MUTED + ";"
         );
 
         Label valueLabel =
                 new Label(value);
 
+        valueLabel.setWrapText(true);
+
         valueLabel.setStyle(
-                "-fx-text-fill: #3F6212;"
+                "-fx-font-size: 14px;" +
+                "-fx-font-weight: bold;" +
+                "-fx-text-fill: " + WHITE + ";"
         );
 
         VBox box =
@@ -313,12 +444,177 @@ public class CAPRound1Page {
                         valueLabel
                 );
 
-        box.setPrefWidth(280);
+        box.setPadding(
+                new Insets(12)
+        );
+
+        box.setMaxWidth(
+                Double.MAX_VALUE
+        );
+
+        box.setStyle(
+                "-fx-background-color: " + ROW + ";" +
+                "-fx-background-radius: 8px;" +
+                "-fx-border-color: " + BORDER + ";" +
+                "-fx-border-radius: 8px;"
+        );
+
+        GridPane.setFillWidth(
+                box,
+                true
+        );
 
         grid.add(
                 box,
                 column,
                 row
+        );
+    }
+
+    private static VBox createActionCard(
+            String tag,
+            String title,
+            String description,
+            String accent
+    ) {
+
+        Label tagLabel =
+                new Label(tag);
+
+        tagLabel.setStyle(
+                "-fx-font-size: 10px;" +
+                "-fx-font-weight: bold;" +
+                "-fx-text-fill: " + accent + ";"
+        );
+
+        Label titleLabel =
+                new Label(title);
+
+        titleLabel.setWrapText(true);
+
+        titleLabel.setStyle(
+                "-fx-font-size: 15px;" +
+                "-fx-font-weight: bold;" +
+                "-fx-text-fill: " + WHITE + ";"
+        );
+
+        Label descriptionLabel =
+                new Label(description);
+
+        descriptionLabel.setWrapText(true);
+
+        descriptionLabel.setStyle(
+                "-fx-font-size: 11px;" +
+                "-fx-text-fill: " + MUTED + ";"
+        );
+
+        VBox card =
+                new VBox(
+                        8,
+                        tagLabel,
+                        titleLabel,
+                        descriptionLabel
+                );
+
+        card.setPadding(
+                new Insets(18)
+        );
+
+        card.setMaxWidth(
+                Double.MAX_VALUE
+        );
+
+        card.setMinHeight(
+                180
+        );
+
+        card.setStyle(
+                "-fx-background-color: " + ROW + ";" +
+                "-fx-background-radius: 10px;" +
+                "-fx-border-color: " + BORDER + ";" +
+                "-fx-border-radius: 10px;"
+        );
+
+        return card;
+    }
+
+    private static void stylePrimaryButton(
+            Button button
+    ) {
+
+        button.setPrefHeight(40);
+        button.setMaxWidth(Double.MAX_VALUE);
+
+        button.setStyle(
+                "-fx-background-color: " + LIME + ";" +
+                "-fx-text-fill: #0B100B;" +
+                "-fx-font-size: 12px;" +
+                "-fx-font-weight: bold;" +
+                "-fx-background-radius: 8px;" +
+                "-fx-cursor: hand;"
+        );
+    }
+
+    private static void styleSecondaryActionButton(
+            Button button
+    ) {
+
+        button.setPrefHeight(40);
+        button.setMaxWidth(Double.MAX_VALUE);
+
+        button.setStyle(
+                "-fx-background-color: #25351A;" +
+                "-fx-text-fill: #C7FF4D;" +
+                "-fx-font-size: 12px;" +
+                "-fx-font-weight: bold;" +
+                "-fx-border-color: #486025;" +
+                "-fx-border-radius: 8px;" +
+                "-fx-background-radius: 8px;" +
+                "-fx-cursor: hand;"
+        );
+    }
+
+    private static void styleDangerButton(
+            Button button
+    ) {
+
+        button.setPrefHeight(40);
+        button.setMaxWidth(Double.MAX_VALUE);
+
+        button.setStyle(
+                "-fx-background-color: " + RED + ";" +
+                "-fx-text-fill: white;" +
+                "-fx-font-size: 12px;" +
+                "-fx-font-weight: bold;" +
+                "-fx-background-radius: 8px;" +
+                "-fx-cursor: hand;"
+        );
+    }
+
+    private static void styleSecondaryButton(
+            Button button
+    ) {
+
+        button.setPrefHeight(42);
+
+        button.setPadding(
+                new Insets(
+                        0,
+                        18,
+                        0,
+                        18
+                )
+        );
+
+        button.setStyle(
+                "-fx-background-color: #171F17;" +
+                "-fx-text-fill: " + WHITE + ";" +
+                "-fx-border-color: #344034;" +
+                "-fx-border-radius: 8px;" +
+                "-fx-background-radius: 8px;" +
+                "-fx-font-size: 12px;" +
+                "-fx-font-weight: bold;" +
+                "-fx-cursor: hand;"
         );
     }
 

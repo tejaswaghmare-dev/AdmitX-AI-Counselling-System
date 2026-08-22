@@ -58,21 +58,45 @@ public class Header {
                 "-fx-padding: 0 5 0 8;"
         );
 
-        Label student = new Label("Student");
+   Label avatar = new Label("ST");
 
-        student.setStyle(
-                "-fx-text-fill: " + WHITE + ";" +
-                "-fx-font-size: 13px;" +
-                "-fx-font-weight: bold;"
-        );
+avatar.setMinSize(
+        34,
+        34
+);
 
-        HBox userSection = new HBox(
+avatar.setAlignment(
+        Pos.CENTER
+);
+
+avatar.setStyle(
+        "-fx-background-color: " + LIME + ";" +
+        "-fx-background-radius: 50%;" +
+        "-fx-text-fill: #0B100B;" +
+        "-fx-font-size: 11px;" +
+        "-fx-font-weight: bold;"
+);
+
+Label student =
+        new Label("Student");
+
+student.setStyle(
+        "-fx-text-fill: " + WHITE + ";" +
+        "-fx-font-size: 13px;" +
+        "-fx-font-weight: bold;"
+);
+
+HBox userSection =
+        new HBox(
                 8,
                 notification,
+                avatar,
                 student
         );
 
-        userSection.setAlignment(Pos.CENTER);
+userSection.setAlignment(
+        Pos.CENTER
+);
 
         HBox rightSection = new HBox(
                 18,

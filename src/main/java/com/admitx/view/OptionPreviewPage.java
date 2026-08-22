@@ -1,36 +1,66 @@
 package com.admitx.view;
 
-import com.admitx.view.Navigation;
-import com.admitx.view.StudentLayout;
-
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 
 public class OptionPreviewPage {
 
+    private static final String BG = "#0B100B";
+    private static final String CARD = "#141B14";
+    private static final String FIELD = "#101610";
+    private static final String BORDER = "#293529";
+    private static final String LIME = "#B7FF00";
+    private static final String WHITE = "#F5F7F2";
+    private static final String MUTED = "#9AA59A";
+
     public static Scene getScene() {
 
-        Label title = new Label("Option Form Preview");
+        Label title =
+                new Label("Option Form Preview");
 
         title.setStyle(
                 "-fx-font-size: 26px;" +
                 "-fx-font-weight: bold;" +
-                "-fx-text-fill: #0A0A0A;"
+                "-fx-text-fill: " + WHITE + ";"
         );
 
-        Label instruction = new Label(
-                "Review your preferences carefully before locking your choices."
-        );
+        Label instruction =
+                new Label(
+                        "Review your preferences carefully before locking your choices."
+                );
 
         instruction.setStyle(
-                "-fx-font-size: 14px;" +
-                "-fx-text-fill: #4D7C0F;"
+                "-fx-font-size: 13px;" +
+                "-fx-text-fill: " + MUTED + ";"
+        );
+
+        VBox heading =
+                new VBox(
+                        6,
+                        title,
+                        instruction
+                );
+
+        ObservableList<PreferenceFillingPage.Preference> preferences =
+                PreferenceFillingPage.getPreferences();
+
+        Label status =
+                new Label("READY TO LOCK");
+
+        status.setStyle(
+                "-fx-background-color: #1D2A10;" +
+                "-fx-text-fill: " + LIME + ";" +
+                "-fx-font-size: 11px;" +
+                "-fx-font-weight: bold;" +
+                "-fx-padding: 8 14 8 14;" +
+                "-fx-background-radius: 20px;" +
+                "-fx-border-color: #3D5520;" +
+                "-fx-border-radius: 20px;"
         );
 
         TableView<PreferenceFillingPage.Preference> table =
@@ -38,39 +68,30 @@ public class OptionPreviewPage {
 
         TableColumn<
                 PreferenceFillingPage.Preference,
-                Number
-                > numberColumn =
+                Number> numberColumn =
                 new TableColumn<>("Preference No.");
 
         numberColumn.setCellValueFactory(
                 new PropertyValueFactory<>("preferenceNumber")
         );
 
-        numberColumn.setPrefWidth(130);
-
         TableColumn<
                 PreferenceFillingPage.Preference,
-                String
-                > collegeColumn =
+                String> collegeColumn =
                 new TableColumn<>("College");
 
         collegeColumn.setCellValueFactory(
                 new PropertyValueFactory<>("college")
         );
 
-        collegeColumn.setPrefWidth(350);
-
         TableColumn<
                 PreferenceFillingPage.Preference,
-                String
-                > branchColumn =
+                String> branchColumn =
                 new TableColumn<>("Branch");
 
         branchColumn.setCellValueFactory(
                 new PropertyValueFactory<>("branch")
         );
-
-        branchColumn.setPrefWidth(300);
 
         table.getColumns().addAll(
                 numberColumn,
@@ -78,35 +99,77 @@ public class OptionPreviewPage {
                 branchColumn
         );
 
-        ObservableList<
-                PreferenceFillingPage.Preference
-                > preferences =
-                PreferenceFillingPage.getPreferences();
-
         table.setItems(preferences);
 
         table.setPrefHeight(400);
 
+        table.setColumnResizePolicy(
+                TableView.CONSTRAINED_RESIZE_POLICY
+        );
+
+        table.setStyle(
+                "-fx-background-color: " + CARD + ";" +
+                "-fx-control-inner-background: " + FIELD + ";" +
+                "-fx-table-cell-border-color: " + BORDER + ";" +
+                "-fx-text-background-color: " + WHITE + ";" +
+                "-fx-selection-bar: " + LIME + ";" +
+                "-fx-selection-bar-non-focused: " + LIME + ";"
+        );
+
         Label totalLabel =
                 new Label(
-                        "Total Preferences: "
-                                + preferences.size()
+                        "Total Preferences: " +
+                        preferences.size()
                 );
 
         totalLabel.setStyle(
-                "-fx-font-size: 15px;" +
+                "-fx-font-size: 12px;" +
                 "-fx-font-weight: bold;" +
-                "-fx-text-fill: #1A1A1A;"
+                "-fx-text-fill: " + MUTED + ";"
+        );
+
+        VBox tableCard =
+                new VBox(
+                        12,
+                        createSectionTitle("OPTION FORM"),
+                        totalLabel,
+                        table
+                );
+
+        tableCard.setPadding(
+                new Insets(20)
+        );
+
+        tableCard.setStyle(
+                "-fx-background-color: " + CARD + ";" +
+                "-fx-background-radius: 12px;" +
+                "-fx-border-color: " + BORDER + ";" +
+                "-fx-border-radius: 12px;"
+        );
+
+        Label warning =
+                new Label(
+                        "Please check the order carefully. Once the option form is locked, "
+                        + "your choices will be submitted for CAP allotment."
+                );
+
+        warning.setWrapText(true);
+
+        warning.setStyle(
+                "-fx-background-color: #211F0F;" +
+                "-fx-text-fill: #D9E6C8;" +
+                "-fx-font-size: 12px;" +
+                "-fx-padding: 14px;" +
+                "-fx-background-radius: 8px;" +
+                "-fx-border-color: #665F20;" +
+                "-fx-border-radius: 8px;"
         );
 
         Button editButton =
-                new Button("Edit Preferences");
+                new Button("← Edit Preferences");
 
-        editButton.setStyle(
-                "-fx-background-color: #4D7C0F;" +
-                "-fx-text-fill: white;" +
-                "-fx-pref-width: 170px;" +
-                "-fx-pref-height: 40px;"
+        styleSecondaryButton(
+                editButton
         );
 
         editButton.setOnAction(e ->
@@ -116,25 +179,29 @@ public class OptionPreviewPage {
         );
 
         Button lockButton =
-                new Button("Lock Choices");
+                new Button("Lock Choices  ✓");
 
-        lockButton.setStyle(
-                "-fx-background-color: #65A30D;" +
-                "-fx-text-fill: white;" +
-                "-fx-pref-width: 170px;" +
-                "-fx-pref-height: 40px;"
+        stylePrimaryButton(
+                lockButton
         );
 
         lockButton.setOnAction(e -> {
 
             if (preferences.isEmpty()) {
 
-                Alert alert = new Alert(
-                        Alert.AlertType.WARNING
+                Alert alert =
+                        new Alert(
+                                Alert.AlertType.WARNING
+                        );
+
+                alert.setTitle(
+                        "Option Form"
                 );
 
-                alert.setTitle("Option Form");
-                alert.setHeaderText(null);
+                alert.setHeaderText(
+                        null
+                );
+
                 alert.setContentText(
                         "Please add at least one preference."
                 );
@@ -144,9 +211,10 @@ public class OptionPreviewPage {
                 return;
             }
 
-            Alert confirmation = new Alert(
-                    Alert.AlertType.CONFIRMATION
-            );
+            Alert confirmation =
+                    new Alert(
+                            Alert.AlertType.CONFIRMATION
+                    );
 
             confirmation.setTitle(
                     "Confirm Option Form"
@@ -164,8 +232,10 @@ public class OptionPreviewPage {
             confirmation.showAndWait()
                     .ifPresent(response -> {
 
-                        if (response ==
-                                ButtonType.OK) {
+                        if (
+                                response ==
+                                ButtonType.OK
+                        ) {
 
                             Navigation.goTo(
                                     OptionConfirmationPage
@@ -175,24 +245,33 @@ public class OptionPreviewPage {
                     });
         });
 
+        Region spacer =
+                new Region();
+
+        HBox.setHgrow(
+                spacer,
+                Priority.ALWAYS
+        );
+
         HBox buttons =
                 new HBox(
-                        15,
+                        12,
                         editButton,
+                        spacer,
                         lockButton
                 );
 
         buttons.setAlignment(
-                Pos.CENTER_RIGHT
+                Pos.CENTER_LEFT
         );
 
         VBox content =
                 new VBox(
-                        20,
-                        title,
-                        instruction,
-                        table,
-                        totalLabel,
+                        22,
+                        heading,
+                        status,
+                        tableCard,
+                        warning,
                         buttons
                 );
 
@@ -201,7 +280,7 @@ public class OptionPreviewPage {
         );
 
         content.setStyle(
-                "-fx-background-color: #F7FEE7;"
+                "-fx-background-color: " + BG + ";"
         );
 
         return new Scene(
@@ -209,6 +288,74 @@ public class OptionPreviewPage {
                         "Option Form Preview",
                         content
                 )
+        );
+    }
+
+    private static Label createSectionTitle(
+            String text
+    ) {
+
+        Label label =
+                new Label(text);
+
+        label.setStyle(
+                "-fx-font-size: 11px;" +
+                "-fx-font-weight: bold;" +
+                "-fx-text-fill: " + LIME + ";"
+        );
+
+        return label;
+    }
+
+    private static void stylePrimaryButton(
+            Button button
+    ) {
+
+        button.setPrefHeight(42);
+
+        button.setPadding(
+                new Insets(
+                        0,
+                        20,
+                        0,
+                        20
+                )
+        );
+
+        button.setStyle(
+                "-fx-background-color: " + LIME + ";" +
+                "-fx-text-fill: #0B100B;" +
+                "-fx-font-size: 13px;" +
+                "-fx-font-weight: bold;" +
+                "-fx-background-radius: 8px;" +
+                "-fx-cursor: hand;"
+        );
+    }
+
+    private static void styleSecondaryButton(
+            Button button
+    ) {
+
+        button.setPrefHeight(42);
+
+        button.setPadding(
+                new Insets(
+                        0,
+                        20,
+                        0,
+                        20
+                )
+        );
+
+        button.setStyle(
+                "-fx-background-color: #171F17;" +
+                "-fx-text-fill: " + WHITE + ";" +
+                "-fx-border-color: #344034;" +
+                "-fx-border-radius: 8px;" +
+                "-fx-background-radius: 8px;" +
+                "-fx-font-size: 13px;" +
+                "-fx-font-weight: bold;" +
+                "-fx-cursor: hand;"
         );
     }
 }

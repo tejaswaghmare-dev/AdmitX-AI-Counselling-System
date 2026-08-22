@@ -14,23 +14,39 @@ public class StudentLayout {
             Node content
     ) {
 
-        BorderPane layout = new BorderPane();
+        BorderPane layout =
+                new BorderPane();
 
-        layout.setTop(Header.create(pageTitle));
-        layout.setLeft(Sidebar.create());
-
-        StackPane contentArea = new StackPane();
-        contentArea.setPadding(new Insets(25));
-        contentArea.setStyle(
-                "-fx-background-color: " + BACKGROUND + ";"
+        layout.setTop(
+                Header.create(pageTitle)
         );
 
-        contentArea.getChildren().add(content);
+        layout.setLeft(
+                Sidebar.create(pageTitle)
+        );
 
-        layout.setCenter(contentArea);
+        StackPane contentArea =
+                new StackPane();
+
+        contentArea.setPadding(
+                new Insets(25)
+        );
+
+        contentArea.setStyle(
+                "-fx-background-color: "
+                        + BACKGROUND + ";"
+        );
+
+        contentArea.getChildren()
+                .add(content);
+
+        layout.setCenter(
+                contentArea
+        );
 
         layout.setStyle(
-                "-fx-background-color: " + BACKGROUND + ";"
+                "-fx-background-color: "
+                        + BACKGROUND + ";"
         );
 
         return layout;

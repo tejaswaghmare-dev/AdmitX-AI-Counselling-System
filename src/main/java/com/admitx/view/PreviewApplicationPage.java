@@ -13,6 +13,9 @@ import javafx.scene.layout.*;
 import java.io.File;
 import java.util.Map;
 
+import java.awt.Desktop;
+import java.net.URI;
+
 public class PreviewApplicationPage {
 
     private static final String BG = "#0B100B";
@@ -377,37 +380,50 @@ public class PreviewApplicationPage {
         );
 
         addSection(
-                applicationDetails,
-                "UPLOADED DOCUMENTS"
+        applicationDetails,
+        "UPLOADED DOCUMENTS"
+);
+
+Map<String, File> documents =
+        DocumentUploadPage.getUploadedDocuments();
+
+Map<String, String> documentUrls =
+        data.getUploadedDocumentUrls();
+
+if (documents.isEmpty()) {
+
+    applicationDetails.getChildren().add(
+            createDetail(
+                    "Documents",
+                    "No documents uploaded"
+            )
+    );
+
+} else {
+
+    for (
+            Map.Entry<String, File> entry :
+            documents.entrySet()
+    ) {
+
+        String documentName =
+                entry.getKey();
+
+        File file =
+                entry.getValue();
+
+        String cloudinaryUrl =
+                documentUrls.get(documentName);
+
+        applicationDetails.getChildren().add(
+                createDocumentDetail(
+                        documentName,
+                        file.getName(),
+                        cloudinaryUrl
+                )
         );
-
-        Map<String, File> documents =
-                DocumentUploadPage.getUploadedDocuments();
-
-        if (documents.isEmpty()) {
-
-            applicationDetails.getChildren().add(
-                    createDetail(
-                            "Documents",
-                            "No documents uploaded"
-                    )
-            );
-
-        } else {
-
-            for (
-                    Map.Entry<String, File> entry :
-                    documents.entrySet()
-            ) {
-
-                applicationDetails.getChildren().add(
-                        createDetail(
-                                entry.getKey(),
-                                entry.getValue().getName()
-                        )
-                );
-            }
-        }
+    }
+}
 
         VBox detailsCard =
                 new VBox(
@@ -616,6 +632,128 @@ public class PreviewApplicationPage {
 
         return row;
     }
+    private static HBox createDocumentDetail(
+        String documentName,
+        String fileName,
+        String cloudinaryUrl
+) {
+
+    Label fieldLabel =
+            new Label(documentName);
+
+    fieldLabel.setPrefWidth(240);
+
+    fieldLabel.setStyle(
+            "-fx-font-size: 12px;" +
+            "-fx-font-weight: bold;" +
+            "-fx-text-fill: " + WHITE + ";"
+    );
+
+    Label valueLabel =
+            new Label(fileName);
+
+    valueLabel.setStyle(
+            "-fx-font-size: 12px;" +
+            "-fx-text-fill: " + LIME + ";"
+    );
+
+    Region spacer =
+            new Region();
+
+    HBox.setHgrow(
+            spacer,
+            Priority.ALWAYS
+    );
+
+    Button viewButton =
+            new Button("View");
+
+    viewButton.setStyle(
+            "-fx-background-color: #202B20;" +
+            "-fx-text-fill: " + LIME + ";" +
+            "-fx-border-color: #3B4A3B;" +
+            "-fx-border-radius: 7px;" +
+            "-fx-background-radius: 7px;" +
+            "-fx-font-size: 11px;" +
+            "-fx-font-weight: bold;" +
+            "-fx-cursor: hand;"
+    );
+
+    if (
+            cloudinaryUrl == null ||
+            cloudinaryUrl.isBlank()
+    ) {
+
+        viewButton.setDisable(true);
+        viewButton.setText("Not Uploaded");
+
+    } else {
+
+        viewButton.setOnAction(e -> {
+
+            try {
+
+                Desktop.getDesktop().browse(
+                        new URI(cloudinaryUrl)
+                );
+
+            } catch (Exception ex) {
+
+                ex.printStackTrace();
+
+                Alert alert =
+                        new Alert(
+                                Alert.AlertType.ERROR
+                        );
+
+                alert.setTitle(
+                        "View Document"
+                );
+
+                alert.setHeaderText(
+                        null
+                );
+
+                alert.setContentText(
+                        "Unable to open this document."
+                );
+
+                alert.showAndWait();
+            }
+        });
+    }
+
+    HBox row =
+            new HBox(
+                    15,
+                    fieldLabel,
+                    valueLabel,
+                    spacer,
+                    viewButton
+            );
+
+    row.setAlignment(
+            Pos.CENTER_LEFT
+    );
+
+    row.setPadding(
+            new Insets(
+                    12,
+                    15,
+                    12,
+                    15
+            )
+    );
+
+    row.setStyle(
+            "-fx-background-color: " + ROW + ";" +
+            "-fx-background-radius: 8px;" +
+            "-fx-border-color: " + BORDER + ";" +
+            "-fx-border-radius: 8px;"
+    );
+
+    return row;
+}
 
     private static String value(
             String text

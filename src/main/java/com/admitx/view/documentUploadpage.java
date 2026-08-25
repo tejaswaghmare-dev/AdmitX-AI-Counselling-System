@@ -1,7 +1,8 @@
 package com.admitx.view;
 
 import com.admitx.model.ApplicationData;
-
+import com.admitx.controller.ImageUploadController;
+import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -290,83 +291,130 @@ public class DocumentUploadPage {
     }
 
     private static HBox createDocumentRow(
-            String documentName
-    ) {
+        String documentName
+) {
 
-        Label documentLabel =
-                new Label(documentName);
+    Label documentLabel =
+            new Label(documentName);
 
-        documentLabel.setPrefWidth(220);
+    documentLabel.setPrefWidth(220);
 
-        documentLabel.setStyle(
-                "-fx-font-size: 13px;" +
-                "-fx-font-weight: bold;" +
-                "-fx-text-fill: " + WHITE + ";"
+    documentLabel.setStyle(
+            "-fx-font-size: 13px;" +
+            "-fx-font-weight: bold;" +
+            "-fx-text-fill: " + WHITE + ";"
+    );
+
+    Label fileName =
+            new Label("No file selected");
+
+    fileName.setMaxWidth(
+            Double.MAX_VALUE
+    );
+
+    fileName.setStyle(
+            "-fx-font-size: 11px;" +
+            "-fx-text-fill: " + MUTED + ";"
+    );
+
+    Region spacer =
+            new Region();
+
+    HBox.setHgrow(
+            spacer,
+            Priority.ALWAYS
+    );
+
+    Button uploadButton =
+            new Button("Choose File");
+
+    styleUploadButton(
+            uploadButton
+    );
+
+    uploadButton.setOnAction(e -> {
+
+        FileChooser fileChooser =
+                new FileChooser();
+
+        fileChooser.setTitle(
+                "Select " + documentName
         );
 
-        Label fileName =
-                new Label("No file selected");
+        fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter(
+                        "Documents",
+                        "*.pdf",
+                        "*.jpg",
+                        "*.jpeg",
+                        "*.png"
+                )
+        );
 
-        fileName.setMaxWidth(
-                Double.MAX_VALUE
+        Stage stage =
+                (Stage) uploadButton
+                        .getScene()
+                        .getWindow();
+
+        File file =
+                fileChooser.showOpenDialog(stage);
+
+        if (file == null) {
+            return;
+        }
+
+        fileName.setText(
+                "Uploading " + file.getName() + "..."
         );
 
         fileName.setStyle(
                 "-fx-font-size: 11px;" +
-                "-fx-text-fill: " + MUTED + ";"
+                "-fx-text-fill: " + LIME + ";" +
+                "-fx-font-weight: bold;"
         );
 
-        Region spacer =
-                new Region();
+        uploadButton.setDisable(true);
+        uploadButton.setText("Uploading...");
 
-        HBox.setHgrow(
-                spacer,
-                Priority.ALWAYS
-        );
+        Task<String> uploadTask =
+                new Task<>() {
 
-        Button uploadButton =
-                new Button("Choose File");
+                    @Override
+                    protected String call() {
 
-        styleUploadButton(
-                uploadButton
-        );
+                        ImageUploadController controller =
+                                new ImageUploadController();
 
-        uploadButton.setOnAction(e -> {
+                        return controller.imageUpload(file);
+                    }
+                };
 
-            FileChooser fileChooser =
-                    new FileChooser();
+        uploadTask.setOnSucceeded(event -> {
 
-            fileChooser.setTitle(
-                    "Select " + documentName
-            );
+            String cloudinaryUrl =
+                    uploadTask.getValue();
 
-            fileChooser.getExtensionFilters().add(
-                    new FileChooser.ExtensionFilter(
-                            "Documents",
-                            "*.pdf",
-                            "*.jpg",
-                            "*.jpeg",
-                            "*.png"
-                    )
-            );
+            if (cloudinaryUrl != null) {
 
-            Stage stage =
-                    (Stage) uploadButton
-                            .getScene()
-                            .getWindow();
-
-            File file =
-                    fileChooser.showOpenDialog(stage);
-
-            if (file != null) {
-
+                /*
+                 * Keep local file if your Preview page
+                 * is already using this map.
+                 */
                 data.getUploadedDocuments().put(
                         documentName,
                         file
                 );
 
+                /*
+                 * Store Cloudinary URL.
+                 */
+                data.getUploadedDocumentUrls().put(
+                        documentName,
+                        cloudinaryUrl
+                );
+
                 fileName.setText(
-                        file.getName()
+                        file.getName() + "  ✓ Uploaded"
                 );
 
                 fileName.setStyle(
@@ -374,38 +422,136 @@ public class DocumentUploadPage {
                         "-fx-text-fill: " + LIME + ";" +
                         "-fx-font-weight: bold;"
                 );
+
+                uploadButton.setText(
+                        "Change File"
+                );
+
+            } else {
+
+                fileName.setText(
+                        "Upload failed"
+                );
+
+                fileName.setStyle(
+                        "-fx-font-size: 11px;" +
+                        "-fx-text-fill: #FF6B6B;" +
+                        "-fx-font-weight: bold;"
+                );
+
+                uploadButton.setText(
+                        "Try Again"
+                );
+
+                Alert alert =
+                        new Alert(
+                                Alert.AlertType.ERROR
+                        );
+
+                alert.setTitle(
+                        "Upload Failed"
+                );
+
+                alert.setHeaderText(
+                        null
+                );
+
+                alert.setContentText(
+                        "Unable to upload "
+                                + documentName
+                                + " to Cloudinary."
+                );
+
+                alert.showAndWait();
             }
+
+            uploadButton.setDisable(false);
         });
 
-        HBox row = new HBox(
-                15,
-                documentLabel,
-                fileName,
-                spacer,
-                uploadButton
-        );
+        uploadTask.setOnFailed(event -> {
 
-        row.setAlignment(
-                Pos.CENTER_LEFT
-        );
+            fileName.setText(
+                    "Upload failed"
+            );
 
-        row.setPadding(
-                new Insets(13, 15, 13, 15)
-        );
+            fileName.setStyle(
+                    "-fx-font-size: 11px;" +
+                    "-fx-text-fill: #FF6B6B;" +
+                    "-fx-font-weight: bold;"
+            );
 
-        row.setMaxWidth(
-                Double.MAX_VALUE
-        );
+            uploadButton.setText(
+                    "Try Again"
+            );
 
-        row.setStyle(
-                "-fx-background-color: #0F150F;" +
-                "-fx-background-radius: 8px;" +
-                "-fx-border-color: " + BORDER + ";" +
-                "-fx-border-radius: 8px;"
-        );
+            uploadButton.setDisable(false);
 
-        return row;
-    }
+            Throwable exception =
+                    uploadTask.getException();
+
+            if (exception != null) {
+                exception.printStackTrace();
+            }
+
+            Alert alert =
+                    new Alert(
+                            Alert.AlertType.ERROR
+                    );
+
+            alert.setTitle(
+                    "Upload Failed"
+            );
+
+            alert.setHeaderText(
+                    null
+            );
+
+            alert.setContentText(
+                    "Unable to upload "
+                            + documentName
+                            + " to Cloudinary."
+            );
+
+            alert.showAndWait();
+        });
+
+        Thread uploadThread =
+                new Thread(uploadTask);
+
+        uploadThread.setDaemon(true);
+
+        uploadThread.start();
+    });
+
+    HBox row = new HBox(
+            15,
+            documentLabel,
+            fileName,
+            spacer,
+            uploadButton
+    );
+
+    row.setAlignment(
+            Pos.CENTER_LEFT
+    );
+
+    row.setPadding(
+            new Insets(13, 15, 13, 15)
+    );
+
+    row.setMaxWidth(
+            Double.MAX_VALUE
+    );
+
+    row.setStyle(
+            "-fx-background-color: #0F150F;" +
+            "-fx-background-radius: 8px;" +
+            "-fx-border-color: " + BORDER + ";" +
+            "-fx-border-radius: 8px;"
+    );
+
+    return row;
+}
 
     private static HBox createStep(
             String number,

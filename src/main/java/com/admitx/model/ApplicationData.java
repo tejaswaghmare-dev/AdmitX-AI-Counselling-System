@@ -50,6 +50,9 @@ public class ApplicationData {
     private String income;
     private String orphan;
 
+    private final Map<String, String> uploadedDocumentUrls =
+        new HashMap<>();
+
     private final Map<String, File> uploadedDocuments =
             new HashMap<>();
 
@@ -350,5 +353,8 @@ public class ApplicationData {
 
     public Map<String, File> getUploadedDocuments() {
         return uploadedDocuments;
+    }
+    public Map<String, String> getUploadedDocumentUrls() {
+        return uploadedDocumentUrls;
     }
 }

@@ -244,6 +244,7 @@ public class Sidebar {
         );
         
         VBox menu =
+                
                 new VBox(
                         5,
                         dashboard,
@@ -251,12 +252,15 @@ public class Sidebar {
                         merit,
                         college,
                         preference,
-                        cap1,cap2,cap3,
+                        cap1,
+                        cap2,
+                        cap3,
                         admission,
                         notices,
                         profile,
                         help
                 );
+                
         
 
         menu.setFillWidth(true);
@@ -411,104 +415,109 @@ public class Sidebar {
     }
 
     private static boolean isActive(
-            String page,
-            String activePage
-    ) {
+        String page,
+        String activePage
+) {
 
-        if (
-                page.equals(activePage)
-        ) {
-            return true;
-        }
-
-        if (
-                page.equals("Personal Details")
-                &&
-                (
-                        activePage.equals("Address Details")
-                        || activePage.equals("Academic Details")
-                        || activePage.equals(
-                                "Home University & Eligibility"
-                        )
-                        || activePage.equals(
-                                "Reservation Details"
-                        )
-                        || activePage.equals(
-                                "Document Upload"
-                        )
-                        || activePage.equals(
-                                "Preview Application"
-                        )
-                        || activePage.equals(
-                                "Application Status"
-                        )
-                )
-        ) {
-            return true;
-        }
-
-        if (
-                page.equals(
-                        "Provisional Merit List"
-                )
-                &&
-                (
-                        activePage.equals("Grievance")
-                        || activePage.equals(
-                                "Final Merit List"
-                        )
-                )
-        ) {
-            return true;
-        }
-
-        if (
-                page.equals("College Search")
-                &&
-                activePage.equals(
-                        "College Information"
-                )
-        ) {
-            return true;
-        }
-
-        if (
-                page.equals(
-                        "Preference Filling"
-                )
-                &&
-                (
-                        activePage.equals(
-                                "Option Form Preview"
-                        )
-                        || activePage.equals(
-                                "Option Form Confirmation"
-                        )
-                )
-        ) {
-            return true;
-        }
-
-        if (
-                page.equals("CAP Round 1")
-                &&
-                (
-                        activePage.equals(
-                                "CAP Round 1 Confirmation"
-                        )
-                        || activePage.equals(
-                                "CAP Round 2"
-                        )
-                        || activePage.equals(
-                                "CAP Round 3"
-                        )
-                )
-        ) {
-            return true;
-        }
-
+    if (activePage == null) {
         return false;
     }
+
+    // Direct page match
+    if (page.equals(activePage)) {
+        return true;
+    }
+
+    // =====================================================
+    // APPLICATION SECTION
+    // =====================================================
+
+    if (page.equals("Personal Details")) {
+
+        return activePage.equals("Address Details")
+                || activePage.equals("Academic Details")
+                || activePage.equals("Home University & Eligibility")
+                || activePage.equals("Reservation Details")
+                || activePage.equals("Document Upload")
+                || activePage.equals("Preview Application")
+                || activePage.equals("Application Status");
+    }
+
+    // =====================================================
+    // MERIT SECTION
+    // =====================================================
+
+    if (page.equals("Provisional Merit List")) {
+
+        return activePage.equals("Grievance")
+                || activePage.equals("Raise Grievance")
+                || activePage.equals("Final Merit List");
+    }
+
+    // =====================================================
+    // COLLEGE SECTION
+    // =====================================================
+
+    if (page.equals("College Search")) {
+
+        return activePage.equals("College Information");
+    }
+
+    // =====================================================
+    // PREFERENCE SECTION
+    // =====================================================
+
+    if (page.equals("Preference Filling")) {
+
+        return activePage.equals("Option Form Preview")
+                || activePage.equals("Option Form Confirmation");
+    }
+
+    // =====================================================
+    // CAP ROUND 1
+    // =====================================================
+
+    if (page.equals("CAP Round 1")) {
+
+        return activePage.equals("CAP Round 1 Confirmation");
+    }
+
+    // =====================================================
+    // CAP ROUND 2
+    // =====================================================
+
+    if (page.equals("CAP Round 2")) {
+
+        return activePage.equals("CAP Round 2 Confirmation");
+    }
+
+    // =====================================================
+    // CAP ROUND 3
+    // =====================================================
+
+    if (page.equals("CAP Round 3")) {
+
+        return activePage.equals("CAP Round 3 Confirmation");
+    }
+
+    // =====================================================
+    // ADMISSION
+    // =====================================================
+
+    if (page.equals("Admission Confirmation")) {
+
+        return activePage.equals("Admission")
+                || activePage.equals("Admission Confirmation");
+    }
+
+    return false;
+}
+
+        
+
+
+        
+    
 
     private static void applyActiveStyle(
             Button button,

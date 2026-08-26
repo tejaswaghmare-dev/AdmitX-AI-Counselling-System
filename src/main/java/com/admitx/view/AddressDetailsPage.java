@@ -1,6 +1,6 @@
 package com.admitx.view;
 
-import com.admitx.model.ApplicationData;
+import com.admitx.model.Student;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -18,7 +18,7 @@ public class AddressDetailsPage {
 
     public static Scene getScene() {
 
-        ApplicationData data = ApplicationData.getInstance();
+        Student data = Student.getInstance();
 
         Label title = new Label("Address Details");
 
@@ -126,25 +126,21 @@ public class AddressDetailsPage {
 
             if (sameAddress.isSelected()) {
 
-                correspondenceAddress.setText(
-                        permanentAddress.getText()
-                );
+                String paddress = permanentAddress.getText();
+                System.out.println(paddress);
 
-                correspondenceState.setText(
-                        permanentState.getText()
-                );
 
-                correspondenceDistrict.setText(
-                        permanentDistrict.getText()
-                );
+                String state = permanentState.getText();
+                 System.out.println(state);
+                
+                String district = permanentDistrict.getText();
+                 System.out.println(district);
 
-                correspondenceTaluka.setText(
-                        permanentTaluka.getText()
-                );
+                String taluka = permanentTaluka.getText();
+                 System.out.println(taluka);
 
-                correspondencePincode.setText(
-                        permanentPincode.getText()
-                );
+                String pincode =  permanentPincode.getText();
+                 System.out.println(pincode);
             }
         });
 

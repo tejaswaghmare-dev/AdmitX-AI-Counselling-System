@@ -6,6 +6,8 @@ import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -15,10 +17,8 @@ public class StudentRegistrationPage {
 
     private static final String BLACK = "#050705";
     private static final String DARK = "#0C110B";
-
     private static final String LIME = "#B7FF00";
     private static final String LIME_DARK = "#8CC900";
-
     private static final String WHITE = "#F8FAF5";
     private static final String GREY = "#9BA69A";
     private static final String BORDER = "#283326";
@@ -27,16 +27,50 @@ public class StudentRegistrationPage {
 
         StackPane root = new StackPane();
 
-        root.setStyle(
-                "-fx-background-color:" +
-                "linear-gradient(to bottom right," +
-                BLACK + "," +
-                DARK + ",#172016);"
+        // -------------------------------------------------
+        // BACKGROUND IMAGE
+        // -------------------------------------------------
+
+        Image backgroundImage = new Image(
+                StudentRegistrationPage.class
+                        .getResource(
+                                "/assets/images/signup.jpeg"
+                        )
+                        .toExternalForm()
         );
+
+        ImageView backgroundView =
+                new ImageView(backgroundImage);
+
+        backgroundView.setPreserveRatio(false);
+
+        backgroundView.fitWidthProperty()
+                .bind(root.widthProperty());
+
+        backgroundView.fitHeightProperty()
+                .bind(root.heightProperty());
+
+        // Dark overlay over background image
+        Region backgroundOverlay = new Region();
+
+        backgroundOverlay.setStyle(
+                "-fx-background-color: rgba(5,7,5,0.55);"
+        );
+
+        backgroundOverlay.prefWidthProperty()
+                .bind(root.widthProperty());
+
+        backgroundOverlay.prefHeightProperty()
+                .bind(root.heightProperty());
+
+        // -------------------------------------------------
+        // CARD
+        // -------------------------------------------------
 
         VBox card = new VBox(14);
 
         card.setAlignment(Pos.CENTER);
+
         card.setMaxWidth(440);
 
         card.setPadding(
@@ -279,6 +313,10 @@ public class StudentRegistrationPage {
                     "Student account created successfully."
             );
 
+            String std_name = name.getText();
+            String emaill = email.getText();
+            String mno = mobile.getText();
+
             Navigation.goTo(
                     StudentLoginPage.getScene()
             );
@@ -366,30 +404,35 @@ public class StudentRegistrationPage {
                 )
         );
 
+        // -------------------------------------------------
+        // CARD CONTENT
+        // -------------------------------------------------
+
         card.getChildren().addAll(
                 portal,
                 title,
                 subtitle,
-
                 createSpacing(5),
-
                 nameBox,
                 emailBox,
                 mobileBox,
                 passwordBox,
                 confirmBox,
-
                 createSpacing(3),
-
                 registerButton,
                 loginBox,
                 backButton
         );
 
+        // -------------------------------------------------
+        // SCROLL PANE
+        // -------------------------------------------------
+
         ScrollPane scrollPane =
                 new ScrollPane(card);
 
         scrollPane.setFitToWidth(true);
+
         scrollPane.setFitToHeight(true);
 
         scrollPane.setPannable(true);
@@ -399,6 +442,10 @@ public class StudentRegistrationPage {
                 "-fx-background-color: transparent;"
         );
 
+        // -------------------------------------------------
+        // WRAPPER
+        // -------------------------------------------------
+
         StackPane wrapper =
                 new StackPane(scrollPane);
 
@@ -406,12 +453,31 @@ public class StudentRegistrationPage {
                 new Insets(30)
         );
 
-        root.getChildren().add(
+        // -------------------------------------------------
+        // IMPORTANT:
+        // Background image
+        //       ↓
+        // Dark overlay
+        //       ↓
+        // Registration card
+        // -------------------------------------------------
+
+        root.getChildren().addAll(
+                backgroundView,
+                backgroundOverlay,
                 wrapper
         );
 
+        // -------------------------------------------------
+        // RETURN SCENE
+        // -------------------------------------------------
+
         return new Scene(root);
     }
+
+    // -------------------------------------------------
+    // FIELD BOX
+    // -------------------------------------------------
 
     private static VBox createFieldBox(
             String labelText,
@@ -460,6 +526,10 @@ public class StudentRegistrationPage {
         return box;
     }
 
+    // -------------------------------------------------
+    // PRIMARY BUTTON
+    // -------------------------------------------------
+
     private static void stylePrimaryButton(
             Button button
     ) {
@@ -483,6 +553,10 @@ public class StudentRegistrationPage {
                 "-fx-font-size:13px;"
         );
     }
+
+    // -------------------------------------------------
+    // SECONDARY BUTTON
+    // -------------------------------------------------
 
     private static void styleSecondaryButton(
             Button button
@@ -508,6 +582,10 @@ public class StudentRegistrationPage {
         );
     }
 
+    // -------------------------------------------------
+    // SPACING
+    // -------------------------------------------------
+
     private static Region createSpacing(
             double height
     ) {
@@ -522,6 +600,10 @@ public class StudentRegistrationPage {
         return region;
     }
 
+    // -------------------------------------------------
+    // ALERT MESSAGE
+    // -------------------------------------------------
+
     private static void showMessage(
             Alert.AlertType type,
             String title,
@@ -532,8 +614,11 @@ public class StudentRegistrationPage {
                 new Alert(type);
 
         alert.setTitle(title);
+
         alert.setHeaderText(null);
+
         alert.setContentText(message);
+
         alert.showAndWait();
     }
 }

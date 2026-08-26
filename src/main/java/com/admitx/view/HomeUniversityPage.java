@@ -1,6 +1,6 @@
 package com.admitx.view;
 
-import com.admitx.model.ApplicationData;
+import com.admitx.model.Student;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -18,7 +18,7 @@ public class HomeUniversityPage {
 
     public static Scene getScene() {
 
-        ApplicationData data = ApplicationData.getInstance();
+        Student data = Student.getInstance();
 
         Label title = new Label(
                 "Home University & Eligibility"
@@ -268,25 +268,21 @@ public class HomeUniversityPage {
 
         nextButton.setOnAction(e -> {
 
-            data.setState(
-                    state.getValue()
-            );
+            String statee = state.getValue();
+            System.out.println(statee);
 
-            data.setHomeUniversity(
-                    homeUniversity.getValue()
-            );
+           String huniver = homeUniversity.getValue();
+           System.out.println(huniver);
 
-            data.setCandidateType(
-                    candidateType.getValue()
-            );
+           String ctype = candidateType.getValue();
+           System.out.println(ctype);
 
-            data.setMaharashtraType(
-                    maharashtraType.getValue()
-            );
+            String mtype = maharashtraType.getValue();
+            System.out.println(mtype);
 
-            data.setDomicileStatus(
-                    domicileStatus.getValue()
-            );
+            String domicle = domicileStatus.getValue();
+            System.out.println(domicle);
+            
 
             Navigation.goTo(
                     ReservationDetailsPage.getScene()

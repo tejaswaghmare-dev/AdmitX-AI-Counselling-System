@@ -6,6 +6,8 @@ import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -16,10 +18,8 @@ public class StudentLoginPage {
     private static final String BLACK = "#050705";
     private static final String DARK = "#0C110B";
     private static final String CARD = "#171E16";
-
     private static final String LIME = "#B7FF00";
     private static final String LIME_DARK = "#8CC900";
-
     private static final String WHITE = "#F8FAF5";
     private static final String GREY = "#9BA69A";
     private static final String BORDER = "#283326";
@@ -28,12 +28,31 @@ public class StudentLoginPage {
 
         StackPane root = new StackPane();
 
-        root.setStyle(
-                "-fx-background-color:" +
-                "linear-gradient(to bottom right," +
-                BLACK + "," +
-                DARK + ",#172016);"
+        // -------------------------------------------------
+        // BACKGROUND IMAGE
+        // -------------------------------------------------
+
+        Image backgroundImage = new Image(
+                StudentLoginPage.class
+                        .getResource("/assets/images/login.jpeg")
+                        .toExternalForm()
         );
+
+        ImageView backgroundView = new ImageView(backgroundImage);
+
+        backgroundView.setPreserveRatio(false);
+        backgroundView.fitWidthProperty().bind(root.widthProperty());
+        backgroundView.fitHeightProperty().bind(root.heightProperty());
+
+        // Dark overlay so login card remains clearly visible
+        Region backgroundOverlay = new Region();
+
+        backgroundOverlay.setStyle(
+                "-fx-background-color: rgba(5,7,5,0.55);"
+        );
+
+        backgroundOverlay.prefWidthProperty().bind(root.widthProperty());
+        backgroundOverlay.prefHeightProperty().bind(root.heightProperty());
 
         // -------------------------------------------------
         // LOGIN CARD
@@ -49,7 +68,7 @@ public class StudentLoginPage {
         );
 
         card.setStyle(
-                "-fx-background-color:rgba(18,24,18,0.97);" +
+                "-fx-background-color: rgba(18,24,18,0.97);" +
                 "-fx-background-radius:22;" +
                 "-fx-border-color:rgba(183,255,0,0.20);" +
                 "-fx-border-radius:22;" +
@@ -319,28 +338,38 @@ public class StudentLoginPage {
                 smallTitle,
                 title,
                 subtitle,
-
                 createSpacing(8),
-
                 applicationBox,
                 passwordBox,
-
                 createSpacing(4),
-
                 loginButton,
                 registerBox,
                 backButton
         );
 
-        root.getChildren().add(card);
+        // -------------------------------------------------
+        // ADD EVERYTHING TO ROOT
+        // Background -> Overlay -> Card
+        // -------------------------------------------------
+
+        root.getChildren().addAll(
+                backgroundView,
+                backgroundOverlay,
+                card
+        );
 
         StackPane.setAlignment(
                 card,
                 Pos.CENTER
         );
 
+        // IMPORTANT: Scene is still returned
         return new Scene(root);
     }
+
+    // -------------------------------------------------
+    // FIELD LABEL
+    // -------------------------------------------------
 
     private static Label createFieldLabel(
             String text
@@ -364,6 +393,10 @@ public class StudentLoginPage {
         return label;
     }
 
+    // -------------------------------------------------
+    // FIELD STYLE
+    // -------------------------------------------------
+
     private static void styleField(
             TextInputControl field
     ) {
@@ -385,6 +418,10 @@ public class StudentLoginPage {
                 "-fx-font-size:13px;"
         );
     }
+
+    // -------------------------------------------------
+    // PRIMARY BUTTON STYLE
+    // -------------------------------------------------
 
     private static void stylePrimaryButton(
             Button button
@@ -409,6 +446,10 @@ public class StudentLoginPage {
                 "-fx-font-size:13px;"
         );
     }
+
+    // -------------------------------------------------
+    // SPACING
+    // -------------------------------------------------
 
     private static Region createSpacing(
             double height

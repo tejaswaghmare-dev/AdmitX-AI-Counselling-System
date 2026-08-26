@@ -1,5 +1,8 @@
 package com.admitx.view;
 
+import com.admitx.controller.CollegeAddController;
+import com.admitx.model.College;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -52,6 +55,9 @@ public class CollegeManagementPage {
         // INPUT FIELDS
         // =========================================
 
+        TextField clgId =
+                createTextField("College ID");
+
         TextField collegeName =
                 createTextField("College Name");
 
@@ -71,80 +77,46 @@ public class CollegeManagementPage {
         // FORM LABELS
         // =========================================
 
+        VBox clgIdBox =
+                createFieldBox("College ID", clgId);
+
         VBox collegeBox =
-                createFieldBox(
-                        "College Name",
-                        collegeName
-                );
+                createFieldBox("College Name", collegeName);
 
         VBox districtBox =
-                createFieldBox(
-                        "District",
-                        district
-                );
+                createFieldBox("District", district);
 
         VBox universityBox =
-                createFieldBox(
-                        "University",
-                        university
-                );
+                createFieldBox("University", university);
 
         VBox branchBox =
-                createFieldBox(
-                        "Branch",
-                        branch
-                );
+                createFieldBox("Branch", branch);
 
         VBox intakeBox =
-                createFieldBox(
-                        "Intake",
-                        intake
-                );
+                createFieldBox("Intake", intake);
 
-        GridPane form =
-                new GridPane();
+        // =========================================
+        // FORM GRID
+        // =========================================
+
+        GridPane form = new GridPane();
 
         form.setHgap(18);
         form.setVgap(16);
 
-        form.add(
-                collegeBox,
-                0,
-                0
-        );
+        // Row 1
+        form.add(clgIdBox, 0, 0);
+        form.add(collegeBox, 1, 0);
+        form.add(districtBox, 2, 0);
 
-        form.add(
-                districtBox,
-                1,
-                0
-        );
+        // Row 2
+        form.add(universityBox, 0, 1);
+        form.add(branchBox, 1, 1);
+        form.add(intakeBox, 2, 1);
 
-        form.add(
-                universityBox,
-                2,
-                0
-        );
-
-        form.add(
-                branchBox,
-                0,
-                1
-        );
-
-        form.add(
-                intakeBox,
-                1,
-                1
-        );
-
-        ColumnConstraints c1 =
-                new ColumnConstraints();
-
-        ColumnConstraints c2 =
-                new ColumnConstraints();
-
-        ColumnConstraints c3 =
-                new ColumnConstraints();
+        ColumnConstraints c1 = new ColumnConstraints();
+        ColumnConstraints c2 = new ColumnConstraints();
+        ColumnConstraints c3 = new ColumnConstraints();
 
         c1.setPercentWidth(33.33);
         c2.setPercentWidth(33.33);
@@ -219,9 +191,7 @@ public class CollegeManagementPage {
                         delete
                 );
 
-        actions.setAlignment(
-                Pos.CENTER_LEFT
-        );
+        actions.setAlignment(Pos.CENTER_LEFT);
 
         VBox formCard =
                 new VBox(
@@ -275,52 +245,74 @@ public class CollegeManagementPage {
         TableView<College> table =
                 new TableView<>();
 
+        // =========================================
+        // COLLEGE ID COLUMN
+        // =========================================
+
+        TableColumn<College, String> clgIdColumn =
+                new TableColumn<>("College ID");
+
+        clgIdColumn.setCellValueFactory(
+                new PropertyValueFactory<>("collegeID")
+        );
+
+        // =========================================
+        // COLLEGE NAME COLUMN
+        // =========================================
+
         TableColumn<College, String> nameColumn =
                 new TableColumn<>("College");
 
         nameColumn.setCellValueFactory(
-                new PropertyValueFactory<>(
-                        "name"
-                )
+                new PropertyValueFactory<>("collegeName")
         );
+
+        // =========================================
+        // DISTRICT COLUMN
+        // =========================================
 
         TableColumn<College, String> districtColumn =
                 new TableColumn<>("District");
 
         districtColumn.setCellValueFactory(
-                new PropertyValueFactory<>(
-                        "district"
-                )
+                new PropertyValueFactory<>("district")
         );
+
+        // =========================================
+        // UNIVERSITY COLUMN
+        // =========================================
 
         TableColumn<College, String> universityColumn =
                 new TableColumn<>("University");
 
         universityColumn.setCellValueFactory(
-                new PropertyValueFactory<>(
-                        "university"
-                )
+                new PropertyValueFactory<>("university")
         );
+
+        // =========================================
+        // BRANCH COLUMN
+        // =========================================
 
         TableColumn<College, String> branchColumn =
                 new TableColumn<>("Branch");
 
         branchColumn.setCellValueFactory(
-                new PropertyValueFactory<>(
-                        "branch"
-                )
+                new PropertyValueFactory<>("branch")
         );
+
+        // =========================================
+        // INTAKE COLUMN
+        // =========================================
 
         TableColumn<College, Integer> intakeColumn =
                 new TableColumn<>("Intake");
 
         intakeColumn.setCellValueFactory(
-                new PropertyValueFactory<>(
-                        "intake"
-                )
+                new PropertyValueFactory<>("intake")
         );
 
         table.getColumns().addAll(
+                clgIdColumn,
                 nameColumn,
                 districtColumn,
                 universityColumn,
@@ -346,28 +338,18 @@ public class CollegeManagementPage {
         // =========================================
 
         ObservableList<College> colleges =
-                FXCollections.observableArrayList(
+                FXCollections.observableArrayList();
 
-                        new College(
-                                "College of Engineering Pune",
-                                "Pune",
-                                "SPPU",
-                                "Computer Engineering",
-                                120
-                        ),
+        CollegeAddController controller =
+                new CollegeAddController();
 
-                        new College(
-                                "Vishwakarma Institute of Technology",
-                                "Pune",
-                                "SPPU",
-                                "Information Technology",
-                                180
-                        )
-                );
+        // Load existing colleges from Firestore
+        for (College college : controller.getAllColleges()) {
 
-        table.setItems(
-                colleges
-        );
+            colleges.add(college);
+        }
+
+        table.setItems(colleges);
 
         // =========================================
         // ADD COLLEGE
@@ -375,8 +357,10 @@ public class CollegeManagementPage {
 
         add.setOnAction(e -> {
 
+            // Validate fields
             if (
-                    collegeName.getText().isBlank()
+                    clgId.getText().isBlank()
+                    || collegeName.getText().isBlank()
                     || district.getText().isBlank()
                     || university.getText().isBlank()
                     || branch.getText().isBlank()
@@ -395,7 +379,7 @@ public class CollegeManagementPage {
 
                 int intakeValue =
                         Integer.parseInt(
-                                intake.getText()
+                                intake.getText().trim()
                         );
 
                 if (intakeValue <= 0) {
@@ -408,17 +392,68 @@ public class CollegeManagementPage {
                     return;
                 }
 
-                colleges.add(
+                String clgid =
+                        clgId.getText().trim();
+
+                // =========================================
+                // CHECK DUPLICATE COLLEGE ID
+                // =========================================
+
+                for (College college : colleges) {
+
+                    if (
+                            college.getCollegeID()
+                                    .equalsIgnoreCase(clgid)
+                    ) {
+
+                        message(
+                                "Duplicate College ID",
+                                "This College ID already exists."
+                        );
+
+                        return;
+                    }
+                }
+
+                // =========================================
+                // CREATE COLLEGE OBJECT
+                // =========================================
+
+                College newCollege =
                         new College(
-                                collegeName.getText(),
-                                district.getText(),
-                                university.getText(),
-                                branch.getText(),
+                                clgid,
+                                collegeName.getText().trim(),
+                                district.getText().trim(),
+                                university.getText().trim(),
+                                branch.getText().trim(),
                                 intakeValue
-                        )
+                        );
+
+                // =========================================
+                // CONTROLLER
+                // =========================================
+
+                controller.addcollege(
+                        newCollege.getCollegeID(),
+                        newCollege.getCollegeName(),
+                        newCollege.getDistrict(),
+                        newCollege.getUniversity(),
+                        newCollege.getBranch(),
+                        newCollege.getIntake()
                 );
 
+                // =========================================
+                // ADD TO TABLE
+                // =========================================
+
+                colleges.add(newCollege);
+
+                // =========================================
+                // CLEAR
+                // =========================================
+
                 clear(
+                        clgId,
                         collegeName,
                         district,
                         university,
@@ -451,8 +486,12 @@ public class CollegeManagementPage {
 
                             if (selected != null) {
 
+                                clgId.setText(
+                                        selected.getCollegeID()
+                                );
+
                                 collegeName.setText(
-                                        selected.getName()
+                                        selected.getCollegeName()
                                 );
 
                                 district.setText(
@@ -496,8 +535,10 @@ public class CollegeManagementPage {
                 return;
             }
 
+            // Validate fields
             if (
-                    collegeName.getText().isBlank()
+                    clgId.getText().isBlank()
+                    || collegeName.getText().isBlank()
                     || district.getText().isBlank()
                     || university.getText().isBlank()
                     || branch.getText().isBlank()
@@ -516,7 +557,7 @@ public class CollegeManagementPage {
 
                 int intakeValue =
                         Integer.parseInt(
-                                intake.getText()
+                                intake.getText().trim()
                         );
 
                 if (intakeValue <= 0) {
@@ -529,27 +570,93 @@ public class CollegeManagementPage {
                     return;
                 }
 
-                selected.setName(
-                        collegeName.getText()
+                String newCollegeID =
+                        clgId.getText().trim();
+
+                // =========================================
+                // CHECK DUPLICATE COLLEGE ID
+                // =========================================
+
+                for (College college : colleges) {
+
+                    if (
+                            college != selected
+                            && college.getCollegeID()
+                                    .equalsIgnoreCase(
+                                            newCollegeID
+                                    )
+                    ) {
+
+                        message(
+                                "Duplicate College ID",
+                                "This College ID already exists."
+                        );
+
+                        return;
+                    }
+                }
+
+                // =========================================
+                // STORE OLD ID
+                // =========================================
+
+                String oldCollegeID =
+                        selected.getCollegeID();
+
+                // =========================================
+                // UPDATE MODEL
+                // =========================================
+
+                selected.setCollegeID(
+                        newCollegeID
+                );
+
+                selected.setCollegeName(
+                        collegeName.getText().trim()
                 );
 
                 selected.setDistrict(
-                        district.getText()
+                        district.getText().trim()
                 );
 
                 selected.setUniversity(
-                        university.getText()
+                        university.getText().trim()
                 );
 
                 selected.setBranch(
-                        branch.getText()
+                        branch.getText().trim()
                 );
 
                 selected.setIntake(
                         intakeValue
                 );
 
+                // =========================================
+                // CONTROLLER
+                // =========================================
+
+                controller.updateCollege(
+                        oldCollegeID,
+                        selected
+                );
+
+                // =========================================
+                // REFRESH TABLE
+                // =========================================
+
                 table.refresh();
+
+                clear(
+                        clgId,
+                        collegeName,
+                        district,
+                        university,
+                        branch,
+                        intake
+                );
+
+                table.getSelectionModel()
+                        .clearSelection();
 
                 message(
                         "College Updated",
@@ -566,7 +673,7 @@ public class CollegeManagementPage {
         });
 
         // =========================================
-        // DELETE
+        // DELETE COLLEGE
         // =========================================
 
         delete.setOnAction(e -> {
@@ -599,7 +706,9 @@ public class CollegeManagementPage {
             );
 
             confirmation.setContentText(
-                    selected.getName()
+                    selected.getCollegeID()
+                            + " - "
+                            + selected.getCollegeName()
             );
 
             confirmation.showAndWait()
@@ -607,16 +716,46 @@ public class CollegeManagementPage {
 
                         if (response == ButtonType.OK) {
 
-                            colleges.remove(
-                                    selected
+                            // =========================================
+                            // GET COLLEGE ID
+                            // =========================================
+
+                            String collegeID =
+                                    selected.getCollegeID();
+
+                            // =========================================
+                            // CONTROLLER
+                            // =========================================
+
+                            controller.deleteCollege(
+                                    collegeID
                             );
 
+                            // =========================================
+                            // REMOVE FROM TABLE
+                            // =========================================
+
+                            colleges.remove(selected);
+
+                            // =========================================
+                            // CLEAR FORM
+                            // =========================================
+
                             clear(
+                                    clgId,
                                     collegeName,
                                     district,
                                     university,
                                     branch,
                                     intake
+                            );
+
+                            table.getSelectionModel()
+                                    .clearSelection();
+
+                            message(
+                                    "College Deleted",
+                                    "College deleted successfully."
                             );
                         }
                     });
@@ -632,6 +771,7 @@ public class CollegeManagementPage {
                     .clearSelection();
 
             clear(
+                    clgId,
                     collegeName,
                     district,
                     university,
@@ -662,6 +802,10 @@ public class CollegeManagementPage {
                 "-fx-border-radius: 10px;"
         );
 
+        // =========================================
+        // MAIN CONTENT
+        // =========================================
+
         VBox content =
                 new VBox(
                         20,
@@ -677,6 +821,10 @@ public class CollegeManagementPage {
         content.setStyle(
                 "-fx-background-color: " + BG + ";"
         );
+
+        // =========================================
+        // LAYOUT
+        // =========================================
 
         BorderPane layout =
                 CounsellorLayout.create(
@@ -702,13 +850,9 @@ public class CollegeManagementPage {
         TextField field =
                 new TextField();
 
-        field.setPromptText(
-                prompt
-        );
+        field.setPromptText(prompt);
 
-        field.setPrefHeight(
-                40
-        );
+        field.setPrefHeight(40);
 
         field.setMaxWidth(
                 Double.MAX_VALUE
@@ -776,13 +920,9 @@ public class CollegeManagementPage {
         Button button =
                 new Button(text);
 
-        button.setPrefWidth(
-                width
-        );
+        button.setPrefWidth(width);
 
-        button.setPrefHeight(
-                40
-        );
+        button.setPrefHeight(40);
 
         button.setStyle(
                 "-fx-background-color: " + LIME + ";" +
@@ -807,13 +947,9 @@ public class CollegeManagementPage {
         Button button =
                 new Button(text);
 
-        button.setPrefWidth(
-                width
-        );
+        button.setPrefWidth(width);
 
-        button.setPrefHeight(
-                40
-        );
+        button.setPrefHeight(40);
 
         button.setStyle(
                 "-fx-background-color: #1C251C;" +
@@ -840,13 +976,9 @@ public class CollegeManagementPage {
         Button button =
                 new Button(text);
 
-        button.setPrefWidth(
-                width
-        );
+        button.setPrefWidth(width);
 
-        button.setPrefHeight(
-                40
-        );
+        button.setPrefHeight(40);
 
         button.setStyle(
                 "-fx-background-color: #DC2626;" +
@@ -864,18 +996,20 @@ public class CollegeManagementPage {
     // =========================================
 
     private static void clear(
-            TextField a,
-            TextField b,
-            TextField c,
-            TextField d,
-            TextField e
+            TextField clgId,
+            TextField collegeName,
+            TextField district,
+            TextField university,
+            TextField branch,
+            TextField intake
     ) {
 
-        a.clear();
-        b.clear();
-        c.clear();
-        d.clear();
-        e.clear();
+        clgId.clear();
+        collegeName.clear();
+        district.clear();
+        university.clear();
+        branch.clear();
+        intake.clear();
     }
 
     // =========================================
@@ -892,121 +1026,12 @@ public class CollegeManagementPage {
                         Alert.AlertType.INFORMATION
                 );
 
-        alert.setTitle(
-                title
-        );
+        alert.setTitle(title);
 
-        alert.setHeaderText(
-                null
-        );
+        alert.setHeaderText(null);
 
-        alert.setContentText(
-                text
-        );
+        alert.setContentText(text);
 
         alert.showAndWait();
-    }
-
-    // =========================================
-    // COLLEGE MODEL
-    // =========================================
-
-    public static class College {
-
-        private String name;
-        private String district;
-        private String university;
-        private String branch;
-
-        private int intake;
-
-        public College(
-                String name,
-                String district,
-                String university,
-                String branch,
-                int intake
-        ) {
-
-            this.name =
-                    name;
-
-            this.district =
-                    district;
-
-            this.university =
-                    university;
-
-            this.branch =
-                    branch;
-
-            this.intake =
-                    intake;
-        }
-
-        public String getName() {
-
-            return name;
-        }
-
-        public String getDistrict() {
-
-            return district;
-        }
-
-        public String getUniversity() {
-
-            return university;
-        }
-
-        public String getBranch() {
-
-            return branch;
-        }
-
-        public int getIntake() {
-
-            return intake;
-        }
-
-        public void setName(
-                String name
-        ) {
-
-            this.name =
-                    name;
-        }
-
-        public void setDistrict(
-                String district
-        ) {
-
-            this.district =
-                    district;
-        }
-
-        public void setUniversity(
-                String university
-        ) {
-
-            this.university =
-                    university;
-        }
-
-        public void setBranch(
-                String branch
-        ) {
-
-            this.branch =
-                    branch;
-        }
-
-        public void setIntake(
-                int intake
-        ) {
-
-            this.intake =
-                    intake;
-        }
     }
 }

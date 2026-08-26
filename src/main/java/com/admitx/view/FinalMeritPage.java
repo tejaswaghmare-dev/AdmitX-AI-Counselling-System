@@ -1,6 +1,6 @@
 package com.admitx.view;
 
-import com.admitx.model.ApplicationData;
+import com.admitx.model.Student;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -25,8 +25,8 @@ public class FinalMeritPage {
 
     public static Scene getScene() {
 
-        ApplicationData data =
-                ApplicationData.getInstance();
+        Student data =
+                Student.getInstance();
 
         Label title =
                 new Label("Final Merit List");

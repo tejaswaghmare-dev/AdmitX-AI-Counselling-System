@@ -1,12 +1,14 @@
 package com.admitx.view;
 
-import com.admitx.model.ApplicationData;
+
+import com.admitx.controller.StudentInfoAddController;
+
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
+
 
 public class PersonalDetailsPage {
 
@@ -19,7 +21,7 @@ public class PersonalDetailsPage {
 
     public static Scene getScene() {
 
-        ApplicationData data = ApplicationData.getInstance();
+        StudentInfoAddController controller = new StudentInfoAddController();
 
         Label title = new Label("Personal Details");
 
@@ -193,25 +195,74 @@ public class PersonalDetailsPage {
 
         nextButton.setOnAction(e -> {
 
-            data.setCandidateName(candidateName.getText());
-            data.setFatherName(fatherName.getText());
-            data.setMotherName(motherName.getText());
-            data.setGender(gender.getValue());
+            String name = candidateName.getText();
+            System.out.println(name);
 
+            String fname = fatherName.getText();
+            System.out.println(fname);
+
+            String mname  = motherName.getText();
+            System.out.println(mname);
+            String gende = gender.getValue();
+            System.out.println(gende);
+
+            String dbirth = " ";
             if (dob.getValue() != null) {
-                data.setDob(dob.getValue().toString());
+                dbirth = dob.getValue().toString();
             }
+            System.out.println(dbirth);
 
-            data.setNationality(nationality.getValue());
-            data.setAadhaar(aadhaar.getText());
-            data.setCategory(category.getValue());
-            data.setReligion(religion.getText());
-            data.setCaste(caste.getText());
-            data.setMinority(minority.getValue());
-            data.setPwd(pwd.getValue());
-            data.setDefence(defence.getValue());
-            data.setTfws(tfws.getValue());
-            data.setEws(ews.getValue());
+
+            String nation = nationality.getValue();
+            System.out.println(nation);
+
+            String adhar  = aadhaar.getText();
+            System.out.println(adhar);
+            
+            String cate = category.getValue();
+            System.out.println(cate);
+
+            String reli = religion.getText();
+            System.out.println(reli);
+
+            String cast = caste.getText();
+            System.out.println(cast);
+
+            String minor = minority.getValue();
+            System.out.println(minor);
+
+            String pwdd = pwd.getValue();
+            System.out.println(pwdd);
+
+            String defen = defence.getValue();
+            System.out.println(defen);
+
+            String tf = tfws.getValue();
+            System.out.println(tf);
+            
+            String ew = ews.getValue();
+            System.out.println(ew);
+
+            controller.addStudentInfo(
+                name,
+                fname,
+                mname,
+                gende,
+                dbirth,
+                nation,
+                adhar,
+                cate,
+                reli,
+                cast,
+                minor,
+                pwdd,
+                defen,
+                tf,
+                ew
+            );
+
+            
+
 
             Navigation.goTo(
                     AddressDetailsPage.getScene()

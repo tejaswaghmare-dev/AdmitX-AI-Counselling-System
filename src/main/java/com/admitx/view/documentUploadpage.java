@@ -1,6 +1,6 @@
 package com.admitx.view;
 
-import com.admitx.model.ApplicationData;
+import com.admitx.model.Student;
 import com.admitx.controller.ImageUploadController;
 import javafx.concurrent.Task;
 import javafx.geometry.Insets;
@@ -16,8 +16,8 @@ import java.util.Map;
 
 public class DocumentUploadPage {
 
-    private static final ApplicationData data =
-            ApplicationData.getInstance();
+    private static final Student data =
+            Student.getInstance();
 
     private static final String BG = "#0B100B";
     private static final String CARD = "#141B14";

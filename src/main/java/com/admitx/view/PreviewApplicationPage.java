@@ -1,6 +1,6 @@
 package com.admitx.view;
 
-import com.admitx.model.ApplicationData;
+import com.admitx.model.Student;
 import com.admitx.view.Navigation;
 import com.admitx.view.StudentLayout;
 
@@ -28,8 +28,8 @@ public class PreviewApplicationPage {
 
     public static Scene getScene() {
 
-        ApplicationData data =
-                ApplicationData.getInstance();
+        Student data =
+                Student.getInstance();
 
         Label title =
                 new Label("Preview Application");

@@ -27,6 +27,10 @@
 >>>>>>> 91154f1fa6f16b6d529fc18926d1676512f489e4
 =======
 >>>>>>> b8957e7d5d65843c16e4a1d47d3864f4b9178d1b
+
+        "env": {
+    "OPENAI_API_KEY": "${env:OPENAI_API_KEY}"
+}
         {
             "type": "java",
             "name": "StudentSignup",

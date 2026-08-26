@@ -4,6 +4,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
@@ -101,14 +102,29 @@ public class Sidebar {
                         activePage
                 );
 
-        Button cap =
+        Button cap1 =
                 createButton(
                         "◉",
-                        "CAP Rounds",
+                        "CAP Round 1",
                         "CAP Round 1",
                         activePage
                 );
-
+        Button cap2 =
+                createButton(
+                        "◉",
+                        "CAP Round 2",
+                        "CAP Round 2",
+                        activePage
+                );        
+        
+        Button cap3 =
+                createButton(
+                        "◉",
+                        "CAP Round 3",
+                        "CAP Round 3",
+                        activePage
+                );
+                
         Button admission =
                 createButton(
                         "✓",
@@ -179,12 +195,24 @@ public class Sidebar {
                 )
         );
 
-        cap.setOnAction(e ->
+        cap1.setOnAction(e ->
                 Navigation.goTo(
                         CAPRound1Page.getScene()
                 )
         );
 
+        cap2.setOnAction(e ->
+                Navigation.goTo(
+                        CAPRound2Page.getScene()
+                )
+        );
+
+        cap3.setOnAction(e ->
+                Navigation.goTo(
+                        CAPRound3Page.getScene()
+                )
+        );
+        
         admission.setOnAction(e ->
                 Navigation.goTo(
                         AdmissionConfirmationPage.getScene()
@@ -214,7 +242,7 @@ public class Sidebar {
                         WelcomePage.getScene()
                 )
         );
-
+        
         VBox menu =
                 new VBox(
                         5,
@@ -223,12 +251,13 @@ public class Sidebar {
                         merit,
                         college,
                         preference,
-                        cap,
+                        cap1,cap2,cap3,
                         admission,
                         notices,
                         profile,
                         help
                 );
+        
 
         menu.setFillWidth(true);
 
@@ -239,6 +268,8 @@ public class Sidebar {
                 spacer,
                 Priority.ALWAYS
         );
+
+        
 
         Label accountLabel =
                 new Label("ACCOUNT");

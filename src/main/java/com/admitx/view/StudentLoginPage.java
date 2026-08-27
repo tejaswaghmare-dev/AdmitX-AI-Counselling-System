@@ -1,5 +1,7 @@
 package com.admitx.view;
 
+import com.admitx.controller.StudentAuthController;
+
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -206,11 +208,22 @@ public class StudentLoginPage {
                 )
         );
 
-        loginButton.setOnAction(e ->
-                Navigation.goTo(
-                        StudentDashboardPage.getScene()
-                )
-        );
+        loginButton.setOnAction(e ->{
+
+                StudentAuthController controller = new StudentAuthController();
+
+                boolean flag = controller.signIn(applicationId.getText(),password.getText());
+
+                if(flag){
+                        System.out.println("sign in is done successfully");
+                        Navigation.goTo(
+                        StudentDashboardPage.getScene());            
+                }else{
+                        System.out.println("sign in failed");
+                       
+                }
+
+        });
 
         // -------------------------------------------------
         // CREATE ACCOUNT

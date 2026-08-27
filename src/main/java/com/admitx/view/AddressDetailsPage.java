@@ -1,5 +1,6 @@
 package com.admitx.view;
 
+import com.admitx.controller.StudentInfoAddController;
 import com.admitx.model.Student;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -131,7 +132,7 @@ public class AddressDetailsPage {
 
 
                 String state = permanentState.getText();
-                 System.out.println(state);
+                System.out.println(state);
                 
                 String district = permanentDistrict.getText();
                  System.out.println(district);
@@ -174,6 +175,36 @@ public class AddressDetailsPage {
              * corresponding fields are available
              * in ApplicationData.
              */
+
+                String paddress = permanentAddress.getText();
+                String state = permanentState.getText();
+                String pdistrict = permanentDistrict.getText();
+                String ptaluka = permanentTaluka.getText();
+                String ppincode = permanentPincode.getText();
+                String caddress = correspondenceAddress.getText();
+                String cstate = correspondenceState.getText();
+                String cdistrict = correspondenceDistrict.getText();
+                String ctaluka = correspondenceTaluka.getText();
+                String cpincode = correspondencePincode.getText();
+                 
+
+                
+
+                StudentInfoAddController controller = new StudentInfoAddController();
+                controller.addStudentAddress(
+                        paddress,
+                        state,
+                        pdistrict,
+                        ppincode,
+                        ptaluka,
+                        caddress,
+                        cdistrict,
+                        cpincode,
+                        cstate,
+                        ctaluka
+                ); 
+
+            
 
             Navigation.goTo(
                     AcademicDetailsPage.getScene()

@@ -54,6 +54,37 @@ public class StudentInfoAddController {
 
     }
 
+    public void addStudentAddress(
+        String paddress,
+        String pstate,
+        String ppincode,
+        String pdistrict,
+        String ptaluka,
+        String caddress,
+        String cstate,
+        String cpincode,
+        String cdistrict,
+        String ctaluka
+    ){
+        Student student = new Student(
+                        paddress,
+                        pstate,
+                        pdistrict,
+                        ppincode,
+                        ptaluka,
+                        caddress,
+                        cdistrict,
+                        cpincode,
+                        cstate,
+                        ctaluka
+        );
+
+        studentInfoDAO.saveStudentAddress(student);
+
+        
+
+    }
+
     
 }
 

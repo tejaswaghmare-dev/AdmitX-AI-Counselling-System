@@ -8,6 +8,35 @@ public class Student {
 
     private static final Student instance = new Student();
 
+    private String username;
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setMobileno(String mobileno) {
+        this.mobileno = mobileno;
+    }
+
+    private String email;
+    private String mobileno;
+
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getMobileno() {
+        return mobileno;
+    }
+
     private String candidateName;
     private String fatherName;
     private String motherName;
@@ -89,6 +118,15 @@ public class Student {
         this.defence = defence;
         this.tfws = tfws;
         this.ews = ews;
+
+    }
+
+    public Student(String name,String email,String mobileno){
+        
+        this.username = name;
+        this.email = email;
+        this.mobileno = mobileno;
+        
 
     }
 

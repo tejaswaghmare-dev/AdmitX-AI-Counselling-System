@@ -1,5 +1,7 @@
 package com.admitx.view;
 
+import com.admitx.controller.StudentInfoAddController;
+
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -14,6 +16,8 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 
 public class StudentRegistrationPage {
+
+    public static String studentemail;
 
     private static final String BLACK = "#050705";
     private static final String DARK = "#0C110B";
@@ -314,8 +318,18 @@ public class StudentRegistrationPage {
             );
 
             String std_name = name.getText();
-            String emaill = email.getText();
+            studentemail = email.getText();
             String mno = mobile.getText();
+
+            System.out.println(std_name);
+            System.out.println(studentemail);
+            System.out.println(mno);
+
+            StudentInfoAddController controller = new StudentInfoAddController();
+
+            controller.registrationDetails(std_name,studentemail,mno);
+
+            
 
             Navigation.goTo(
                     StudentLoginPage.getScene()

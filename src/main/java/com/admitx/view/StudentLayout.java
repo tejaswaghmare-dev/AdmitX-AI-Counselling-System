@@ -38,19 +38,19 @@ public class StudentLayout {
 
         contentArea.getChildren().add(content);
 
-        Node chatbot = StudentChatbot.create();
+        // Node chatbot = StudentChatbot.create();
 
-        contentArea.getChildren().add(chatbot);
+        // contentArea.getChildren().add(chatbot);
 
-        StackPane.setAlignment(
-                chatbot,
-                Pos.BOTTOM_RIGHT
-        );
+        // StackPane.setAlignment(
+        //         chatbot,
+        //         Pos.TOP_CENTER
+        // );
 
-        StackPane.setMargin(
-                chatbot,
-                new Insets(0, 20, 20, 0)
-        );
+        // StackPane.setMargin(
+        //         chatbot,
+        //         new Insets(0, 20, 100, 0)
+        // );
 
         layout.setCenter(contentArea);
 

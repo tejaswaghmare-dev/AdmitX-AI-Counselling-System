@@ -282,32 +282,39 @@ public class PersonalDetailsPage {
 
         buttons.setAlignment(Pos.CENTER_LEFT);
 
+        // Keep only the page content inside the ScrollPane.
         VBox content = new VBox(
                 22,
                 heading,
                 progressCard,
-                formCard,
-                buttons
+                formCard
         );
 
         content.setPadding(new Insets(5));
         content.setFillWidth(true);
 
         ScrollPane scrollPane = new ScrollPane(content);
-
         scrollPane.setFitToWidth(true);
-        scrollPane.setHbarPolicy(
-                ScrollPane.ScrollBarPolicy.NEVER
-        );
+        scrollPane.setFitToHeight(false);
+        scrollPane.setPannable(true);
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
         scrollPane.setStyle(
                 "-fx-background: " + BG + ";" +
                 "-fx-background-color: " + BG + ";"
         );
 
+        // Keep the buttons fixed and visible at the bottom.
+        buttons.setPadding(new Insets(12, 5, 5, 5));
+        buttons.setMaxWidth(Double.MAX_VALUE);
+        buttons.setStyle(
+                "-fx-background-color: " + BG + ";"
+        );
+
         BorderPane page = new BorderPane();
 
         page.setCenter(scrollPane);
+        page.setBottom(buttons);
 
         page.setStyle(
                 "-fx-background-color: " + BG + ";"

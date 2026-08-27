@@ -55,6 +55,10 @@ public class Student {
 
     private String permanentAddress;
     private String correspondenceAddress;
+    private String correspondenceState;
+    private String correspondenceDistrict;
+    private String correspondenceTaluka;
+    private String correspondencePincode;
     private String state;
     private String district;
     private String taluka;
@@ -126,7 +130,30 @@ public class Student {
         this.username = name;
         this.email = email;
         this.mobileno = mobileno;
-        
+    }
+
+    public Student(
+        String paddress,
+        String pstate,
+        String ppincode,
+        String pdistrict,
+        String ptaluka,
+        String caddress,
+        String cstate,
+        String cpincode,
+        String cdistrict,
+        String ctaluka
+    ){
+        this.permanentAddress = paddress;
+        this.state = pstate;
+        this.pinCode = ppincode;
+        this.district = pdistrict;
+        this.taluka = ptaluka;
+        this.correspondenceAddress = caddress;
+        this.correspondenceDistrict = cdistrict;
+        this.correspondencePincode = cpincode;
+        this.correspondenceState = state;
+        this.correspondenceTaluka = ctaluka;
 
     }
 

@@ -1,5 +1,6 @@
 package com.admitx.view;
 
+import com.admitx.controller.StudentAuthController;
 import com.admitx.controller.StudentInfoAddController;
 
 import javafx.geometry.Insets;
@@ -278,13 +279,15 @@ public class StudentRegistrationPage {
 
         registerButton.setOnAction(e -> {
 
-            if (
-                    name.getText().isBlank() ||
-                    email.getText().isBlank() ||
-                    mobile.getText().isBlank() ||
-                    password.getText().isBlank() ||
-                    confirmPassword.getText().isBlank()
-            ) {
+        // ---------------------------------------------
+        // VALIDATION
+        // ---------------------------------------------
+
+        if (name.getText().isBlank()
+                || email.getText().isBlank()
+                || mobile.getText().isBlank()
+                || password.getText().isBlank()
+                || confirmPassword.getText().isBlank()) {
 
                 showMessage(
                         Alert.AlertType.WARNING,
@@ -293,14 +296,9 @@ public class StudentRegistrationPage {
                 );
 
                 return;
-            }
+        }
 
-            if (
-                    !password.getText()
-                            .equals(
-                                    confirmPassword.getText()
-                            )
-            ) {
+        if (!password.getText().equals(confirmPassword.getText())) {
 
                 showMessage(
                         Alert.AlertType.WARNING,
@@ -309,31 +307,86 @@ public class StudentRegistrationPage {
                 );
 
                 return;
-            }
+        }
 
-            showMessage(
-                    Alert.AlertType.INFORMATION,
-                    "Registration Successful",
-                    "Student account created successfully."
-            );
 
-            String std_name = name.getText();
-            studentemail = email.getText();
-            String mno = mobile.getText();
+        // ---------------------------------------------
+        // GET DATA
+        // ---------------------------------------------
 
-            System.out.println(std_name);
-            System.out.println(studentemail);
-            System.out.println(mno);
+        String std_name = name.getText().trim();
+        studentemail = email.getText().trim();
+        String mno = mobile.getText().trim();
+        String pass = password.getText();
 
-            StudentInfoAddController controller = new StudentInfoAddController();
 
-            controller.registrationDetails(std_name,studentemail,mno);
+        // ---------------------------------------------
+        // FIREBASE AUTHENTICATION SIGN UP
+        // ---------------------------------------------
 
-            
+        StudentAuthController authController =
+                new StudentAuthController();
 
-            Navigation.goTo(
-                    StudentLoginPage.getScene()
-            );
+        boolean flag = authController.signUp(
+                studentemail,
+                pass
+        );
+
+
+        // ---------------------------------------------
+        // SIGN UP FAILED
+        // ---------------------------------------------
+
+        if (!flag) {
+
+                showMessage(
+                        Alert.AlertType.ERROR,
+                        "Registration Failed",
+                        "Unable to create account.\n"
+                        + "The email may already be registered."
+                );
+
+                return;
+        }
+
+
+        // ---------------------------------------------
+        // SAVE STUDENT REGISTRATION INFO
+        // ---------------------------------------------
+
+        StudentInfoAddController controller =
+                new StudentInfoAddController();
+
+        controller.registrationDetails(
+                std_name,
+                studentemail,
+                mno
+        );
+
+
+        // ---------------------------------------------
+        // SUCCESS
+        // ---------------------------------------------
+
+        showMessage(
+                Alert.AlertType.INFORMATION,
+                "Registration Successful",
+                "Student account created successfully."
+        );
+
+        System.out.println("Sign up is done successfully.");
+        System.out.println(std_name);
+        System.out.println(studentemail);
+        System.out.println(mno);
+
+
+        // ---------------------------------------------
+        // GO TO LOGIN
+        // ---------------------------------------------
+
+        Navigation.goTo(
+                StudentLoginPage.getScene()
+        );
         });
 
         // -------------------------------------------------
@@ -442,14 +495,18 @@ public class StudentRegistrationPage {
         // SCROLL PANE
         // -------------------------------------------------
 
-        ScrollPane scrollPane =
-                new ScrollPane(card);
+        ScrollPane scrollPane = new ScrollPane(card);
 
         scrollPane.setFitToWidth(true);
-
-        scrollPane.setFitToHeight(true);
+        scrollPane.setFitToHeight(false);
 
         scrollPane.setPannable(true);
+
+        // Always allow vertical scrolling when content is taller
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+
+        // Disable horizontal scrolling
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
         scrollPane.setStyle(
                 "-fx-background: transparent;" +

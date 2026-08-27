@@ -6,6 +6,8 @@ import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -20,10 +22,8 @@ public class CounsellorLoginPage {
 
     private static final String BLACK = "#050705";
     private static final String DARK = "#0C110B";
-
     private static final String LIME = "#B7FF00";
     private static final String LIME_DARK = "#8CC900";
-
     private static final String WHITE = "#F8FAF5";
     private static final String GREY = "#9BA69A";
     private static final String BORDER = "#283326";
@@ -34,12 +34,46 @@ public class CounsellorLoginPage {
         StackPane root =
                 new StackPane();
 
-        root.setStyle(
-                "-fx-background-color:" +
-                "linear-gradient(to bottom right," +
-                BLACK + "," +
-                DARK + ",#172016);"
+        // -------------------------------------------------
+        // BACKGROUND IMAGE
+        // -------------------------------------------------
+
+        Image backgroundImage = new Image(
+                CounsellorLoginPage.class
+                        .getResource(
+                                "/assets/images/counsellor.png"
+                        )
+                        .toExternalForm()
         );
+
+        ImageView backgroundView =
+                new ImageView(backgroundImage);
+
+        backgroundView.setPreserveRatio(false);
+
+        backgroundView.fitWidthProperty()
+                .bind(root.widthProperty());
+
+        backgroundView.fitHeightProperty()
+                .bind(root.heightProperty());
+
+        // Dark overlay so the card remains clearly visible
+        Region backgroundOverlay =
+                new Region();
+
+        backgroundOverlay.setStyle(
+                "-fx-background-color: rgba(5,7,5,0.55);"
+        );
+
+        backgroundOverlay.prefWidthProperty()
+                .bind(root.widthProperty());
+
+        backgroundOverlay.prefHeightProperty()
+                .bind(root.heightProperty());
+
+        // -------------------------------------------------
+        // LOGIN CARD
+        // -------------------------------------------------
 
         VBox card =
                 new VBox(16);
@@ -77,6 +111,10 @@ public class CounsellorLoginPage {
                         )
                 )
         );
+
+        // -------------------------------------------------
+        // HEADER
+        // -------------------------------------------------
 
         Label portal =
                 new Label(
@@ -128,12 +166,20 @@ public class CounsellorLoginPage {
                 Color.web(GREY)
         );
 
+        // -------------------------------------------------
+        // USERNAME
+        // -------------------------------------------------
+
         TextField username =
                 new TextField();
 
         username.setPromptText(
                 "Enter Counsellor ID / Email"
         );
+
+        // -------------------------------------------------
+        // PASSWORD
+        // -------------------------------------------------
 
         PasswordField password =
                 new PasswordField();
@@ -162,6 +208,10 @@ public class CounsellorLoginPage {
                         password
                 );
 
+        // -------------------------------------------------
+        // ERROR
+        // -------------------------------------------------
+
         Label error =
                 new Label();
 
@@ -174,6 +224,10 @@ public class CounsellorLoginPage {
                 "-fx-font-size:11px;" +
                 "-fx-font-weight:bold;"
         );
+
+        // -------------------------------------------------
+        // LOGIN BUTTON
+        // -------------------------------------------------
 
         Button login =
                 new Button(
@@ -264,6 +318,10 @@ public class CounsellorLoginPage {
             }
         });
 
+        // -------------------------------------------------
+        // BACK
+        // -------------------------------------------------
+
         Button back =
                 new Button(
                         "← BACK TO WELCOME"
@@ -300,6 +358,10 @@ public class CounsellorLoginPage {
                 )
         );
 
+        // -------------------------------------------------
+        // DEMO
+        // -------------------------------------------------
+
         Label demo =
                 new Label(
                         "Demo Counsellor Access"
@@ -317,30 +379,44 @@ public class CounsellorLoginPage {
                 )
         );
 
+        // -------------------------------------------------
+        // CARD CONTENT
+        // -------------------------------------------------
+
         card.getChildren().addAll(
                 portal,
                 title,
                 subtitle,
-
                 createSpacing(8),
-
                 usernameBox,
                 passwordBox,
                 error,
-
                 createSpacing(3),
-
                 login,
                 back,
-
                 createSpacing(3),
-
                 demo
         );
 
-        root.getChildren().add(
+        // -------------------------------------------------
+        // ROOT LAYERS
+        //
+        // Background Image
+        //       ↓
+        // Dark Overlay
+        //       ↓
+        // Login Card
+        // -------------------------------------------------
+
+        root.getChildren().addAll(
+                backgroundView,
+                backgroundOverlay,
                 card
         );
+
+        // -------------------------------------------------
+        // RETURN SCENE
+        // -------------------------------------------------
 
         return new Scene(
                 root,
@@ -348,6 +424,10 @@ public class CounsellorLoginPage {
                 650
         );
     }
+
+    // -------------------------------------------------
+    // FIELD BOX
+    // -------------------------------------------------
 
     private static VBox createFieldBox(
             String labelText,
@@ -381,6 +461,10 @@ public class CounsellorLoginPage {
         return box;
     }
 
+    // -------------------------------------------------
+    // FIELD STYLE
+    // -------------------------------------------------
+
     private static void styleField(
             TextInputControl field
     ) {
@@ -407,6 +491,10 @@ public class CounsellorLoginPage {
         );
     }
 
+    // -------------------------------------------------
+    // PRIMARY BUTTON
+    // -------------------------------------------------
+
     private static void stylePrimaryButton(
             Button button
     ) {
@@ -432,6 +520,10 @@ public class CounsellorLoginPage {
                 "-fx-font-size:13px;"
         );
     }
+
+    // -------------------------------------------------
+    // SECONDARY BUTTON
+    // -------------------------------------------------
 
     private static void styleSecondaryButton(
             Button button
@@ -461,6 +553,10 @@ public class CounsellorLoginPage {
                 "-fx-font-weight:bold;"
         );
     }
+
+    // -------------------------------------------------
+    // SPACING
+    // -------------------------------------------------
 
     private static Region createSpacing(
             double height

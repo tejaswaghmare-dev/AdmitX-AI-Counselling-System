@@ -1,6 +1,6 @@
 package com.admitx.view;
 
-import com.admitx.model.ApplicationData;
+import com.admitx.model.Student;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -18,7 +18,7 @@ public class AcademicDetailsPage {
 
     public static Scene getScene() {
 
-        ApplicationData data = ApplicationData.getInstance();
+        Student data = Student.getInstance();
 
         Label title = new Label("Academic Details");
 
@@ -238,33 +238,26 @@ public class AcademicDetailsPage {
 
         nextButton.setOnAction(e -> {
 
-            data.setSscDetails(
-                    sscDetails.getText()
-            );
+            String ssc = sscDetails.getText();
+             System.out.println(ssc);
 
-            data.setHscDetails(
-                    hscDetails.getText()
-            );
+            String hsc = hscDetails.getText();
+             System.out.println(hsc);
 
-            data.setDiplomaDetails(
-                    diplomaDetails.getText()
-            );
+            String diplo = diplomaDetails.getText();
+             System.out.println(diplo);
 
-            data.setPcmMarks(
-                    pcmMarks.getText()
-            );
+            String pcmm = pcmMarks.getText();
+             System.out.println(pcmm);
 
-            data.setCetPercentile(
-                    cetPercentile.getText()
-            );
+            String cerp = cetPercentile.getText();
+             System.out.println(cerp);
 
-            data.setJeePercentile(
-                    jeePercentile.getText()
-            );
+            String jeep = jeePercentile.getText();
+             System.out.println(jeep);
 
-            data.setYearOfPassing(
-                    yearOfPassing.getText()
-            );
+            String ypass = yearOfPassing.getText();
+             System.out.println(ypass);
 
             Navigation.goTo(
                     HomeUniversityPage.getScene()

@@ -1,6 +1,6 @@
 package com.admitx.view;
 
-import com.admitx.view.Navigation;
+
 
 import javafx.animation.FadeTransition;
 import javafx.geometry.Insets;
@@ -27,12 +27,11 @@ public class WelcomePage {
 
     private static final String BLACK = "#050705";
     private static final String DARK = "#0C110B";
-    private static final String PANEL = "#121812";
-    private static final String CARD = "#171E16";
+    
 
     private static final String LIME = "#B7FF00";
     private static final String LIME_DARK = "#8CC900";
-    private static final String LIME_SOFT = "#263800";
+   
 
     private static final String WHITE = "#F8FAF5";
     private static final String TEXT = "#DDE5D7";
@@ -335,7 +334,7 @@ public class WelcomePage {
         );
 
         guideButton.setOnAction(
-                e -> showGuide()
+                e -> Navigation.goTo(UserGuidePage.getScene())
         );
 
         topBar.getChildren().addAll(

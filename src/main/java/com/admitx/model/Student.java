@@ -4,10 +4,9 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ApplicationData {
+public class Student {
 
-    private static final ApplicationData instance =
-            new ApplicationData();
+    private static final Student instance = new Student();
 
     private String candidateName;
     private String fatherName;
@@ -50,16 +49,50 @@ public class ApplicationData {
     private String income;
     private String orphan;
 
-    private final Map<String, String> uploadedDocumentUrls =
-        new HashMap<>();
+    private final Map<String, String> uploadedDocumentUrls = new HashMap<>();
 
-    private final Map<String, File> uploadedDocuments =
-            new HashMap<>();
+    private final Map<String, File> uploadedDocuments = new HashMap<>();
 
-    private ApplicationData() {
+    public Student() {
     }
 
-    public static ApplicationData getInstance() {
+    public Student(
+        String candidateName,
+        String fatherName,
+        String motherName,
+        String gender,
+        String dob,
+        String  nationality,
+        String aadhaar,
+        String category ,
+        String religion,
+        String  caste,
+        String minority,
+        String pwd,
+        String defence,
+        String tfws,
+        String ews
+
+    ){
+        this.candidateName = candidateName;
+        this.fatherName = fatherName;
+        this.motherName = motherName;
+        this.gender = gender;
+        this.dob = dob;
+        this.nationality = nationality;
+        this.aadhaar = aadhaar;
+        this.category = category;
+        this.religion = religion;
+        this.caste = caste;
+        this.minority = minority;
+        this.pwd = pwd;
+        this.defence = defence;
+        this.tfws = tfws;
+        this.ews = ews;
+
+    }
+
+    public static Student getInstance() {
         return instance;
     }
 
@@ -354,6 +387,7 @@ public class ApplicationData {
     public Map<String, File> getUploadedDocuments() {
         return uploadedDocuments;
     }
+
     public Map<String, String> getUploadedDocumentUrls() {
         return uploadedDocumentUrls;
     }

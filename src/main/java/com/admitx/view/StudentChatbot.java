@@ -99,7 +99,6 @@ public class StudentChatbot {
                         );
 
                 fade.setFromValue(0);
-
                 fade.setToValue(1);
 
                 fade.play();
@@ -164,7 +163,6 @@ public class StudentChatbot {
                 );
 
         face.setArcWidth(15);
-
         face.setArcHeight(15);
 
         face.setFill(
@@ -795,7 +793,6 @@ public class StudentChatbot {
         );
 
         blinkLeft.play();
-
         blinkRight.play();
     }
 }

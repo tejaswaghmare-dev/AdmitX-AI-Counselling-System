@@ -44,8 +44,13 @@ public class StudentInfoAddController {
 
         studentInfoDAO.saveStudentInfo(student);
 
+    }
 
+    public void registrationDetails(String name, String email,String mobileno){
 
+        Student regStudent = new Student(name,email,mobileno);
+
+        studentInfoDAO.registrationDetails(regStudent);
 
     }
 

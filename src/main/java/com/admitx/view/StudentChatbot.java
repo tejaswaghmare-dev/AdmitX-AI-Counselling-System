@@ -1,10 +1,11 @@
 package com.admitx.view;
+
 import com.admitx.service.OpenAIService;
-import javafx.concurrent.Task;
+
 import javafx.animation.Animation;
 import javafx.animation.FadeTransition;
-import javafx.animation.PauseTransition;
 import javafx.animation.TranslateTransition;
+import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -29,19 +30,37 @@ public class StudentChatbot {
     private static VBox messagesBox;
     private static ScrollPane scrollPane;
 
+    // Drag variables
+    private static double dragStartX;
+    private static double dragStartY;
+
+    private static double startTranslateX;
+    private static double startTranslateY;
+
+    private static boolean dragged = false;
+
+    // =========================================================
+    // CREATE CHATBOT
+    // =========================================================
+
     public static Node create() {
 
         StackPane root = new StackPane();
+
         root.setPickOnBounds(false);
 
         VBox chatBox = createChatBox();
+
         StackPane robot = createRobot();
 
         chatBox.setVisible(false);
         chatBox.setManaged(false);
 
         VBox container = new VBox(10);
-        container.setAlignment(Pos.BOTTOM_RIGHT);
+
+        container.setAlignment(
+                Pos.BOTTOM_RIGHT
+        );
 
         container.getChildren().addAll(
                 chatBox,
@@ -50,11 +69,25 @@ public class StudentChatbot {
 
         root.getChildren().add(container);
 
-        robot.setOnMouseClicked(e -> {
+        // =====================================================
+        // CLICK ROBOT -> OPEN / CLOSE CHAT
+        // =====================================================
 
-            boolean show = !chatBox.isVisible();
+        robot.setOnMouseClicked(event -> {
+
+            // Prevent chat opening after dragging
+            if (dragged) {
+
+                dragged = false;
+
+                return;
+            }
+
+            boolean show =
+                    !chatBox.isVisible();
 
             chatBox.setVisible(show);
+
             chatBox.setManaged(show);
 
             if (show) {
@@ -72,16 +105,43 @@ public class StudentChatbot {
             }
         });
 
-        startFloatingAnimation(robot);
+        // Make robot draggable
+        makeDraggable(
+                root,
+                robot
+        );
+
+        // Floating animation
+        startFloatingAnimation(
+                robot
+        );
 
         return root;
     }
 
+    // =========================================================
+    // ROBOT
+    // =========================================================
+
     private static StackPane createRobot() {
 
-        StackPane robot = new StackPane();
+        StackPane robot =
+                new StackPane();
 
-        robot.setPrefSize(85, 85);
+        robot.setPrefSize(
+                85,
+                85
+        );
+
+        robot.setMinSize(
+                85,
+                85
+        );
+
+        robot.setMaxSize(
+                85,
+                85
+        );
 
         Circle background =
                 new Circle(40);
@@ -153,6 +213,10 @@ public class StudentChatbot {
         return robot;
     }
 
+    // =========================================================
+    // CHAT BOX
+    // =========================================================
+
     private static VBox createChatBox() {
 
         VBox chatBox =
@@ -163,9 +227,11 @@ public class StudentChatbot {
         );
 
         chatBox.setPrefWidth(330);
+
         chatBox.setPrefHeight(430);
 
         chatBox.setMaxWidth(330);
+
         chatBox.setMaxHeight(430);
 
         chatBox.setStyle(
@@ -176,8 +242,12 @@ public class StudentChatbot {
                 "-fx-border-width: 1;"
         );
 
+        // =====================================================
+        // HEADER
+        // =====================================================
+
         HBox header =
-                new HBox();
+                new HBox(5);
 
         header.setAlignment(
                 Pos.CENTER_LEFT
@@ -196,7 +266,7 @@ public class StudentChatbot {
 
         Label status =
                 new Label(
-                        "  ● Online"
+                        "● Online"
                 );
 
         status.setStyle(
@@ -209,6 +279,10 @@ public class StudentChatbot {
                 status
         );
 
+        // =====================================================
+        // MESSAGE AREA
+        // =====================================================
+
         messagesBox =
                 new VBox(10);
 
@@ -217,7 +291,9 @@ public class StudentChatbot {
         );
 
         scrollPane =
-                new ScrollPane(messagesBox);
+                new ScrollPane(
+                        messagesBox
+                );
 
         scrollPane.setFitToWidth(true);
 
@@ -239,9 +315,16 @@ public class StudentChatbot {
                 Priority.ALWAYS
         );
 
+        // Welcome message
+
         addBotMessage(
-                "Hi! 👋 I'm your AdmitX Assistant.\nHow can I help you today?"
+                "Hi! 👋 I'm your AdmitX Assistant.\n" +
+                "How can I help you today?"
         );
+
+        // =====================================================
+        // INPUT
+        // =====================================================
 
         TextField input =
                 new TextField();
@@ -288,11 +371,15 @@ public class StudentChatbot {
                 send
         );
 
-        send.setOnAction(e ->
+        // Send button
+
+        send.setOnAction(event ->
                 sendMessage(input)
         );
 
-        input.setOnAction(e ->
+        // Press ENTER
+
+        input.setOnAction(event ->
                 sendMessage(input)
         );
 
@@ -305,60 +392,103 @@ public class StudentChatbot {
         return chatBox;
     }
 
+    // =========================================================
+    // SEND MESSAGE TO AI
+    // =========================================================
+
     private static void sendMessage(
-        TextField input
-) {
+            TextField input
+    ) {
 
-    String text =
-            input.getText().trim();
+        String text =
+                input
+                        .getText()
+                        .trim();
 
-    if (text.isEmpty()) {
-        return;
+        if (text.isEmpty()) {
+            return;
+        }
+
+        // Show student message
+
+        addUserMessage(text);
+
+        input.clear();
+
+        // Show typing indicator
+
+        showTyping();
+
+        // =====================================================
+        // AI TASK
+        // =====================================================
+
+        Task<String> aiTask =
+                new Task<>() {
+
+                    @Override
+                    protected String call() {
+
+                        return OpenAIService.askAI(
+                                text
+                        );
+                    }
+                };
+
+        // =====================================================
+        // AI SUCCESS
+        // =====================================================
+
+        aiTask.setOnSucceeded(event -> {
+
+            removeTyping();
+
+            String response =
+                    aiTask.getValue();
+
+            if (response == null
+                    || response.isBlank()) {
+
+                response =
+                        "Sorry, I couldn't generate a response.";
+            }
+
+            addBotMessage(
+                    response
+            );
+        });
+
+        // =====================================================
+        // AI FAILED
+        // =====================================================
+
+        aiTask.setOnFailed(event -> {
+
+            removeTyping();
+
+            addBotMessage(
+                    "Sorry, I couldn't connect to the AI right now."
+            );
+
+            if (aiTask.getException() != null) {
+
+                aiTask
+                        .getException()
+                        .printStackTrace();
+            }
+        });
+
+        Thread thread =
+                new Thread(aiTask);
+
+        thread.setDaemon(true);
+
+        thread.start();
     }
 
-    addUserMessage(text);
-
-    input.clear();
-
-    showTyping();
-
-    Task<String> aiTask =
-            new Task<>() {
-
-                @Override
-                protected String call() {
-
-                    return OpenAIService.askAI(
-                            text
-                    );
-                }
-            };
-
-    aiTask.setOnSucceeded(e -> {
-
-        removeTyping();
-
-        addBotMessage(
-                aiTask.getValue()
-        );
-    });
-
-    aiTask.setOnFailed(e -> {
-
-        removeTyping();
-
-        addBotMessage(
-                "Sorry, I couldn't connect to the AI right now."
-        );
-    });
-
-    Thread thread =
-            new Thread(aiTask);
-
-    thread.setDaemon(true);
-
-    thread.start();
-}
+    // =========================================================
+    // USER MESSAGE
+    // =========================================================
 
     private static void addUserMessage(
             String message
@@ -372,7 +502,12 @@ public class StudentChatbot {
         bubble.setMaxWidth(220);
 
         bubble.setPadding(
-                new Insets(8, 12, 8, 12)
+                new Insets(
+                        8,
+                        12,
+                        8,
+                        12
+                )
         );
 
         bubble.setStyle(
@@ -389,10 +524,16 @@ public class StudentChatbot {
                 Pos.CENTER_RIGHT
         );
 
-        messagesBox.getChildren().add(row);
+        messagesBox
+                .getChildren()
+                .add(row);
 
         scrollToBottom();
     }
+
+    // =========================================================
+    // BOT MESSAGE
+    // =========================================================
 
     private static void addBotMessage(
             String message
@@ -406,7 +547,12 @@ public class StudentChatbot {
         bubble.setMaxWidth(220);
 
         bubble.setPadding(
-                new Insets(8, 12, 8, 12)
+                new Insets(
+                        8,
+                        12,
+                        8,
+                        12
+                )
         );
 
         bubble.setStyle(
@@ -423,21 +569,25 @@ public class StudentChatbot {
                 Pos.CENTER_LEFT
         );
 
-        messagesBox.getChildren().add(row);
+        messagesBox
+                .getChildren()
+                .add(row);
 
         scrollToBottom();
     }
 
+    // =========================================================
+    // TYPING INDICATOR
+    // =========================================================
+
     private static void showTyping() {
+
+        removeTyping();
 
         Label typing =
                 new Label(
                         "AdmitX is typing..."
                 );
-
-        typing.setId(
-                "typingLabel"
-        );
 
         typing.setStyle(
                 "-fx-text-fill: #A3A3A3;" +
@@ -456,113 +606,119 @@ public class StudentChatbot {
                 Pos.CENTER_LEFT
         );
 
-        messagesBox.getChildren().add(row);
+        messagesBox
+                .getChildren()
+                .add(row);
 
         scrollToBottom();
     }
 
+    // =========================================================
+    // REMOVE TYPING
+    // =========================================================
+
     private static void removeTyping() {
 
-        messagesBox.getChildren()
-                .removeIf(node ->
-                        "typingRow".equals(
-                                node.getId()
-                        )
+        if (messagesBox == null) {
+            return;
+        }
+
+        messagesBox
+                .getChildren()
+                .removeIf(
+                        node ->
+                                "typingRow"
+                                        .equals(
+                                                node.getId()
+                                        )
                 );
     }
 
-    private static String getBotResponse(
-            String message
-    ) {
-
-        String text =
-                message.toLowerCase();
-
-        if (text.contains("hello")
-                || text.contains("hi")
-                || text.contains("hey")) {
-
-            return "Hello! 👋 How can I help you with your admission process?";
-        }
-
-        if (text.contains("application")) {
-
-            return "Go to the Application section and complete Personal, Address, Academic, Eligibility and Reservation details.";
-        }
-
-        if (text.contains("document")
-                || text.contains("upload")) {
-
-            return "Open the Documents section and upload the required certificates and marksheets. Make sure every uploaded document is correct before submission.";
-        }
-
-        if (text.contains("merit")) {
-
-            return "You can check your Provisional and Final Merit status from the Merit List section.";
-        }
-
-        if (text.contains("grievance")) {
-
-            return "If you find any issue in your provisional merit details, open the Merit List section and select Raise Grievance.";
-        }
-
-        if (text.contains("college")) {
-
-            return "Use College Search to find institutes and view their available branches, fees and other information.";
-        }
-
-        if (text.contains("preference")
-                || text.contains("option form")) {
-
-            return "In Preference Filling, add colleges and branches in your preferred order. Higher preferences should contain the options you want most.";
-        }
-
-        if (text.contains("cap")
-                || text.contains("round")) {
-
-            return "CAP rounds are used for seat allotment. After allotment, you may receive options such as Freeze, Betterment or Reject depending on the round.";
-        }
-
-        if (text.contains("seat")
-                || text.contains("allotment")) {
-
-            return "Your allotted college and branch will appear in the CAP Round section once the allotment result is published.";
-        }
-
-        if (text.contains("freeze")) {
-
-            return "Freeze means you accept the allotted seat and do not want to participate in further betterment rounds.";
-        }
-
-        if (text.contains("betterment")) {
-
-            return "Betterment means you keep the current eligible seat while participating for a higher preference in the next CAP round.";
-        }
-
-        if (text.contains("status")) {
-
-            return "You can check your Application, Documents, Merit and CAP Round status from the Student Dashboard.";
-        }
-
-        if (text.contains("help")) {
-
-            return "You can ask me about application, documents, merit list, colleges, preference filling, grievances or CAP rounds.";
-        }
-
-        if (text.contains("thank")) {
-
-            return "You're welcome! 😊 I'm here whenever you need help.";
-        }
-
-        return "I can currently help with Application, Documents, Merit List, College Search, Preference Filling, Grievances and CAP Rounds.";
-    }
+    // =========================================================
+    // SCROLL DOWN
+    // =========================================================
 
     private static void scrollToBottom() {
 
-        javafx.application.Platform.runLater(() ->
-                scrollPane.setVvalue(1.0)
+        if (scrollPane == null) {
+            return;
+        }
+
+        javafx.application.Platform.runLater(
+                () ->
+                        scrollPane.setVvalue(
+                                1.0
+                        )
         );
     }
+
+    // =========================================================
+    // DRAG CHATBOT
+    // =========================================================
+
+    private static void makeDraggable(
+            StackPane root,
+            StackPane robot
+    ) {
+
+        // =====================================================
+        // MOUSE PRESSED
+        // =====================================================
+
+        robot.setOnMousePressed(event -> {
+
+            dragged = false;
+
+            dragStartX =
+                    event.getSceneX();
+
+            dragStartY =
+                    event.getSceneY();
+
+            startTranslateX =
+                    root.getTranslateX();
+
+            startTranslateY =
+                    root.getTranslateY();
+        });
+
+        // =====================================================
+        // MOUSE DRAGGED
+        // =====================================================
+
+        robot.setOnMouseDragged(event -> {
+
+            double deltaX =
+                    event.getSceneX()
+                            - dragStartX;
+
+            double deltaY =
+                    event.getSceneY()
+                            - dragStartY;
+
+            // Ignore tiny mouse movements
+
+            if (Math.abs(deltaX) > 3
+                    || Math.abs(deltaY) > 3) {
+
+                dragged = true;
+            }
+
+            root.setTranslateX(
+                    startTranslateX
+                            + deltaX
+            );
+
+            root.setTranslateY(
+                    startTranslateY
+                            + deltaY
+            );
+        });
+    }
+
+    // =========================================================
+    // FLOATING ANIMATION
+    // =========================================================
 
     private static void startFloatingAnimation(
             Node robot
@@ -575,7 +731,8 @@ public class StudentChatbot {
                 );
 
         floating.setFromY(0);
-        floating.setToY(-12);
+
+        floating.setToY(-10);
 
         floating.setCycleCount(
                 Animation.INDEFINITE
@@ -585,6 +742,10 @@ public class StudentChatbot {
 
         floating.play();
     }
+
+    // =========================================================
+    // BLINK EYES
+    // =========================================================
 
     private static void blinkEyes(
             Circle leftEye,
@@ -604,12 +765,15 @@ public class StudentChatbot {
                 );
 
         blinkLeft.setFromValue(1);
+
         blinkLeft.setToValue(0.15);
 
         blinkRight.setFromValue(1);
+
         blinkRight.setToValue(0.15);
 
         blinkLeft.setAutoReverse(true);
+
         blinkRight.setAutoReverse(true);
 
         blinkLeft.setCycleCount(

@@ -21,7 +21,8 @@ public class OpenAIService {
 
         try {
 
-            String apiKey = System.getenv("OPen api-key:");
+            String apiKey =
+                    System.getenv("OPENAI_API_KEY");
 
             if (apiKey == null || apiKey.isBlank()) {
                 return "OpenAI API key is not configured.";

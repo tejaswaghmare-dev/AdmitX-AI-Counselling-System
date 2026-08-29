@@ -1,5 +1,7 @@
 package com.admitx.view;
 
+import com.admitx.dao.CAPAllotmentDAO;
+
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -23,6 +25,9 @@ public class CAPRound1ManagementPage {
     private static final String MUTED = "#9AA59A";
 
     public static Scene getScene() {
+
+        CAPAllotmentDAO capDAO =
+                new CAPAllotmentDAO();
 
         Label title =
                 new Label("CAP Round 1 Management");
@@ -117,7 +122,7 @@ public class CAPRound1ManagementPage {
         Button run =
                 createPrimaryAction(
                         "Run Seat Allotment",
-                        "Process eligible students using merit rank and locked preferences."
+                        "Process students with locked preference forms."
                 );
 
         Button publish =
@@ -132,31 +137,119 @@ public class CAPRound1ManagementPage {
                         "Review seat distribution and Round 1 allotment details."
                 );
 
-        run.setOnAction(e ->
-                showMessage(
-                        "Seat Allotment",
-                        "CAP Round 1 seat allotment completed."
-                )
-        );
+        /*
+         * RUN ROUND 1
+         */
 
-        publish.setOnAction(e ->
+        run.setOnAction(e -> {
+
+            run.setDisable(true);
+
+            currentValue.setText(
+                    "Processing Seat Allotment..."
+            );
+
+            boolean success =
+                    capDAO.runRound1Allotment();
+
+            if (success) {
+
+                currentValue.setText(
+                        "Seat Allotment Completed"
+                );
+
+                statusBadge.setText(
+                        "●  ALLOTMENT COMPLETED"
+                );
+
+                statusDescription.setText(
+                        "CAP Round 1 allotment has been generated. Publish the results to make them visible to students."
+                );
+
                 showMessage(
-                        "Results",
-                        "CAP Round 1 results published."
-                )
-        );
+                        Alert.AlertType.INFORMATION,
+                        "Seat Allotment",
+                        "CAP Round 1 seat allotment completed successfully."
+                );
+
+            } else {
+
+                currentValue.setText(
+                        "Allotment Not Completed"
+                );
+
+                showMessage(
+                        Alert.AlertType.WARNING,
+                        "Seat Allotment",
+                        "No students were allotted seats.\n\nMake sure students have locked their preference forms."
+                );
+            }
+
+            run.setDisable(false);
+        });
+
+        /*
+         * PUBLISH ROUND 1
+         */
+
+        publish.setOnAction(e -> {
+
+            publish.setDisable(true);
+
+            boolean success =
+                    capDAO.publishRound1();
+
+            if (success) {
+
+                currentValue.setText(
+                        "Results Published"
+                );
+
+                statusBadge.setText(
+                        "●  ROUND 1 PUBLISHED"
+                );
+
+                statusDescription.setText(
+                        "CAP Round 1 results are now available to students."
+                );
+
+                showMessage(
+                        Alert.AlertType.INFORMATION,
+                        "Results Published",
+                        "CAP Round 1 results have been published successfully."
+                );
+
+            } else {
+
+                showMessage(
+                        Alert.AlertType.ERROR,
+                        "Publish Failed",
+                        "CAP Round 1 results could not be published."
+                );
+            }
+
+            publish.setDisable(false);
+        });
+
+        /*
+         * REPORT
+         */
 
         report.setOnAction(e ->
+
                 showMessage(
+                        Alert.AlertType.INFORMATION,
                         "Allotment Report",
-                        "CAP Round 1 allotment report opened."
+                        "Round 1 allotment report will be connected after the CAP flow is completed."
                 )
         );
 
         VBox actionsCard =
                 new VBox(
                         12,
-                        createSectionTitle("ROUND 1 ACTIONS"),
+                        createSectionTitle(
+                                "ROUND 1 ACTIONS"
+                        ),
                         run,
                         publish,
                         report
@@ -173,22 +266,40 @@ public class CAPRound1ManagementPage {
                 "-fx-border-radius: 10px;"
         );
 
+        /*
+         * FIRESTORE COUNTS
+         */
+
+        int lockedStudents =
+                capDAO.getLockedPreferenceCount();
+
         VBox overviewCard =
                 new VBox(
                         12,
-                        createSectionTitle("ROUND 1 OVERVIEW"),
+
+                        createSectionTitle(
+                                "ROUND 1 OVERVIEW"
+                        ),
+
                         createStatRow(
                                 "Eligible Students",
-                                "1,184"
+                                String.valueOf(
+                                        lockedStudents
+                                )
                         ),
+
                         createStatRow(
                                 "Locked Option Forms",
-                                "987"
+                                String.valueOf(
+                                        lockedStudents
+                                )
                         ),
+
                         createStatRow(
                                 "Available Seats",
-                                "820"
+                                "Not Connected"
                         ),
+
                         createStatRow(
                                 "Round Status",
                                 "Ready"
@@ -225,7 +336,7 @@ public class CAPRound1ManagementPage {
 
         Label note =
                 new Label(
-                        "Run the allotment only after merit data, seat matrix and locked preference forms have been verified."
+                        "Only students who have locked their preference forms will be processed in CAP Round 1."
                 );
 
         note.setWrapText(true);
@@ -254,7 +365,9 @@ public class CAPRound1ManagementPage {
         );
 
         root.setStyle(
-                "-fx-background-color: " + BG + ";"
+                "-fx-background-color: "
+                        + BG
+                        + ";"
         );
 
         BorderPane layout =
@@ -449,18 +562,18 @@ public class CAPRound1ManagementPage {
     }
 
     private static void showMessage(
+            Alert.AlertType type,
             String title,
             String message
     ) {
 
         Alert alert =
-                new Alert(
-                        Alert.AlertType.INFORMATION
-                );
+                new Alert(type);
 
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(message);
+
         alert.showAndWait();
     }
 }

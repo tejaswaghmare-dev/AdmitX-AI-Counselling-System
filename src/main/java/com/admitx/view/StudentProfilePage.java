@@ -1,32 +1,148 @@
 package com.admitx.view;
 
+import com.admitx.controller.StudentInfoAddController;
+import com.admitx.model.Student;
+
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
-import javafx.scene.layout.*;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 
 public class StudentProfilePage {
 
-    private static final String BG = "#0B100B";
-    private static final String CARD = "#141B14";
-    private static final String ROW = "#0F150F";
-    private static final String BORDER = "#293529";
-    private static final String LIME = "#B7FF00";
-    private static final String WHITE = "#F5F7F2";
-    private static final String MUTED = "#9AA59A";
+    private static final String BG =
+            "#0B100B";
+
+    private static final String CARD =
+            "#141B14";
+
+    private static final String ROW =
+            "#0F150F";
+
+    private static final String BORDER =
+            "#293529";
+
+    private static final String LIME =
+            "#B7FF00";
+
+    private static final String WHITE =
+            "#F5F7F2";
+
+    private static final String MUTED =
+            "#9AA59A";
 
     public static Scene getScene() {
 
+        // =========================================================
+        // CURRENT STUDENT
+        // =========================================================
+
+        Student sessionStudent =
+                Student.getInstance();
+
+        String loggedInEmail =
+                sessionStudent.getEmail();
+
+        if (
+                loggedInEmail == null
+                ||
+                loggedInEmail.isBlank()
+        ) {
+
+            show(
+                    Alert.AlertType.WARNING,
+                    "Student Profile",
+                    "Please login to view your profile."
+            );
+
+            return StudentLoginPage
+                    .getScene();
+        }
+
+        StudentInfoAddController controller =
+                new StudentInfoAddController();
+
+        Student student =
+                controller.getStudentProfile(
+                        loggedInEmail
+                );
+
+        if (
+                student == null
+        ) {
+
+            student =
+                    sessionStudent;
+        }
+
+        // =========================================================
+        // VALUES
+        // =========================================================
+
+        String fullName =
+                firstAvailable(
+                        student.getCandidateName(),
+                        student.getUsername(),
+                        "Student"
+                );
+
+        String email =
+                value(
+                        student.getEmail()
+                );
+
+        String mobile =
+                value(
+                        student.getMobileno()
+                );
+
+        String category =
+                value(
+                        student.getCategory()
+                );
+
+        String cetPercentile =
+                value(
+                        student.getCetPercentile()
+                );
+
+        String homeUniversity =
+                value(
+                        student.getHomeUniversity()
+                );
+
+        String district =
+                value(
+                        student.getDistrict()
+                );
+
+        String candidature =
+                value(
+                        student.getCandidateType()
+                );
+
+        // =========================================================
+        // TITLE
+        // =========================================================
+
         Label title =
-                new Label("Student Profile");
+                new Label(
+                        "Student Profile"
+                );
 
         title.setStyle(
-                "-fx-font-size: 26px;" +
-                "-fx-font-weight: bold;" +
-                "-fx-text-fill: " + WHITE + ";"
+                "-fx-font-size:26px;" +
+                "-fx-font-weight:bold;" +
+                "-fx-text-fill:"
+                        + WHITE + ";"
         );
 
         Label subtitle =
@@ -35,8 +151,9 @@ public class StudentProfilePage {
                 );
 
         subtitle.setStyle(
-                "-fx-font-size: 13px;" +
-                "-fx-text-fill: " + MUTED + ";"
+                "-fx-font-size:13px;" +
+                "-fx-text-fill:"
+                        + MUTED + ";"
         );
 
         VBox heading =
@@ -46,8 +163,16 @@ public class StudentProfilePage {
                         subtitle
                 );
 
+        // =========================================================
+        // AVATAR
+        // =========================================================
+
         Label avatar =
-                new Label("YB");
+                new Label(
+                        getInitials(
+                                fullName
+                        )
+                );
 
         avatar.setMinSize(
                 64,
@@ -64,35 +189,46 @@ public class StudentProfilePage {
         );
 
         avatar.setStyle(
-                "-fx-background-color: " + LIME + ";" +
-                "-fx-background-radius: 50%;" +
-                "-fx-text-fill: #0B100B;" +
-                "-fx-font-size: 20px;" +
-                "-fx-font-weight: bold;"
+                "-fx-background-color:"
+                        + LIME + ";" +
+                "-fx-background-radius:50%;" +
+                "-fx-text-fill:#0B100B;" +
+                "-fx-font-size:20px;" +
+                "-fx-font-weight:bold;"
         );
+
+        // =========================================================
+        // IDENTITY
+        // =========================================================
 
         Label studentName =
-                new Label("Yash Batte");
+                new Label(
+                        fullName
+                );
 
         studentName.setStyle(
-                "-fx-font-size: 20px;" +
-                "-fx-font-weight: bold;" +
-                "-fx-text-fill: " + WHITE + ";"
+                "-fx-font-size:20px;" +
+                "-fx-font-weight:bold;" +
+                "-fx-text-fill:"
+                        + WHITE + ";"
         );
 
-        Label applicationId =
-                new Label("MHTCET20260001");
+        Label studentEmail =
+                new Label(
+                        email
+                );
 
-        applicationId.setStyle(
-                "-fx-font-size: 12px;" +
-                "-fx-text-fill: " + MUTED + ";"
+        studentEmail.setStyle(
+                "-fx-font-size:12px;" +
+                "-fx-text-fill:"
+                        + MUTED + ";"
         );
 
         VBox identity =
                 new VBox(
                         4,
                         studentName,
-                        applicationId
+                        studentEmail
                 );
 
         HBox profileHeader =
@@ -106,76 +242,98 @@ public class StudentProfilePage {
                 Pos.CENTER_LEFT
         );
 
-        VBox profileCard =
-                new VBox(
-                        18,
-                        createSectionTitle("PROFILE INFORMATION"),
-                        profileHeader
-                );
+        // =========================================================
+        // PROFILE DETAILS
+        // =========================================================
 
         GridPane details =
                 new GridPane();
 
-        details.setHgap(18);
-        details.setVgap(15);
+        details.setHgap(
+                18
+        );
 
-        addDetail(
-                details,
-                "Full Name",
-                "Yash Batte",
-                0,
-                0
+        details.setVgap(
+                15
         );
 
         addDetail(
                 details,
-                "Application ID",
-                "MHTCET20260001",
-                1,
+                "Full Name",
+                fullName,
+                0,
                 0
         );
 
         addDetail(
                 details,
                 "Email",
-                "student@example.com",
-                0,
-                1
+                email,
+                1,
+                0
         );
 
         addDetail(
                 details,
                 "Mobile",
-                "9876543210",
-                1,
+                mobile,
+                0,
                 1
         );
 
         addDetail(
                 details,
                 "Category",
-                "Open",
+                category,
+                1,
+                1
+        );
+
+        addDetail(
+                details,
+                "MHT CET Percentile",
+                cetPercentile,
                 0,
                 2
         );
 
         addDetail(
                 details,
-                "MHT CET Percentile",
-                "95.50",
+                "Home University",
+                homeUniversity,
                 1,
                 2
+        );
+
+        addDetail(
+                details,
+                "District",
+                district,
+                0,
+                3
+        );
+
+        addDetail(
+                details,
+                "Candidature Type",
+                candidature,
+                1,
+                3
         );
 
         ColumnConstraints first =
                 new ColumnConstraints();
 
-        first.setPercentWidth(50);
+        first.setPercentWidth(
+                50
+        );
 
         ColumnConstraints second =
                 new ColumnConstraints();
 
-        second.setPercentWidth(50);
+        second.setPercentWidth(
+                50
+        );
 
         details.getColumnConstraints()
                 .addAll(
@@ -183,20 +341,38 @@ public class StudentProfilePage {
                         second
                 );
 
-        profileCard.getChildren().add(
-                details
-        );
+        // =========================================================
+        // PROFILE CARD
+        // =========================================================
+
+        VBox profileCard =
+                new VBox(
+                        18,
+                        createSectionTitle(
+                                "PROFILE INFORMATION"
+                        ),
+                        profileHeader,
+                        details
+                );
 
         profileCard.setPadding(
-                new Insets(22)
+                new Insets(
+                        22
+                )
         );
 
         profileCard.setStyle(
-                "-fx-background-color: " + CARD + ";" +
-                "-fx-background-radius: 12px;" +
-                "-fx-border-color: " + BORDER + ";" +
-                "-fx-border-radius: 12px;"
+                "-fx-background-color:"
+                        + CARD + ";" +
+                "-fx-background-radius:12px;" +
+                "-fx-border-color:"
+                        + BORDER + ";" +
+                "-fx-border-radius:12px;"
         );
+
+        // =========================================================
+        // PASSWORD FIELDS
+        // =========================================================
 
         PasswordField oldPassword =
                 new PasswordField();
@@ -233,33 +409,158 @@ public class StudentProfilePage {
 
         Label passwordDescription =
                 new Label(
-                        "Choose a strong password and confirm it before saving."
+                        "Enter your current password and choose a new password."
                 );
 
         passwordDescription.setStyle(
-                "-fx-font-size: 12px;" +
-                "-fx-text-fill: " + MUTED + ";"
+                "-fx-font-size:12px;" +
+                "-fx-text-fill:"
+                        + MUTED + ";"
         );
+
+        // =========================================================
+        // CHANGE PASSWORD
+        // =========================================================
 
         Button changePassword =
-                new Button("Change Password");
+                new Button(
+                        "Change Password"
+                );
 
-        changePassword.setPrefHeight(42);
+        changePassword.setPrefHeight(
+                42
+        );
 
         changePassword.setStyle(
-                "-fx-background-color: " + LIME + ";" +
-                "-fx-text-fill: #0B100B;" +
-                "-fx-font-size: 13px;" +
-                "-fx-font-weight: bold;" +
-                "-fx-background-radius: 8px;" +
-                "-fx-padding: 0 20 0 20;" +
-                "-fx-cursor: hand;"
+                "-fx-background-color:"
+                        + LIME + ";" +
+                "-fx-text-fill:#0B100B;" +
+                "-fx-font-size:13px;" +
+                "-fx-font-weight:bold;" +
+                "-fx-background-radius:8px;" +
+                "-fx-padding:0 20 0 20;" +
+                "-fx-cursor:hand;"
         );
+
+        final String currentEmail =
+                loggedInEmail;
+
+        changePassword.setOnAction(e -> {
+
+            String oldValue =
+                    oldPassword
+                            .getText();
+
+            String newValue =
+                    newPassword
+                            .getText();
+
+            String confirmValue =
+                    confirmPassword
+                            .getText();
+
+            if (
+                    oldValue.isBlank()
+                    ||
+                    newValue.isBlank()
+                    ||
+                    confirmValue.isBlank()
+            ) {
+
+                show(
+                        Alert.AlertType.WARNING,
+                        "Change Password",
+                        "Please fill all password fields."
+                );
+
+                return;
+            }
+
+            if (
+                    newValue.length()
+                            < 6
+            ) {
+
+                show(
+                        Alert.AlertType.WARNING,
+                        "Change Password",
+                        "New password must contain at least 6 characters."
+                );
+
+                return;
+            }
+
+            if (
+                    !newValue.equals(
+                            confirmValue
+                    )
+            ) {
+
+                show(
+                        Alert.AlertType.WARNING,
+                        "Change Password",
+                        "New password and confirmation do not match."
+                );
+
+                return;
+            }
+
+            if (
+                    oldValue.equals(
+                            newValue
+                    )
+            ) {
+
+                show(
+                        Alert.AlertType.WARNING,
+                        "Change Password",
+                        "New password must be different from the current password."
+                );
+
+                return;
+            }
+
+            boolean changed =
+                    controller.changePassword(
+                            currentEmail,
+                            oldValue,
+                            newValue
+                    );
+
+            if (
+                    changed
+            ) {
+
+                show(
+                        Alert.AlertType.INFORMATION,
+                        "Password Changed",
+                        "Your password has been changed successfully."
+                );
+
+                oldPassword.clear();
+                newPassword.clear();
+                confirmPassword.clear();
+
+            } else {
+
+                show(
+                        Alert.AlertType.ERROR,
+                        "Change Password",
+                        "Current password is incorrect."
+                );
+            }
+        });
+
+        // =========================================================
+        // PASSWORD CARD
+        // =========================================================
 
         VBox passwordCard =
                 new VBox(
                         12,
-                        createSectionTitle("CHANGE PASSWORD"),
+                        createSectionTitle(
+                                "CHANGE PASSWORD"
+                        ),
                         passwordDescription,
                         oldPassword,
                         newPassword,
@@ -268,20 +569,32 @@ public class StudentProfilePage {
                 );
 
         passwordCard.setPadding(
-                new Insets(22)
+                new Insets(
+                        22
+                )
         );
 
         passwordCard.setStyle(
-                "-fx-background-color: " + CARD + ";" +
-                "-fx-background-radius: 12px;" +
-                "-fx-border-color: " + BORDER + ";" +
-                "-fx-border-radius: 12px;"
+                "-fx-background-color:"
+                        + CARD + ";" +
+                "-fx-background-radius:12px;" +
+                "-fx-border-color:"
+                        + BORDER + ";" +
+                "-fx-border-radius:12px;"
         );
 
-        Button dashboard =
-                new Button("← Dashboard");
+        // =========================================================
+        // DASHBOARD BUTTON
+        // =========================================================
 
-        dashboard.setPrefHeight(42);
+        Button dashboard =
+                new Button(
+                        "← Dashboard"
+                );
+
+        dashboard.setPrefHeight(
+                42
+        );
 
         dashboard.setPadding(
                 new Insets(
@@ -293,21 +606,28 @@ public class StudentProfilePage {
         );
 
         dashboard.setStyle(
-                "-fx-background-color: #171F17;" +
-                "-fx-text-fill: " + WHITE + ";" +
-                "-fx-border-color: #344034;" +
-                "-fx-border-radius: 8px;" +
-                "-fx-background-radius: 8px;" +
-                "-fx-font-size: 12px;" +
-                "-fx-font-weight: bold;" +
-                "-fx-cursor: hand;"
+                "-fx-background-color:#171F17;" +
+                "-fx-text-fill:"
+                        + WHITE + ";" +
+                "-fx-border-color:#344034;" +
+                "-fx-border-radius:8px;" +
+                "-fx-background-radius:8px;" +
+                "-fx-font-size:12px;" +
+                "-fx-font-weight:bold;" +
+                "-fx-cursor:hand;"
         );
 
         dashboard.setOnAction(e ->
+
                 Navigation.goTo(
-                        StudentDashboardPage.getScene()
+                        StudentDashboardPage
+                                .getScene()
                 )
         );
+
+        // =========================================================
+        // CONTENT
+        // =========================================================
 
         VBox content =
                 new VBox(
@@ -319,36 +639,83 @@ public class StudentProfilePage {
                 );
 
         content.setPadding(
-                new Insets(30)
+                new Insets(
+                        30
+                )
         );
 
         content.setStyle(
-                "-fx-background-color: " + BG + ";"
+                "-fx-background-color:"
+                        + BG + ";"
+        );
+
+        // =========================================================
+        // SCROLL
+        // =========================================================
+
+        ScrollPane scrollPane =
+                new ScrollPane(
+                        content
+                );
+
+        scrollPane.setFitToWidth(
+                true
+        );
+
+        scrollPane.setHbarPolicy(
+                ScrollPane
+                        .ScrollBarPolicy
+                        .NEVER
+        );
+
+        scrollPane.setVbarPolicy(
+                ScrollPane
+                        .ScrollBarPolicy
+                        .AS_NEEDED
+        );
+
+        scrollPane.setStyle(
+                "-fx-background:"
+                        + BG + ";" +
+                "-fx-background-color:"
+                        + BG + ";" +
+                "-fx-border-color:transparent;"
         );
 
         return new Scene(
                 StudentLayout.create(
                         "Student Profile",
-                        content
+                        scrollPane
                 )
         );
     }
+
+    // =============================================================
+    // SECTION TITLE
+    // =============================================================
 
     private static Label createSectionTitle(
             String text
     ) {
 
         Label label =
-                new Label(text);
+                new Label(
+                        text
+                );
 
         label.setStyle(
-                "-fx-font-size: 11px;" +
-                "-fx-font-weight: bold;" +
-                "-fx-text-fill: " + LIME + ";"
+                "-fx-font-size:11px;" +
+                "-fx-font-weight:bold;" +
+                "-fx-text-fill:"
+                        + LIME + ";"
         );
 
         return label;
     }
+
+    // =============================================================
+    // DETAIL CARD
+    // =============================================================
 
     private static void addDetail(
             GridPane grid,
@@ -359,23 +726,31 @@ public class StudentProfilePage {
     ) {
 
         Label label =
-                new Label(name);
+                new Label(
+                        name
+                );
 
         label.setStyle(
-                "-fx-font-size: 11px;" +
-                "-fx-font-weight: bold;" +
-                "-fx-text-fill: " + MUTED + ";"
+                "-fx-font-size:11px;" +
+                "-fx-font-weight:bold;" +
+                "-fx-text-fill:"
+                        + MUTED + ";"
         );
 
         Label valueLabel =
-                new Label(value);
+                new Label(
+                        value
+                );
 
-        valueLabel.setWrapText(true);
+        valueLabel.setWrapText(
+                true
+        );
 
         valueLabel.setStyle(
-                "-fx-font-size: 14px;" +
-                "-fx-font-weight: bold;" +
-                "-fx-text-fill: " + WHITE + ";"
+                "-fx-font-size:14px;" +
+                "-fx-font-weight:bold;" +
+                "-fx-text-fill:"
+                        + WHITE + ";"
         );
 
         VBox box =
@@ -386,7 +761,9 @@ public class StudentProfilePage {
                 );
 
         box.setPadding(
-                new Insets(12)
+                new Insets(
+                        12
+                )
         );
 
         box.setMaxWidth(
@@ -394,10 +771,12 @@ public class StudentProfilePage {
         );
 
         box.setStyle(
-                "-fx-background-color: " + ROW + ";" +
-                "-fx-background-radius: 8px;" +
-                "-fx-border-color: " + BORDER + ";" +
-                "-fx-border-radius: 8px;"
+                "-fx-background-color:"
+                        + ROW + ";" +
+                "-fx-background-radius:8px;" +
+                "-fx-border-color:"
+                        + BORDER + ";" +
+                "-fx-border-radius:8px;"
         );
 
         GridPane.setFillWidth(
@@ -412,21 +791,166 @@ public class StudentProfilePage {
         );
     }
 
+    // =============================================================
+    // PASSWORD STYLE
+    // =============================================================
+
     private static void stylePasswordField(
             PasswordField field
     ) {
 
-        field.setPrefHeight(40);
-        field.setMaxWidth(420);
+        field.setPrefHeight(
+                40
+        );
+
+        field.setMaxWidth(
+                420
+        );
 
         field.setStyle(
-                "-fx-background-color: " + ROW + ";" +
-                "-fx-text-fill: " + WHITE + ";" +
-                "-fx-prompt-text-fill: " + MUTED + ";" +
-                "-fx-border-color: " + BORDER + ";" +
-                "-fx-border-radius: 7px;" +
-                "-fx-background-radius: 7px;" +
-                "-fx-font-size: 13px;"
+                "-fx-background-color:"
+                        + ROW + ";" +
+                "-fx-text-fill:"
+                        + WHITE + ";" +
+                "-fx-prompt-text-fill:"
+                        + MUTED + ";" +
+                "-fx-border-color:"
+                        + BORDER + ";" +
+                "-fx-border-radius:7px;" +
+                "-fx-background-radius:7px;" +
+                "-fx-font-size:13px;"
         );
+    }
+
+    // =============================================================
+    // INITIALS
+    // =============================================================
+
+    private static String getInitials(
+            String name
+    ) {
+
+        if (
+                name == null
+                ||
+                name.isBlank()
+        ) {
+
+            return "ST";
+        }
+
+        String[] parts =
+                name.trim()
+                        .split("\\s+");
+
+        if (
+                parts.length == 1
+        ) {
+
+            String value =
+                    parts[0];
+
+            return value
+                    .substring(
+                            0,
+                            Math.min(
+                                    2,
+                                    value.length()
+                            )
+                    )
+                    .toUpperCase();
+        }
+
+        return (
+                parts[0]
+                        .substring(
+                                0,
+                                1
+                        )
+                +
+                parts[
+                        parts.length - 1
+                ].substring(
+                        0,
+                        1
+                )
+        ).toUpperCase();
+    }
+
+    // =============================================================
+    // SAFE VALUE
+    // =============================================================
+
+    private static String value(
+            String text
+    ) {
+
+        if (
+                text == null
+                ||
+                text.isBlank()
+        ) {
+
+            return "Not Provided";
+        }
+
+        return text;
+    }
+
+    private static String firstAvailable(
+            String first,
+            String second,
+            String fallback
+    ) {
+
+        if (
+                first != null
+                &&
+                !first.isBlank()
+        ) {
+
+            return first;
+        }
+
+        if (
+                second != null
+                &&
+                !second.isBlank()
+        ) {
+
+            return second;
+        }
+
+        return fallback;
+    }
+
+    // =============================================================
+    // ALERT
+    // =============================================================
+
+    private static void show(
+            Alert.AlertType type,
+            String title,
+            String message
+    ) {
+
+        Alert alert =
+                new Alert(
+                        type
+                );
+
+        alert.setTitle(
+                title
+        );
+
+        alert.setHeaderText(
+                null
+        );
+
+        alert.setContentText(
+                message
+        );
+
+        alert.showAndWait();
     }
 }

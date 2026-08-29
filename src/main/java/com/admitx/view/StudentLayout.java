@@ -1,6 +1,7 @@
 package com.admitx.view;
 
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
@@ -14,8 +15,7 @@ public class StudentLayout {
             Node content
     ) {
 
-        BorderPane layout =
-                new BorderPane();
+        BorderPane layout = new BorderPane();
 
         layout.setTop(
                 Header.create(pageTitle)
@@ -25,8 +25,7 @@ public class StudentLayout {
                 Sidebar.create(pageTitle)
         );
 
-        StackPane contentArea =
-                new StackPane();
+        StackPane contentArea = new StackPane();
 
         contentArea.setPadding(
                 new Insets(25)
@@ -37,12 +36,23 @@ public class StudentLayout {
                         + BACKGROUND + ";"
         );
 
-        contentArea.getChildren()
-                .add(content);
+        contentArea.getChildren().add(content);
 
-        layout.setCenter(
-                contentArea
+        Node chatbot = StudentChatbot.create();
+
+        contentArea.getChildren().add(chatbot);
+
+        StackPane.setAlignment(
+                chatbot,
+                Pos.BOTTOM_RIGHT
         );
+
+        StackPane.setMargin(
+                chatbot,
+                new Insets(0, 20, 20, 0)
+        );
+
+        layout.setCenter(contentArea);
 
         layout.setStyle(
                 "-fx-background-color: "

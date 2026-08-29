@@ -1,6 +1,7 @@
 package com.admitx.view;
-
-import com.admitx.model.ApplicationData;
+import com.admitx.dao.ApplicationDAO;
+import com.admitx.model.Student;
+import com.admitx.model.Student;
 import com.admitx.view.Navigation;
 import com.admitx.view.StudentLayout;
 
@@ -28,9 +29,13 @@ public class PreviewApplicationPage {
 
     public static Scene getScene() {
 
-        ApplicationData data =
-                ApplicationData.getInstance();
+        Student data =
+                Student.getInstance();
+        ApplicationDAO applicationDAO =
+                new ApplicationDAO();
 
+        boolean alreadySubmitted =
+                applicationDAO.isApplicationSubmitted();
         Label title =
                 new Label("Preview Application");
 
@@ -480,11 +485,117 @@ if (documents.isEmpty()) {
                 )
         );
 
-        submitButton.setOnAction(e ->
-                Navigation.goTo(
-                        ApplicationStatusPage.getScene()
-                )
+        submitButton.setOnAction(e -> {
+
+        Alert confirmation =
+                new Alert(
+                        Alert.AlertType.CONFIRMATION
+                );
+
+        confirmation.setTitle(
+                "Submit Application"
         );
+
+        confirmation.setHeaderText(
+                "Confirm Application Submission"
+        );
+
+        confirmation.setContentText(
+                "Once submitted, your application will be locked. "
+                        + "Do you want to continue?"
+        );
+
+        confirmation.showAndWait()
+                .ifPresent(response -> {
+
+                        if (
+                                response
+                                        == ButtonType.OK
+                        ) {
+
+                        boolean submitted =
+                                applicationDAO
+                                        .submitApplication();
+
+                        if (submitted) {
+
+                                Alert success =
+                                        new Alert(
+                                                Alert.AlertType.INFORMATION
+                                        );
+
+                                success.setTitle(
+                                        "Application Submitted"
+                                );
+
+                                success.setHeaderText(
+                                        null
+                                );
+
+                                success.setContentText(
+                                        "Your application has been submitted successfully."
+                                );
+
+                                success.showAndWait();
+
+                                Navigation.goTo(
+                                        ApplicationStatusPage.getScene()
+                                );
+
+                        } else {
+
+                                Alert error =
+                                        new Alert(
+                                                Alert.AlertType.ERROR
+                                        );
+
+                                error.setTitle(
+                                        "Submission Failed"
+                                );
+
+                                error.setHeaderText(
+                                        null
+                                );
+
+                                error.setContentText(
+                                        "Unable to submit your application. "
+                                                + "Please check that you are logged in and try again."
+                                );
+
+                                error.showAndWait();
+                        }
+                        }
+                });
+        });
+        if (alreadySubmitted) {
+
+                editButton.setDisable(true);
+
+                editButton.setText(
+                        "Application Locked"
+                );
+
+                submitButton.setText(
+                        "Application Submitted"
+                );
+
+                submitButton.setDisable(true);
+
+                warning.setText(
+                        "✓ Your application has been submitted successfully. "
+                                + "The application is now locked and waiting for counsellor verification."
+                );
+
+                warning.setStyle(
+                        "-fx-background-color: #18220F;" +
+                        "-fx-text-fill: " + LIME + ";" +
+                        "-fx-padding: 14px;" +
+                        "-fx-background-radius: 8px;" +
+                        "-fx-border-color: #3D5520;" +
+                        "-fx-border-radius: 8px;" +
+                        "-fx-font-size: 12px;"
+                );
+                }
 
         Region spacer =
                 new Region();

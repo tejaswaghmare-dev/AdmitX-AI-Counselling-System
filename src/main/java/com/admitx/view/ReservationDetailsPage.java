@@ -1,6 +1,6 @@
 package com.admitx.view;
 
-import com.admitx.model.ApplicationData;
+import com.admitx.model.Student;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -18,7 +18,7 @@ public class ReservationDetailsPage {
 
     public static Scene getScene() {
 
-        ApplicationData data = ApplicationData.getInstance();
+        Student data = Student.getInstance();
 
         Label title = new Label("Reservation Details");
 
@@ -280,41 +280,32 @@ public class ReservationDetailsPage {
 
         nextButton.setOnAction(e -> {
 
-            data.setCategory(
-                    category.getValue()
-            );
+            String cate = category.getValue();
+            System.out.println(cate);
 
-            data.setCaste(
-                    caste.getText()
-            );
+            String cast = caste.getText();
+            System.out.println(cast);
 
-            data.setValidityCertificate(
-                    validityCertificate.getValue()
-            );
+            String vcerti = validityCertificate.getValue();
+            System.out.println(vcerti);
 
-            data.setNcl(
-                    ncl.getValue()
-            );
+            String nccl =ncl.getValue();
+            System.out.println(nccl);
 
-            data.setEws(
-                    ews.getValue()
-            );
+            String ewws= ews.getValue();
+            System.out.println(ewws);
 
-            data.setIncome(
-                    income.getText()
-            );
+            String  incom = income.getText();
+            System.out.println(incom);
 
-            data.setMinority(
-                    minority.getValue()
-            );
+            String minor = minority.getValue();
+            System.out.println(minor);
 
-            data.setDefence(
-                    defence.getValue()
-            );
+            String defe = defence.getValue();
+            System.out.println(defe);
 
-            data.setOrphan(
-                    orphan.getValue()
-            );
+            String orphn = orphan.getValue();
+            System.out.println(orphn);
 
             Navigation.goTo(
                     DocumentUploadPage.getScene()

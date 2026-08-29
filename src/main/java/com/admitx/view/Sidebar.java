@@ -1,33 +1,50 @@
 package com.admitx.view;
 
+import com.admitx.model.Student;
+
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
 public class Sidebar {
 
-    private static final String BG = "#0A0F0A";
-    private static final String LIME = "#B7FF00";
-    private static final String TEXT = "#F5F7F2";
-    private static final String MUTED = "#9AA59A";
-    private static final String HOVER = "#1B2817";
+    private static final String BG =
+            "#0A0F0A";
+
+    private static final String LIME =
+            "#B7FF00";
+
+    private static final String TEXT =
+            "#F5F7F2";
+
+    private static final String MUTED =
+            "#9AA59A";
+
+    private static final String HOVER =
+            "#1B2817";
 
     public static VBox create(
             String activePage
     ) {
 
+        // =====================================================
+        // BRANDING
+        // =====================================================
+
         Label logo =
-                new Label("ADMITX");
+                new Label(
+                        "ADMITX"
+                );
 
         logo.setStyle(
-                "-fx-text-fill: " + LIME + ";" +
-                "-fx-font-size: 25px;" +
-                "-fx-font-weight: bold;"
+                "-fx-text-fill:" + LIME + ";" +
+                "-fx-font-size:25px;" +
+                "-fx-font-weight:bold;"
         );
 
         Label subtitle =
@@ -36,9 +53,9 @@ public class Sidebar {
                 );
 
         subtitle.setStyle(
-                "-fx-text-fill: " + MUTED + ";" +
-                "-fx-font-size: 10px;" +
-                "-fx-font-weight: bold;"
+                "-fx-text-fill:" + MUTED + ";" +
+                "-fx-font-size:10px;" +
+                "-fx-font-weight:bold;"
         );
 
         VBox branding =
@@ -60,6 +77,10 @@ public class Sidebar {
                         8
                 )
         );
+
+        // =====================================================
+        // BUTTONS
+        // =====================================================
 
         Button dashboard =
                 createButton(
@@ -101,11 +122,27 @@ public class Sidebar {
                         activePage
                 );
 
-        Button cap =
+        Button cap1 =
                 createButton(
                         "◉",
-                        "CAP Rounds",
                         "CAP Round 1",
+                        "CAP Round 1",
+                        activePage
+                );
+
+        Button cap2 =
+                createButton(
+                        "◉",
+                        "CAP Round 2",
+                        "CAP Round 2",
+                        activePage
+                );
+
+        Button cap3 =
+                createButton(
+                        "◉",
+                        "CAP Round 3",
+                        "CAP Round 3",
                         activePage
                 );
 
@@ -149,71 +186,123 @@ public class Sidebar {
                         activePage
                 );
 
+        // =====================================================
+        // NAVIGATION
+        // =====================================================
+
         dashboard.setOnAction(e ->
+
                 Navigation.goTo(
-                        StudentDashboardPage.getScene()
+                        StudentDashboardPage
+                                .getScene()
                 )
         );
 
         application.setOnAction(e ->
+
                 Navigation.goTo(
-                        PersonalDetailsPage.getScene()
+                        PersonalDetailsPage
+                                .getScene()
                 )
         );
 
         merit.setOnAction(e ->
+
                 Navigation.goTo(
-                        ProvisionalMeritPage.getScene()
+                        ProvisionalMeritPage
+                                .getScene()
                 )
         );
 
         college.setOnAction(e ->
+
                 Navigation.goTo(
-                        CollegeSearchPage.getScene()
+                        CollegeSearchPage
+                                .getScene()
                 )
         );
 
         preference.setOnAction(e ->
+
                 Navigation.goTo(
-                        PreferenceFillingPage.getScene()
+                        PreferenceFillingPage
+                                .getScene()
                 )
         );
 
-        cap.setOnAction(e ->
+        cap1.setOnAction(e ->
+
                 Navigation.goTo(
-                        CAPRound1Page.getScene()
+                        CAPRound1Page
+                                .getScene()
+                )
+        );
+
+        cap2.setOnAction(e ->
+
+                Navigation.goTo(
+                        CAPRound2Page
+                                .getScene()
+                )
+        );
+
+        cap3.setOnAction(e ->
+
+                Navigation.goTo(
+                        CAPRound3Page
+                                .getScene()
                 )
         );
 
         admission.setOnAction(e ->
+
                 Navigation.goTo(
-                        AdmissionConfirmationPage.getScene()
+                        AdmissionConfirmationPage
+                                .getScene()
                 )
         );
 
         notices.setOnAction(e ->
+
                 Navigation.goTo(
-                        NoticeBoardPage.getScene()
+                        NoticeBoardPage
+                                .getScene()
                 )
         );
 
         profile.setOnAction(e ->
+
                 Navigation.goTo(
-                        StudentProfilePage.getScene()
+                        StudentProfilePage
+                                .getScene()
                 )
         );
 
         help.setOnAction(e ->
+
                 Navigation.goTo(
-                        HelpCentrePage.getScene()
+                        HelpCentrePage
+                                .getScene()
                 )
         );
 
-        logout.setOnAction(e ->
-                Navigation.goTo(
-                        WelcomePage.getScene()
-                )
-        );
+        // =====================================================
+        // LOGOUT
+        // =====================================================
+
+        logout.setOnAction(e -> {
+
+            clearStudentSession();
+
+            Navigation.goTo(
+                    WelcomePage
+                            .getScene()
+            );
+        });
+
+        // =====================================================
+        // MENU
+        // =====================================================
 
         VBox menu =
                 new VBox(
@@ -223,31 +312,33 @@ public class Sidebar {
                         merit,
                         college,
                         preference,
-                        cap,
+                        cap1,
+                        cap2,
+                        cap3,
                         admission,
                         notices,
                         profile,
                         help
                 );
 
-        menu.setFillWidth(true);
-
-        Region spacer =
-                new Region();
-
-        VBox.setVgrow(
-                spacer,
-                Priority.ALWAYS
+        menu.setFillWidth(
+                true
         );
 
+        // =====================================================
+        // ACCOUNT SECTION
+        // =====================================================
+
         Label accountLabel =
-                new Label("ACCOUNT");
+                new Label(
+                        "ACCOUNT"
+                );
 
         accountLabel.setStyle(
-                "-fx-text-fill: #596359;" +
-                "-fx-font-size: 10px;" +
-                "-fx-font-weight: bold;" +
-                "-fx-padding: 0 8 8 8;"
+                "-fx-text-fill:#596359;" +
+                "-fx-font-size:10px;" +
+                "-fx-font-weight:bold;" +
+                "-fx-padding:0 8 8 8;"
         );
 
         VBox bottom =
@@ -257,13 +348,54 @@ public class Sidebar {
                         logout
                 );
 
-        bottom.setFillWidth(true);
+        bottom.setFillWidth(
+                true
+        );
+
+        // =====================================================
+        // SCROLLABLE MENU
+        // =====================================================
+
+        ScrollPane menuScroll =
+                new ScrollPane(
+                        menu
+                );
+
+        menuScroll.setFitToWidth(
+                true
+        );
+
+        menuScroll.setHbarPolicy(
+                ScrollPane
+                        .ScrollBarPolicy
+                        .NEVER
+        );
+
+        menuScroll.setVbarPolicy(
+                ScrollPane
+                        .ScrollBarPolicy
+                        .AS_NEEDED
+        );
+
+        menuScroll.setStyle(
+                "-fx-background:transparent;" +
+                "-fx-background-color:transparent;" +
+                "-fx-border-color:transparent;"
+        );
+
+        VBox.setVgrow(
+                menuScroll,
+                Priority.ALWAYS
+        );
+
+        // =====================================================
+        // SIDEBAR
+        // =====================================================
 
         VBox sidebar =
                 new VBox(
                         branding,
-                        menu,
-                        spacer,
+                        menuScroll,
                         bottom
                 );
 
@@ -276,22 +408,71 @@ public class Sidebar {
                 )
         );
 
-        sidebar.setPrefWidth(245);
-        sidebar.setMinWidth(245);
+        sidebar.setPrefWidth(
+                245
+        );
+
+        sidebar.setMinWidth(
+                245
+        );
 
         sidebar.setAlignment(
                 Pos.TOP_CENTER
         );
 
         sidebar.setStyle(
-                "-fx-background-color: "
-                        + BG + ";" +
-                "-fx-border-color: #202820;" +
-                "-fx-border-width: 0 1 0 0;"
+                "-fx-background-color:" + BG + ";" +
+                "-fx-border-color:#202820;" +
+                "-fx-border-width:0 1 0 0;"
         );
 
         return sidebar;
     }
+
+    // =========================================================
+    // CLEAR STUDENT SESSION
+    // =========================================================
+
+    private static void clearStudentSession() {
+
+        /*
+         * PreferenceFillingPage stores preferences in a static
+         * ObservableList.
+         *
+         * Clearing it prevents Student A's unsaved preferences
+         * appearing when Student B logs in.
+         */
+
+        PreferenceFillingPage
+                .getPreferences()
+                .clear();
+
+        Student student =
+                Student.getInstance();
+
+        /*
+         * These are the most important session values.
+         *
+         * Your DAOs use the student's email to find that
+         * student's Firestore documents.
+         */
+
+        student.setEmail(
+                null
+        );
+
+        student.setUsername(
+                null
+        );
+
+        student.setMobileno(
+                null
+        );
+    }
+
+    // =========================================================
+    // CREATE BUTTON
+    // =========================================================
 
     private static Button createButton(
             String icon,
@@ -301,16 +482,22 @@ public class Sidebar {
     ) {
 
         Label iconLabel =
-                new Label(icon);
+                new Label(
+                        icon
+                );
 
-        iconLabel.setMinWidth(25);
+        iconLabel.setMinWidth(
+                25
+        );
 
         iconLabel.setAlignment(
                 Pos.CENTER
         );
 
         Label textLabel =
-                new Label(text);
+                new Label(
+                        text
+                );
 
         HBox content =
                 new HBox(
@@ -334,8 +521,13 @@ public class Sidebar {
                 Double.MAX_VALUE
         );
 
-        button.setPrefHeight(46);
-        button.setMinHeight(46);
+        button.setPrefHeight(
+                46
+        );
+
+        button.setMinHeight(
+                46
+        );
 
         boolean active =
                 isActive(
@@ -360,6 +552,7 @@ public class Sidebar {
             );
 
             button.setOnMouseEntered(e ->
+
                     applyHoverStyle(
                             button,
                             iconLabel,
@@ -368,6 +561,7 @@ public class Sidebar {
             );
 
             button.setOnMouseExited(e ->
+
                     applyNormalStyle(
                             button,
                             iconLabel,
@@ -379,105 +573,197 @@ public class Sidebar {
         return button;
     }
 
+    // =========================================================
+    // ACTIVE PAGE
+    // =========================================================
+
     private static boolean isActive(
             String page,
             String activePage
     ) {
 
+        if (activePage == null) {
+
+            return false;
+        }
+
+        // Direct page match
+
         if (
-                page.equals(activePage)
+                page.equals(
+                        activePage
+                )
         ) {
+
             return true;
         }
 
+        // =====================================================
+        // APPLICATION SECTION
+        // =====================================================
+
         if (
-                page.equals("Personal Details")
-                &&
-                (
-                        activePage.equals("Address Details")
-                        || activePage.equals("Academic Details")
-                        || activePage.equals(
-                                "Home University & Eligibility"
-                        )
-                        || activePage.equals(
-                                "Reservation Details"
-                        )
-                        || activePage.equals(
-                                "Document Upload"
-                        )
-                        || activePage.equals(
-                                "Preview Application"
-                        )
-                        || activePage.equals(
-                                "Application Status"
-                        )
+                page.equals(
+                        "Personal Details"
                 )
         ) {
-            return true;
+
+            return activePage.equals(
+                    "Address Details"
+            )
+                    ||
+                    activePage.equals(
+                            "Academic Details"
+                    )
+                    ||
+                    activePage.equals(
+                            "Home University & Eligibility"
+                    )
+                    ||
+                    activePage.equals(
+                            "Reservation Details"
+                    )
+                    ||
+                    activePage.equals(
+                            "Document Upload"
+                    )
+                    ||
+                    activePage.equals(
+                            "Preview Application"
+                    )
+                    ||
+                    activePage.equals(
+                            "Application Status"
+                    );
         }
+
+        // =====================================================
+        // MERIT SECTION
+        // =====================================================
 
         if (
                 page.equals(
                         "Provisional Merit List"
                 )
-                &&
-                (
-                        activePage.equals("Grievance")
-                        || activePage.equals(
-                                "Final Merit List"
-                        )
-                )
         ) {
-            return true;
+
+            return activePage.equals(
+                    "Grievance"
+            )
+                    ||
+                    activePage.equals(
+                            "Raise Grievance"
+                    )
+                    ||
+                    activePage.equals(
+                            "Final Merit List"
+                    );
         }
 
+        // =====================================================
+        // COLLEGE SECTION
+        // =====================================================
+
         if (
-                page.equals("College Search")
-                &&
-                activePage.equals(
-                        "College Information"
+                page.equals(
+                        "College Search"
                 )
         ) {
-            return true;
+
+            return activePage.equals(
+                    "College Information"
+            );
         }
+
+        // =====================================================
+        // PREFERENCE SECTION
+        // =====================================================
 
         if (
                 page.equals(
                         "Preference Filling"
                 )
-                &&
-                (
-                        activePage.equals(
-                                "Option Form Preview"
-                        )
-                        || activePage.equals(
-                                "Option Form Confirmation"
-                        )
-                )
         ) {
-            return true;
+
+            return activePage.equals(
+                    "Option Form Preview"
+            )
+                    ||
+                    activePage.equals(
+                            "Option Form Confirmation"
+                    );
         }
 
+        // =====================================================
+        // CAP ROUND 1
+        // =====================================================
+
         if (
-                page.equals("CAP Round 1")
-                &&
-                (
-                        activePage.equals(
-                                "CAP Round 1 Confirmation"
-                        )
-                        || activePage.equals(
-                                "CAP Round 2"
-                        )
-                        || activePage.equals(
-                                "CAP Round 3"
-                        )
+                page.equals(
+                        "CAP Round 1"
                 )
         ) {
-            return true;
+
+            return activePage.equals(
+                    "CAP Round 1 Confirmation"
+            );
+        }
+
+        // =====================================================
+        // CAP ROUND 2
+        // =====================================================
+
+        if (
+                page.equals(
+                        "CAP Round 2"
+                )
+        ) {
+
+            return activePage.equals(
+                    "CAP Round 2 Confirmation"
+            );
+        }
+
+        // =====================================================
+        // CAP ROUND 3
+        // =====================================================
+
+        if (
+                page.equals(
+                        "CAP Round 3"
+                )
+        ) {
+
+            return activePage.equals(
+                    "CAP Round 3 Confirmation"
+            );
+        }
+
+        // =====================================================
+        // ADMISSION
+        // =====================================================
+
+        if (
+                page.equals(
+                        "Admission Confirmation"
+                )
+        ) {
+
+            return activePage.equals(
+                    "Admission"
+            )
+                    ||
+                    activePage.equals(
+                            "Admission Confirmation"
+                    );
         }
 
         return false;
     }
+
+    // =========================================================
+    // ACTIVE STYLE
+    // =========================================================
 
     private static void applyActiveStyle(
             Button button,
@@ -486,25 +772,29 @@ public class Sidebar {
     ) {
 
         icon.setStyle(
-                "-fx-text-fill: #0B100B;" +
-                "-fx-font-size: 16px;" +
-                "-fx-font-weight: bold;"
+                "-fx-text-fill:#0B100B;" +
+                "-fx-font-size:16px;" +
+                "-fx-font-weight:bold;"
         );
 
         text.setStyle(
-                "-fx-text-fill: #0B100B;" +
-                "-fx-font-size: 13px;" +
-                "-fx-font-weight: bold;"
+                "-fx-text-fill:#0B100B;" +
+                "-fx-font-size:13px;" +
+                "-fx-font-weight:bold;"
         );
 
         button.setStyle(
-                "-fx-background-color: " + LIME + ";" +
-                "-fx-background-radius: 9px;" +
-                "-fx-padding: 0 12 0 12;" +
-                "-fx-alignment: CENTER_LEFT;" +
-                "-fx-cursor: hand;"
+                "-fx-background-color:" + LIME + ";" +
+                "-fx-background-radius:9px;" +
+                "-fx-padding:0 12 0 12;" +
+                "-fx-alignment:CENTER_LEFT;" +
+                "-fx-cursor:hand;"
         );
     }
+
+    // =========================================================
+    // NORMAL STYLE
+    // =========================================================
 
     private static void applyNormalStyle(
             Button button,
@@ -513,24 +803,28 @@ public class Sidebar {
     ) {
 
         icon.setStyle(
-                "-fx-text-fill: " + MUTED + ";" +
-                "-fx-font-size: 16px;"
+                "-fx-text-fill:" + MUTED + ";" +
+                "-fx-font-size:16px;"
         );
 
         text.setStyle(
-                "-fx-text-fill: " + TEXT + ";" +
-                "-fx-font-size: 13px;" +
-                "-fx-font-weight: bold;"
+                "-fx-text-fill:" + TEXT + ";" +
+                "-fx-font-size:13px;" +
+                "-fx-font-weight:bold;"
         );
 
         button.setStyle(
-                "-fx-background-color: transparent;" +
-                "-fx-background-radius: 9px;" +
-                "-fx-padding: 0 12 0 12;" +
-                "-fx-alignment: CENTER_LEFT;" +
-                "-fx-cursor: hand;"
+                "-fx-background-color:transparent;" +
+                "-fx-background-radius:9px;" +
+                "-fx-padding:0 12 0 12;" +
+                "-fx-alignment:CENTER_LEFT;" +
+                "-fx-cursor:hand;"
         );
     }
+
+    // =========================================================
+    // HOVER STYLE
+    // =========================================================
 
     private static void applyHoverStyle(
             Button button,
@@ -539,22 +833,22 @@ public class Sidebar {
     ) {
 
         icon.setStyle(
-                "-fx-text-fill: " + LIME + ";" +
-                "-fx-font-size: 16px;"
+                "-fx-text-fill:" + LIME + ";" +
+                "-fx-font-size:16px;"
         );
 
         text.setStyle(
-                "-fx-text-fill: white;" +
-                "-fx-font-size: 13px;" +
-                "-fx-font-weight: bold;"
+                "-fx-text-fill:white;" +
+                "-fx-font-size:13px;" +
+                "-fx-font-weight:bold;"
         );
 
         button.setStyle(
-                "-fx-background-color: " + HOVER + ";" +
-                "-fx-background-radius: 9px;" +
-                "-fx-padding: 0 12 0 12;" +
-                "-fx-alignment: CENTER_LEFT;" +
-                "-fx-cursor: hand;"
+                "-fx-background-color:" + HOVER + ";" +
+                "-fx-background-radius:9px;" +
+                "-fx-padding:0 12 0 12;" +
+                "-fx-alignment:CENTER_LEFT;" +
+                "-fx-cursor:hand;"
         );
     }
 }

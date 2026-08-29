@@ -1,5 +1,7 @@
 package com.admitx.view;
 
+import com.admitx.dao.CAPAllotmentDAO;
+
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -23,6 +25,9 @@ public class CAPRound2ManagementPage {
     private static final String MUTED = "#9AA59A";
 
     public static Scene getScene() {
+
+        CAPAllotmentDAO capDAO =
+                new CAPAllotmentDAO();
 
         Label title =
                 new Label("CAP Round 2 Management");
@@ -84,7 +89,7 @@ public class CAPRound2ManagementPage {
 
         Label statusDescription =
                 new Label(
-                        "Round 1 decisions have been processed and eligible students are ready for betterment."
+                        "Students who selected Betterment in Round 1 are eligible for CAP Round 2."
                 );
 
         statusDescription.setWrapText(true);
@@ -114,10 +119,14 @@ public class CAPRound2ManagementPage {
                 "-fx-border-radius: 10px;"
         );
 
+        /*
+         * ROUND 2 ACTIONS
+         */
+
         Button run =
                 createPrimaryAction(
                         "Run Betterment",
-                        "Process eligible students for upgraded allotment."
+                        "Process Round 1 betterment requests for CAP Round 2."
                 );
 
         Button publish =
@@ -126,24 +135,106 @@ public class CAPRound2ManagementPage {
                         "Make CAP Round 2 betterment results visible to students."
                 );
 
-        run.setOnAction(e ->
-                showMessage(
-                        "Betterment",
-                        "CAP Round 2 betterment completed."
-                )
-        );
+        /*
+         * RUN BETTERMENT
+         */
 
-        publish.setOnAction(e ->
+        run.setOnAction(e -> {
+
+            run.setDisable(true);
+
+            currentValue.setText(
+                    "Processing Betterment..."
+            );
+
+            boolean success =
+                    capDAO.runRound2Allotment();
+
+            if (success) {
+
+                currentValue.setText(
+                        "Betterment Completed"
+                );
+
+                statusBadge.setText(
+                        "●  ROUND 2 COMPLETED"
+                );
+
+                statusDescription.setText(
+                        "CAP Round 2 betterment processing is complete. Publish the results to students."
+                );
+
                 showMessage(
-                        "Results",
-                        "CAP Round 2 results published."
-                )
-        );
+                        Alert.AlertType.INFORMATION,
+                        "Round 2 Betterment",
+                        "CAP Round 2 betterment completed successfully."
+                );
+
+            } else {
+
+                currentValue.setText(
+                        "No Betterment Processed"
+                );
+
+                showMessage(
+                        Alert.AlertType.WARNING,
+                        "Round 2 Betterment",
+                        "No students were processed.\n\nMake sure at least one student selected Betterment in CAP Round 1."
+                );
+            }
+
+            run.setDisable(false);
+        });
+
+        /*
+         * PUBLISH ROUND 2
+         */
+
+        publish.setOnAction(e -> {
+
+            publish.setDisable(true);
+
+            boolean success =
+                    capDAO.publishRound2();
+
+            if (success) {
+
+                currentValue.setText(
+                        "Round 2 Results Published"
+                );
+
+                statusBadge.setText(
+                        "●  ROUND 2 PUBLISHED"
+                );
+
+                statusDescription.setText(
+                        "CAP Round 2 results are now visible to eligible students."
+                );
+
+                showMessage(
+                        Alert.AlertType.INFORMATION,
+                        "Results Published",
+                        "CAP Round 2 results have been published successfully."
+                );
+
+            } else {
+
+                showMessage(
+                        Alert.AlertType.ERROR,
+                        "Publish Failed",
+                        "CAP Round 2 results could not be published."
+                );
+            }
+
+            publish.setDisable(false);
+        });
 
         VBox actionsCard =
                 new VBox(
                         12,
-                        createSectionTitle("ROUND 2 ACTIONS"),
+                        createSectionTitle(
+                                "ROUND 2 ACTIONS"
+                        ),
                         run,
                         publish
                 );
@@ -159,22 +250,43 @@ public class CAPRound2ManagementPage {
                 "-fx-border-radius: 10px;"
         );
 
+        /*
+         * FIRESTORE COUNTS
+         */
+
+        int bettermentStudents =
+                capDAO.getRound1BettermentCount();
+
+        int frozenStudents =
+                capDAO.getRound1FrozenCount();
+
         VBox overviewCard =
                 new VBox(
                         12,
-                        createSectionTitle("ROUND 2 OVERVIEW"),
+
+                        createSectionTitle(
+                                "ROUND 2 OVERVIEW"
+                        ),
+
                         createStatRow(
                                 "Students Eligible for Betterment",
-                                "642"
+                                String.valueOf(
+                                        bettermentStudents
+                                )
                         ),
+
                         createStatRow(
                                 "Round 1 Frozen Seats",
-                                "318"
+                                String.valueOf(
+                                        frozenStudents
+                                )
                         ),
+
                         createStatRow(
                                 "Vacant Seats",
-                                "274"
+                                "Not Connected"
                         ),
+
                         createStatRow(
                                 "Round Status",
                                 "Ready"
@@ -211,7 +323,7 @@ public class CAPRound2ManagementPage {
 
         Label note =
                 new Label(
-                        "Before running betterment, confirm that Round 1 decisions, vacancies and seat availability are finalized."
+                        "Only students whose Round 1 decision is Betterment Requested will participate in CAP Round 2."
                 );
 
         note.setWrapText(true);
@@ -435,18 +547,18 @@ public class CAPRound2ManagementPage {
     }
 
     private static void showMessage(
+            Alert.AlertType type,
             String title,
             String message
     ) {
 
         Alert alert =
-                new Alert(
-                        Alert.AlertType.INFORMATION
-                );
+                new Alert(type);
 
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(message);
+
         alert.showAndWait();
     }
 }

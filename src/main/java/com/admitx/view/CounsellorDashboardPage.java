@@ -1,26 +1,240 @@
 package com.admitx.view;
 
+import com.admitx.dao.ApplicationDAO;
+import com.admitx.dao.CAPAllotmentDAO;
+import com.admitx.dao.CollegeDAO;
+import com.admitx.dao.GrievanceDAO;
+import com.admitx.dao.MeritDAO;
+
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.*;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 
 public class CounsellorDashboardPage {
 
-    private static final String BG = "#0B100B";
-    private static final String CARD = "#141B14";
-    private static final String ROW = "#0F150F";
-    private static final String BORDER = "#293529";
-    private static final String LIME = "#B7FF00";
-    private static final String WHITE = "#F5F7F2";
-    private static final String MUTED = "#9AA59A";
+    private static final String BG =
+            "#0B100B";
+
+    private static final String CARD =
+            "#141B14";
+
+    private static final String ROW =
+            "#0F150F";
+
+    private static final String BORDER =
+            "#293529";
+
+    private static final String LIME =
+            "#B7FF00";
+
+    private static final String WHITE =
+            "#F5F7F2";
+
+    private static final String MUTED =
+            "#9AA59A";
 
     public static Scene getScene() {
 
+        // =====================================================
+        // DAO
+        // =====================================================
+
+        ApplicationDAO applicationDAO =
+                new ApplicationDAO();
+
+        CAPAllotmentDAO capDAO =
+                new CAPAllotmentDAO();
+
+        MeritDAO meritDAO =
+                new MeritDAO();
+
+        GrievanceDAO grievanceDAO =
+                new GrievanceDAO();
+
+        CollegeDAO collegeDAO =
+                new CollegeDAO();
+
+        // =====================================================
+        // APPLICATION COUNTS
+        // =====================================================
+
+        int totalApplications =
+                applicationDAO
+                        .getTotalApplicationCount();
+
+        int verifiedApplications =
+                applicationDAO
+                        .getVerifiedApplicationCount();
+
+        int pendingApplications =
+                applicationDAO
+                        .getPendingApplicationCount();
+
+        int rejectedApplications =
+                applicationDAO
+                        .getRejectedApplicationCount();
+
+        // =====================================================
+        // COLLEGE COUNT
+        // =====================================================
+
+        int totalColleges =
+                collegeDAO
+                        .getAllColleges()
+                        .size();
+
+        // =====================================================
+        // MERIT DATA
+        // =====================================================
+
+        int eligibleStudents =
+                meritDAO
+                        .getEligibleStudentCount();
+
+        int provisionalPublishedCount =
+                meritDAO
+                        .getPublishedMeritCount();
+
+        int finalPublishedCount =
+                meritDAO
+                        .getFinalPublishedCount();
+
+        boolean provisionalGenerated =
+                meritDAO
+                        .isProvisionalGenerated();
+
+        boolean provisionalPublished =
+                meritDAO
+                        .isProvisionalPublished();
+
+        boolean finalGenerated =
+                meritDAO
+                        .isFinalGenerated();
+
+        boolean finalPublished =
+                meritDAO
+                        .isFinalPublished();
+
+        // =====================================================
+        // GRIEVANCE DATA
+        // =====================================================
+
+        int pendingGrievances =
+                grievanceDAO
+                        .getPendingCount();
+
+        int approvedGrievances =
+                grievanceDAO
+                        .getApprovedCount();
+
+        int rejectedGrievances =
+                grievanceDAO
+                        .getRejectedCount();
+
+        // =====================================================
+        // PREFERENCE / CAP DATA
+        // =====================================================
+
+        int lockedPreferences =
+                capDAO
+                        .getLockedPreferenceCount();
+
+        int round1Frozen =
+                capDAO
+                        .getRound1FrozenCount();
+
+        int round1Betterment =
+                capDAO
+                        .getRound1BettermentCount();
+
+        int round1Rejected =
+                capDAO
+                        .getRound1RejectedCount();
+
+        int round2Frozen =
+                capDAO
+                        .getRound2FrozenCount();
+
+        int round2Betterment =
+                capDAO
+                        .getRound2BettermentCount();
+
+        int finalAdmissions =
+                capDAO
+                        .getFinalAdmissionCount();
+
+        // =====================================================
+        // VERIFICATION PERCENTAGE
+        // =====================================================
+
+        double verificationPercentage =
+                totalApplications == 0
+                        ? 0
+                        :
+                        (
+                                verifiedApplications
+                                        * 100.0
+                        )
+                                /
+                                totalApplications;
+
+        String verificationText =
+                String.format(
+                        "%.1f%% verified",
+                        verificationPercentage
+                );
+
+        // =====================================================
+        // CURRENT CAP STATUS
+        // =====================================================
+
+        String currentCAPStatus =
+                determineCAPStatus(
+                        lockedPreferences,
+                        round1Frozen,
+                        round1Betterment,
+                        round1Rejected,
+                        round2Frozen,
+                        round2Betterment,
+                        finalAdmissions
+                );
+
+        String capStatusDescription =
+                determineCAPDescription(
+                        currentCAPStatus
+                );
+
+        // =====================================================
+        // OVERALL PROGRESS
+        // =====================================================
+
+        int overallProgress =
+                calculateOverallProgress(
+                        verifiedApplications,
+                        provisionalPublished,
+                        finalPublished,
+                        lockedPreferences,
+                        finalAdmissions
+                );
+
+        // =====================================================
+        // HEADING
+        // =====================================================
+
         Label title =
-                new Label("Counsellor Dashboard");
+                new Label(
+                        "Counsellor Dashboard"
+                );
 
         title.setStyle(
                 "-fx-font-size: 28px;" +
@@ -30,7 +244,8 @@ public class CounsellorDashboardPage {
 
         Label subtitle =
                 new Label(
-                        "Monitor students, verification activity and CAP counselling progress."
+                        "Monitor applications, merit activity, "
+                                + "preferences and CAP counselling progress."
                 );
 
         subtitle.setStyle(
@@ -45,63 +260,199 @@ public class CounsellorDashboardPage {
                         subtitle
                 );
 
+        // =====================================================
+        // PRIMARY STATISTICS
+        // =====================================================
+
         GridPane stats =
                 new GridPane();
 
-        stats.setHgap(16);
-        stats.setVgap(16);
+        stats.setHgap(
+                16
+        );
 
-        VBox totalStudents =
+        stats.setVgap(
+                16
+        );
+
+        VBox totalStudentsCard =
                 createStatCard(
-                        "TOTAL STUDENTS",
-                        "1,250",
-                        "Registered candidates"
+                        "TOTAL APPLICATIONS",
+                        String.valueOf(
+                                totalApplications
+                        ),
+                        "Submitted student applications"
                 );
 
-        VBox verifiedStudents =
+        VBox verifiedStudentsCard =
                 createStatCard(
                         "VERIFIED STUDENTS",
-                        "980",
-                        "78.4% verified"
+                        String.valueOf(
+                                verifiedApplications
+                        ),
+                        verificationText
                 );
 
-        VBox pendingVerification =
+        VBox pendingVerificationCard =
                 createStatCard(
                         "PENDING VERIFICATION",
-                        "270",
+                        String.valueOf(
+                                pendingApplications
+                        ),
                         "Requires counsellor review"
                 );
 
-        VBox capStatus =
+        VBox capStatusCard =
                 createStatCard(
-                        "CAP ROUND STATUS",
-                        "Round 1",
-                        "Currently active"
+                        "CAP STATUS",
+                        currentCAPStatus,
+                        capStatusDescription
                 );
 
-        stats.add(totalStudents, 0, 0);
-        stats.add(verifiedStudents, 1, 0);
-        stats.add(pendingVerification, 2, 0);
-        stats.add(capStatus, 3, 0);
+        stats.add(
+                totalStudentsCard,
+                0,
+                0
+        );
 
-        for (int i = 0; i < 4; i++) {
+        stats.add(
+                verifiedStudentsCard,
+                1,
+                0
+        );
+
+        stats.add(
+                pendingVerificationCard,
+                2,
+                0
+        );
+
+        stats.add(
+                capStatusCard,
+                3,
+                0
+        );
+
+        for (
+                int i = 0;
+                i < 4;
+                i++
+        ) {
 
             ColumnConstraints column =
                     new ColumnConstraints();
 
-            column.setPercentWidth(25);
+            column.setPercentWidth(
+                    25
+            );
 
-            stats.getColumnConstraints()
-                    .add(column);
+            stats
+                    .getColumnConstraints()
+                    .add(
+                            column
+                    );
         }
 
-        Label activityTitle =
-                createSectionTitle(
-                        "COUNSELLING OVERVIEW"
-                );
+        // =====================================================
+        // SECONDARY STATISTICS
+        // =====================================================
+
+        GridPane secondaryStats =
+                new GridPane();
+
+        secondaryStats.setHgap(
+                16
+        );
+
+        secondaryStats.setVgap(
+                16
+        );
+
+        secondaryStats.add(
+                createStatCard(
+                        "COLLEGES",
+                        String.valueOf(
+                                totalColleges
+                        ),
+                        "Available colleges"
+                ),
+                0,
+                0
+        );
+
+        secondaryStats.add(
+                createStatCard(
+                        "ELIGIBLE STUDENTS",
+                        String.valueOf(
+                                eligibleStudents
+                        ),
+                        "Eligible for merit process"
+                ),
+                1,
+                0
+        );
+
+        secondaryStats.add(
+                createStatCard(
+                        "LOCKED OPTION FORMS",
+                        String.valueOf(
+                                lockedPreferences
+                        ),
+                        "Ready for CAP allotment"
+                ),
+                2,
+                0
+        );
+
+        secondaryStats.add(
+                createStatCard(
+                        "FINAL ADMISSIONS",
+                        String.valueOf(
+                                finalAdmissions
+                        ),
+                        "Students accepted final seat"
+                ),
+                3,
+                0
+        );
+
+        for (
+                int i = 0;
+                i < 4;
+                i++
+        ) {
+
+            ColumnConstraints column =
+                    new ColumnConstraints();
+
+            column.setPercentWidth(
+                    25
+            );
+
+            secondaryStats
+                    .getColumnConstraints()
+                    .add(
+                            column
+                    );
+        }
+
+        // =====================================================
+        // COUNSELLING PROGRESS
+        // =====================================================
 
         VBox progressCard =
-                createProgressCard();
+                createProgressCard(
+                        overallProgress,
+                        currentCAPStatus,
+                        totalApplications,
+                        verifiedApplications,
+                        lockedPreferences,
+                        finalAdmissions
+                );
+
+        // =====================================================
+        // PENDING ACTIONS
+        // =====================================================
 
         Label actionTitle =
                 createSectionTitle(
@@ -110,22 +461,46 @@ public class CounsellorDashboardPage {
 
         VBox pendingActions =
                 new VBox(
-                        10,
+                        10
+                );
+
+        pendingActions
+                .getChildren()
+                .add(
                         createActionRow(
                                 "Student Verifications",
-                                "12 applications pending"
-                        ),
+                                pendingApplications
+                                        + " applications pending"
+                        )
+                );
+
+        pendingActions
+                .getChildren()
+                .add(
                         createActionRow(
-                                "Document Review",
-                                "8 document sets pending"
-                        ),
+                                "Rejected Applications",
+                                rejectedApplications
+                                        + " applications rejected"
+                        )
+                );
+
+        pendingActions
+                .getChildren()
+                .add(
                         createActionRow(
                                 "Grievances",
-                                "4 grievances require review"
-                        ),
+                                pendingGrievances
+                                        + " grievances require review"
+                        )
+                );
+
+        pendingActions
+                .getChildren()
+                .add(
                         createActionRow(
-                                "College Updates",
-                                "3 records need attention"
+                                "Option Forms",
+                                lockedPreferences
+                                        + " locked preference forms"
                         )
                 );
 
@@ -136,67 +511,131 @@ public class CounsellorDashboardPage {
                         pendingActions
                 );
 
-        actionCard.setPadding(
-                new Insets(20)
+        styleCard(
+                actionCard
         );
 
-        actionCard.setStyle(
-                "-fx-background-color: " + CARD + ";" +
-                "-fx-background-radius: 12px;" +
-                "-fx-border-color: " + BORDER + ";" +
-                "-fx-border-radius: 12px;"
-        );
+        // =====================================================
+        // SYSTEM STATUS
+        // =====================================================
 
-        Label recentTitle =
+        Label statusTitle =
                 createSectionTitle(
-                        "RECENT ACTIVITY"
+                        "SYSTEM STATUS"
                 );
 
-        VBox recentActivity =
+        VBox systemStatus =
                 new VBox(
                         10,
                         createActivityRow(
-                                "New student registered",
-                                "Application MHTCET20260048"
+                                "Provisional Merit",
+                                getProvisionalStatus(
+                                        provisionalGenerated,
+                                        provisionalPublished,
+                                        provisionalPublishedCount
+                                )
                         ),
                         createActivityRow(
-                                "Documents verified",
-                                "Application MHTCET20260031"
+                                "Final Merit",
+                                getFinalMeritStatus(
+                                        finalGenerated,
+                                        finalPublished,
+                                        finalPublishedCount
+                                )
                         ),
                         createActivityRow(
-                                "Merit list updated",
-                                "Provisional merit data published"
+                                "Grievance Review",
+                                pendingGrievances
+                                        + " pending • "
+                                        + approvedGrievances
+                                        + " approved • "
+                                        + rejectedGrievances
+                                        + " rejected"
                         ),
                         createActivityRow(
-                                "Option form locked",
-                                "Student preference list submitted"
+                                "CAP Counselling",
+                                currentCAPStatus
+                                        + " • "
+                                        + capStatusDescription
                         )
                 );
 
-        VBox recentCard =
+        VBox statusCard =
                 new VBox(
                         14,
-                        recentTitle,
-                        recentActivity
+                        statusTitle,
+                        systemStatus
                 );
 
-        recentCard.setPadding(
-                new Insets(20)
+        styleCard(
+                statusCard
         );
 
-        recentCard.setStyle(
-                "-fx-background-color: " + CARD + ";" +
-                "-fx-background-radius: 12px;" +
-                "-fx-border-color: " + BORDER + ";" +
-                "-fx-border-radius: 12px;"
+        // =====================================================
+        // CAP ROUND DETAILS
+        // =====================================================
+
+        Label capDetailsTitle =
+                createSectionTitle(
+                        "CAP ROUND DETAILS"
+                );
+
+        VBox capDetails =
+                new VBox(
+                        10,
+                        createActivityRow(
+                                "Round 1 Freeze",
+                                round1Frozen
+                                        + " students accepted seats"
+                        ),
+                        createActivityRow(
+                                "Round 1 Betterment",
+                                round1Betterment
+                                        + " students requested betterment"
+                        ),
+                        createActivityRow(
+                                "Round 1 Rejected",
+                                round1Rejected
+                                        + " students rejected seats"
+                        ),
+                        createActivityRow(
+                                "Round 2 Freeze",
+                                round2Frozen
+                                        + " students accepted seats"
+                        ),
+                        createActivityRow(
+                                "Round 2 Betterment",
+                                round2Betterment
+                                        + " students requested betterment"
+                        ),
+                        createActivityRow(
+                                "Final Admission",
+                                finalAdmissions
+                                        + " students confirmed admission"
+                        )
+                );
+
+        VBox capDetailsCard =
+                new VBox(
+                        14,
+                        capDetailsTitle,
+                        capDetails
+                );
+
+        styleCard(
+                capDetailsCard
         );
+
+        // =====================================================
+        // LOWER SECTION
+        // =====================================================
 
         HBox lowerSection =
                 new HBox(
                         16,
                         progressCard,
                         actionCard,
-                        recentCard
+                        statusCard
                 );
 
         HBox.setHgrow(
@@ -210,37 +649,83 @@ public class CounsellorDashboardPage {
         );
 
         HBox.setHgrow(
-                recentCard,
+                statusCard,
                 Priority.ALWAYS
         );
+
+        progressCard.setMaxWidth(
+                Double.MAX_VALUE
+        );
+
+        actionCard.setMaxWidth(
+                Double.MAX_VALUE
+        );
+
+        statusCard.setMaxWidth(
+                Double.MAX_VALUE
+        );
+
+        // =====================================================
+        // MAIN CONTENT
+        // =====================================================
 
         VBox root =
                 new VBox(
                         24,
                         heading,
                         stats,
-                        lowerSection
+                        secondaryStats,
+                        lowerSection,
+                        capDetailsCard
                 );
 
         root.setPadding(
-                new Insets(30)
+                new Insets(
+                        30
+                )
         );
 
         root.setStyle(
-                "-fx-background-color: " + BG + ";"
+                "-fx-background-color: "
+                        + BG + ";"
         );
 
+        // =====================================================
+        // SCROLL PANE
+        // =====================================================
+
         ScrollPane scrollPane =
-                new ScrollPane(root);
+                new ScrollPane(
+                        root
+                );
 
         scrollPane.setFitToWidth(
                 true
         );
 
-        scrollPane.setStyle(
-                "-fx-background: " + BG + ";" +
-                "-fx-background-color: " + BG + ";"
+        scrollPane.setHbarPolicy(
+                ScrollPane
+                        .ScrollBarPolicy
+                        .NEVER
         );
+
+        scrollPane.setVbarPolicy(
+                ScrollPane
+                        .ScrollBarPolicy
+                        .AS_NEEDED
+        );
+
+        scrollPane.setStyle(
+                "-fx-background: "
+                        + BG + ";" +
+                "-fx-background-color: "
+                        + BG + ";" +
+                "-fx-border-color: transparent;"
+        );
+
+        // =====================================================
+        // COUNSELLOR LAYOUT
+        // =====================================================
 
         BorderPane layout =
                 CounsellorLayout.create(
@@ -255,6 +740,197 @@ public class CounsellorDashboardPage {
         );
     }
 
+    // =========================================================
+    // DETERMINE CAP STATUS
+    // =========================================================
+
+    private static String determineCAPStatus(
+            int lockedPreferences,
+            int round1Frozen,
+            int round1Betterment,
+            int round1Rejected,
+            int round2Frozen,
+            int round2Betterment,
+            int finalAdmissions
+    ) {
+
+        if (finalAdmissions > 0) {
+
+            return "Round 3";
+        }
+
+        if (
+                round2Frozen > 0
+                        ||
+                        round2Betterment > 0
+        ) {
+
+            return "Round 2";
+        }
+
+        if (
+                round1Frozen > 0
+                        ||
+                        round1Betterment > 0
+                        ||
+                        round1Rejected > 0
+        ) {
+
+            return "Round 1";
+        }
+
+        if (lockedPreferences > 0) {
+
+            return "CAP Ready";
+        }
+
+        return "Not Started";
+    }
+
+    // =========================================================
+    // CAP DESCRIPTION
+    // =========================================================
+
+    private static String determineCAPDescription(
+            String status
+    ) {
+
+        if (
+                "Round 3".equals(
+                        status
+                )
+        ) {
+
+            return "Final admission process active";
+        }
+
+        if (
+                "Round 2".equals(
+                        status
+                )
+        ) {
+
+            return "Round 2 counselling activity";
+        }
+
+        if (
+                "Round 1".equals(
+                        status
+                )
+        ) {
+
+            return "Round 1 counselling activity";
+        }
+
+        if (
+                "CAP Ready".equals(
+                        status
+                )
+        ) {
+
+            return "Locked option forms available";
+        }
+
+        return "CAP counselling has not started";
+    }
+
+    // =========================================================
+    // OVERALL PROGRESS
+    // =========================================================
+
+    private static int calculateOverallProgress(
+            int verifiedApplications,
+            boolean provisionalPublished,
+            boolean finalPublished,
+            int lockedPreferences,
+            int finalAdmissions
+    ) {
+
+        int progress =
+                0;
+
+        if (verifiedApplications > 0) {
+
+            progress += 20;
+        }
+
+        if (provisionalPublished) {
+
+            progress += 20;
+        }
+
+        if (finalPublished) {
+
+            progress += 20;
+        }
+
+        if (lockedPreferences > 0) {
+
+            progress += 20;
+        }
+
+        if (finalAdmissions > 0) {
+
+            progress += 20;
+        }
+
+        return progress;
+    }
+
+    // =========================================================
+    // PROVISIONAL STATUS
+    // =========================================================
+
+    private static String getProvisionalStatus(
+            boolean generated,
+            boolean published,
+            int publishedCount
+    ) {
+
+        if (published) {
+
+            return "Published • "
+                    + publishedCount
+                    + " merit records";
+        }
+
+        if (generated) {
+
+            return "Generated • Waiting for publication";
+        }
+
+        return "Not generated";
+    }
+
+    // =========================================================
+    // FINAL MERIT STATUS
+    // =========================================================
+
+    private static String getFinalMeritStatus(
+            boolean generated,
+            boolean published,
+            int publishedCount
+    ) {
+
+        if (published) {
+
+            return "Published • "
+                    + publishedCount
+                    + " final merit records";
+        }
+
+        if (generated) {
+
+            return "Generated • Waiting for publication";
+        }
+
+        return "Not generated";
+    }
+
+    // =========================================================
+    // STAT CARD
+    // =========================================================
+
     private static VBox createStatCard(
             String title,
             String value,
@@ -262,31 +938,46 @@ public class CounsellorDashboardPage {
     ) {
 
         Label titleLabel =
-                new Label(title);
+                new Label(
+                        title
+                );
 
         titleLabel.setStyle(
                 "-fx-font-size: 10px;" +
                 "-fx-font-weight: bold;" +
-                "-fx-text-fill: " + MUTED + ";"
+                "-fx-text-fill: "
+                        + MUTED + ";"
         );
 
         Label valueLabel =
-                new Label(value);
+                new Label(
+                        value
+                );
+
+        valueLabel.setWrapText(
+                true
+        );
 
         valueLabel.setStyle(
-                "-fx-font-size: 26px;" +
+                "-fx-font-size: 24px;" +
                 "-fx-font-weight: bold;" +
-                "-fx-text-fill: " + LIME + ";"
+                "-fx-text-fill: "
+                        + LIME + ";"
         );
 
         Label descriptionLabel =
-                new Label(description);
+                new Label(
+                        description
+                );
 
-        descriptionLabel.setWrapText(true);
+        descriptionLabel.setWrapText(
+                true
+        );
 
         descriptionLabel.setStyle(
                 "-fx-font-size: 11px;" +
-                "-fx-text-fill: " + MUTED + ";"
+                "-fx-text-fill: "
+                        + MUTED + ";"
         );
 
         VBox card =
@@ -298,52 +989,84 @@ public class CounsellorDashboardPage {
                 );
 
         card.setPadding(
-                new Insets(18)
+                new Insets(
+                        18
+                )
         );
 
         card.setMaxWidth(
                 Double.MAX_VALUE
         );
 
+        card.setMinHeight(
+                125
+        );
+
         card.setStyle(
-                "-fx-background-color: " + CARD + ";" +
+                "-fx-background-color: "
+                        + CARD + ";" +
                 "-fx-background-radius: 12px;" +
-                "-fx-border-color: " + BORDER + ";" +
+                "-fx-border-color: "
+                        + BORDER + ";" +
                 "-fx-border-radius: 12px;"
         );
 
         return card;
     }
 
-    private static VBox createProgressCard() {
+    // =========================================================
+    // PROGRESS CARD
+    // =========================================================
+
+    private static VBox createProgressCard(
+            int overallProgress,
+            String capStatus,
+            int totalApplications,
+            int verifiedApplications,
+            int lockedPreferences,
+            int finalAdmissions
+    ) {
 
         Label title =
                 createSectionTitle(
-                        "CAP ROUND ACTIVITY"
+                        "COUNSELLING PROGRESS"
                 );
 
         Label round =
-                new Label("Round 1");
+                new Label(
+                        capStatus
+                );
 
         round.setStyle(
                 "-fx-font-size: 20px;" +
                 "-fx-font-weight: bold;" +
-                "-fx-text-fill: " + WHITE + ";"
+                "-fx-text-fill: "
+                        + WHITE + ";"
         );
 
         Label percentage =
-                new Label("82%");
+                new Label(
+                        overallProgress
+                                + "%"
+                );
 
         percentage.setStyle(
                 "-fx-font-size: 12px;" +
                 "-fx-font-weight: bold;" +
-                "-fx-text-fill: " + LIME + ";"
+                "-fx-text-fill: "
+                        + LIME + ";"
         );
 
         Region track =
                 new Region();
 
-        track.setPrefHeight(8);
+        track.setPrefHeight(
+                8
+        );
+
+        track.setMaxWidth(
+                Double.MAX_VALUE
+        );
 
         track.setStyle(
                 "-fx-background-color: #263026;" +
@@ -353,11 +1076,23 @@ public class CounsellorDashboardPage {
         Region progress =
                 new Region();
 
-        progress.setPrefHeight(8);
-        progress.setPrefWidth(230);
+        progress.setPrefHeight(
+                8
+        );
+
+        progress.prefWidthProperty()
+                .bind(
+                        track
+                                .widthProperty()
+                                .multiply(
+                                        overallProgress
+                                                / 100.0
+                                )
+                );
 
         progress.setStyle(
-                "-fx-background-color: " + LIME + ";" +
+                "-fx-background-color: "
+                        + LIME + ";" +
                 "-fx-background-radius: 10px;"
         );
 
@@ -371,32 +1106,33 @@ public class CounsellorDashboardPage {
                 Pos.CENTER_LEFT
         );
 
+        progressBar.setMaxWidth(
+                Double.MAX_VALUE
+        );
+
         Label applications =
-                new Label(
-                        "Applications: 1,250"
+                createMutedLabel(
+                        "Applications: "
+                                + totalApplications
                 );
 
-        Label allotted =
-                new Label(
-                        "Seats Allotted: 840"
+        Label verified =
+                createMutedLabel(
+                        "Verified: "
+                                + verifiedApplications
                 );
 
-        Label pending =
-                new Label(
-                        "Pending: 410"
+        Label locked =
+                createMutedLabel(
+                        "Option Forms Locked: "
+                                + lockedPreferences
                 );
 
-        applications.setStyle(
-                "-fx-text-fill: " + MUTED + ";"
-        );
-
-        allotted.setStyle(
-                "-fx-text-fill: " + MUTED + ";"
-        );
-
-        pending.setStyle(
-                "-fx-text-fill: " + MUTED + ";"
-        );
+        Label admissions =
+                createMutedLabel(
+                        "Final Admissions: "
+                                + finalAdmissions
+                );
 
         VBox card =
                 new VBox(
@@ -406,23 +1142,21 @@ public class CounsellorDashboardPage {
                         percentage,
                         progressBar,
                         applications,
-                        allotted,
-                        pending
+                        verified,
+                        locked,
+                        admissions
                 );
 
-        card.setPadding(
-                new Insets(20)
-        );
-
-        card.setStyle(
-                "-fx-background-color: " + CARD + ";" +
-                "-fx-background-radius: 12px;" +
-                "-fx-border-color: " + BORDER + ";" +
-                "-fx-border-radius: 12px;"
+        styleCard(
+                card
         );
 
         return card;
     }
+
+    // =========================================================
+    // ACTION ROW
+    // =========================================================
 
     private static HBox createActionRow(
             String title,
@@ -430,20 +1164,30 @@ public class CounsellorDashboardPage {
     ) {
 
         Label titleLabel =
-                new Label(title);
+                new Label(
+                        title
+                );
 
         titleLabel.setStyle(
                 "-fx-font-size: 13px;" +
                 "-fx-font-weight: bold;" +
-                "-fx-text-fill: " + WHITE + ";"
+                "-fx-text-fill: "
+                        + WHITE + ";"
         );
 
         Label descriptionLabel =
-                new Label(description);
+                new Label(
+                        description
+                );
+
+        descriptionLabel.setWrapText(
+                true
+        );
 
         descriptionLabel.setStyle(
                 "-fx-font-size: 11px;" +
-                "-fx-text-fill: " + MUTED + ";"
+                "-fx-text-fill: "
+                        + MUTED + ";"
         );
 
         VBox text =
@@ -454,10 +1198,13 @@ public class CounsellorDashboardPage {
                 );
 
         Label dot =
-                new Label("●");
+                new Label(
+                        "●"
+                );
 
         dot.setStyle(
-                "-fx-text-fill: " + LIME + ";" +
+                "-fx-text-fill: "
+                        + LIME + ";" +
                 "-fx-font-size: 10px;"
         );
 
@@ -473,16 +1220,23 @@ public class CounsellorDashboardPage {
         );
 
         row.setPadding(
-                new Insets(10)
+                new Insets(
+                        10
+                )
         );
 
         row.setStyle(
-                "-fx-background-color: " + ROW + ";" +
+                "-fx-background-color: "
+                        + ROW + ";" +
                 "-fx-background-radius: 8px;"
         );
 
         return row;
     }
+
+    // =========================================================
+    // ACTIVITY ROW
+    // =========================================================
 
     private static HBox createActivityRow(
             String title,
@@ -490,7 +1244,9 @@ public class CounsellorDashboardPage {
     ) {
 
         Label icon =
-                new Label("✓");
+                new Label(
+                        "✓"
+                );
 
         icon.setMinSize(
                 28,
@@ -504,25 +1260,36 @@ public class CounsellorDashboardPage {
         icon.setStyle(
                 "-fx-background-color: #1D2A10;" +
                 "-fx-background-radius: 50%;" +
-                "-fx-text-fill: " + LIME + ";" +
+                "-fx-text-fill: "
+                        + LIME + ";" +
                 "-fx-font-weight: bold;"
         );
 
         Label titleLabel =
-                new Label(title);
+                new Label(
+                        title
+                );
 
         titleLabel.setStyle(
                 "-fx-font-size: 12px;" +
                 "-fx-font-weight: bold;" +
-                "-fx-text-fill: " + WHITE + ";"
+                "-fx-text-fill: "
+                        + WHITE + ";"
         );
 
         Label descriptionLabel =
-                new Label(description);
+                new Label(
+                        description
+                );
+
+        descriptionLabel.setWrapText(
+                true
+        );
 
         descriptionLabel.setStyle(
                 "-fx-font-size: 10px;" +
-                "-fx-text-fill: " + MUTED + ";"
+                "-fx-text-fill: "
+                        + MUTED + ";"
         );
 
         VBox text =
@@ -544,25 +1311,80 @@ public class CounsellorDashboardPage {
         );
 
         row.setPadding(
-                new Insets(8)
+                new Insets(
+                        8
+                )
         );
 
         return row;
     }
+
+    // =========================================================
+    // SECTION TITLE
+    // =========================================================
 
     private static Label createSectionTitle(
             String text
     ) {
 
         Label label =
-                new Label(text);
+                new Label(
+                        text
+                );
 
         label.setStyle(
                 "-fx-font-size: 10px;" +
                 "-fx-font-weight: bold;" +
-                "-fx-text-fill: " + LIME + ";"
+                "-fx-text-fill: "
+                        + LIME + ";"
         );
 
         return label;
+    }
+
+    // =========================================================
+    // MUTED LABEL
+    // =========================================================
+
+    private static Label createMutedLabel(
+            String text
+    ) {
+
+        Label label =
+                new Label(
+                        text
+                );
+
+        label.setStyle(
+                "-fx-font-size: 11px;" +
+                "-fx-text-fill: "
+                        + MUTED + ";"
+        );
+
+        return label;
+    }
+
+    // =========================================================
+    // CARD STYLE
+    // =========================================================
+
+    private static void styleCard(
+            Region region
+    ) {
+
+        region.setPadding(
+                new Insets(
+                        20
+                )
+        );
+
+        region.setStyle(
+                "-fx-background-color: "
+                        + CARD + ";" +
+                "-fx-background-radius: 12px;" +
+                "-fx-border-color: "
+                        + BORDER + ";" +
+                "-fx-border-radius: 12px;"
+        );
     }
 }

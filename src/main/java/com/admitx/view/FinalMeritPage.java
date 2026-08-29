@@ -1,13 +1,15 @@
 package com.admitx.view;
 
-import com.admitx.model.ApplicationData;
+import com.admitx.dao.MeritDAO;
+import com.admitx.dao.MeritDAO.MeritRecord;
+import com.admitx.model.Student;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
@@ -22,11 +24,25 @@ public class FinalMeritPage {
     private static final String LIME = "#B7FF00";
     private static final String WHITE = "#F5F7F2";
     private static final String MUTED = "#9AA59A";
+    private static final String ORANGE = "#F97316";
 
     public static Scene getScene() {
 
-        ApplicationData data =
-                ApplicationData.getInstance();
+        Student student =
+                Student.getInstance();
+
+        MeritDAO meritDAO =
+                new MeritDAO();
+
+        MeritRecord merit =
+                meritDAO.getCurrentStudentFinalMerit();
+
+        boolean finalPublished =
+                merit != null;
+
+        // =====================================================
+        // HEADING
+        // =====================================================
 
         Label title =
                 new Label("Final Merit List");
@@ -39,7 +55,9 @@ public class FinalMeritPage {
 
         Label subtitle =
                 new Label(
-                        "Your final merit details are now available."
+                        finalPublished
+                                ? "Your final merit details are now available."
+                                : "Final merit list has not been published yet."
                 );
 
         subtitle.setStyle(
@@ -54,47 +72,102 @@ public class FinalMeritPage {
                         subtitle
                 );
 
-        Label published =
-                new Label("●  FINAL MERIT PUBLISHED");
+        // =====================================================
+        // STATUS
+        // =====================================================
 
-        published.setStyle(
-                "-fx-background-color: #1D2A10;" +
-                "-fx-text-fill: " + LIME + ";" +
-                "-fx-font-size: 11px;" +
-                "-fx-font-weight: bold;" +
-                "-fx-padding: 8 14 8 14;" +
-                "-fx-background-radius: 20px;" +
-                "-fx-border-color: #3D5520;" +
-                "-fx-border-radius: 20px;"
-        );
+        Label published =
+                new Label(
+                        finalPublished
+                                ? "●  FINAL MERIT PUBLISHED"
+                                : "●  FINAL MERIT NOT PUBLISHED"
+                );
+
+        if (finalPublished) {
+
+            published.setStyle(
+                    "-fx-background-color: #1D2A10;" +
+                    "-fx-text-fill: " + LIME + ";" +
+                    "-fx-font-size: 11px;" +
+                    "-fx-font-weight: bold;" +
+                    "-fx-padding: 8 14 8 14;" +
+                    "-fx-background-radius: 20px;" +
+                    "-fx-border-color: #3D5520;" +
+                    "-fx-border-radius: 20px;"
+            );
+
+        } else {
+
+            published.setStyle(
+                    "-fx-background-color: #2A1B10;" +
+                    "-fx-text-fill: " + ORANGE + ";" +
+                    "-fx-font-size: 11px;" +
+                    "-fx-font-weight: bold;" +
+                    "-fx-padding: 8 14 8 14;" +
+                    "-fx-background-radius: 20px;" +
+                    "-fx-border-color: #5C3518;" +
+                    "-fx-border-radius: 20px;"
+            );
+        }
 
         HBox status =
-                new HBox(published);
+                new HBox(
+                        published
+                );
 
         status.setAlignment(
                 Pos.CENTER_LEFT
         );
 
-        Label candidateSection =
-                new Label("CANDIDATE");
+        // =====================================================
+        // CANDIDATE INFORMATION
+        // =====================================================
 
-        candidateSection.setStyle(
-                "-fx-font-size: 11px;" +
-                "-fx-font-weight: bold;" +
-                "-fx-text-fill: " + LIME + ";"
-        );
+        Label candidateSection =
+                sectionTitle(
+                        "CANDIDATE"
+                );
+
+        String candidateName;
+
+        if (
+                merit != null &&
+                merit.getCandidateName() != null &&
+                !merit.getCandidateName().isBlank()
+        ) {
+
+            candidateName =
+                    merit.getCandidateName();
+
+        } else if (
+                student.getCandidateName() != null &&
+                !student.getCandidateName().isBlank()
+        ) {
+
+            candidateName =
+                    student.getCandidateName();
+
+        } else {
+
+            candidateName =
+                    student.getUsername();
+        }
 
         VBox candidateCard =
                 new VBox(
                         15,
                         candidateSection,
+
                         detail(
                                 "Candidate",
-                                value(data.getCandidateName())
+                                value(candidateName)
                         ),
+
                         detail(
-                                "Application ID",
-                                "MHTCET20260001"
+                                "Student Email",
+                                value(
+                                        student.getEmail()
+                                )
                         )
                 );
 
@@ -102,71 +175,154 @@ public class FinalMeritPage {
                 new Insets(22)
         );
 
-        candidateCard.setStyle(
-                "-fx-background-color: " + CARD + ";" +
-                "-fx-background-radius: 12px;" +
-                "-fx-border-color: " + BORDER + ";" +
-                "-fx-border-radius: 12px;"
+        styleCard(
+                candidateCard
         );
+
+        // =====================================================
+        // FINAL MERIT INFORMATION
+        // =====================================================
 
         Label meritSection =
-                new Label("FINAL MERIT INFORMATION");
-
-        meritSection.setStyle(
-                "-fx-font-size: 11px;" +
-                "-fx-font-weight: bold;" +
-                "-fx-text-fill: " + LIME + ";"
-        );
+                sectionTitle(
+                        "FINAL MERIT INFORMATION"
+                );
 
         VBox meritCard =
                 new VBox(
-                        15,
-                        meritSection,
-
-                        createRankCard(
-                                "FINAL MERIT RANK",
-                                "1498"
-                        ),
-
-                        detail(
-                                "Category Rank",
-                                "Open - 701"
-                        ),
-
-                        detail(
-                                "Eligible CAP Rounds",
-                                "CAP Round 1, 2 and 3"
-                        )
+                        15
                 );
+
+        meritCard.getChildren().add(
+                meritSection
+        );
+
+        if (finalPublished) {
+
+            meritCard.getChildren().addAll(
+
+                    createRankCard(
+                            "FINAL MERIT RANK",
+                            String.valueOf(
+                                    merit.getFinalMeritNumber()
+                            )
+                    ),
+
+                    detail(
+                            "Category",
+                            value(
+                                    merit.getCategory()
+                            )
+                    ),
+
+                    detail(
+                            "Category Rank",
+                            value(
+                                    merit.getCategory()
+                            )
+                                    + " - "
+                                    + merit.getFinalCategoryRank()
+                    ),
+
+                    detail(
+                            "CET Percentile",
+                            value(
+                                    merit.getCetPercentile()
+                            )
+                    ),
+
+                    detail(
+                            "Eligible CAP Rounds",
+                            "CAP Round 1, 2 and 3"
+                    ),
+
+                    detail(
+                            "Status",
+                            "Final Merit Published"
+                    )
+            );
+
+        } else {
+
+            meritCard.getChildren().addAll(
+
+                    createRankCard(
+                            "FINAL MERIT RANK",
+                            "--"
+                    ),
+
+                    detail(
+                            "Category",
+                            value(
+                                    student.getCategory()
+                            )
+                    ),
+
+                    detail(
+                            "Category Rank",
+                            "Not Available"
+                    ),
+
+                    detail(
+                            "CET Percentile",
+                            value(
+                                    student.getCetPercentile()
+                            )
+                    ),
+
+                    detail(
+                            "Eligible CAP Rounds",
+                            "Not Available"
+                    ),
+
+                    detail(
+                            "Status",
+                            "Not Published"
+                    )
+            );
+        }
 
         meritCard.setPadding(
                 new Insets(22)
         );
 
-        meritCard.setStyle(
-                "-fx-background-color: " + CARD + ";" +
-                "-fx-background-radius: 12px;" +
-                "-fx-border-color: " + BORDER + ";" +
-                "-fx-border-radius: 12px;"
+        styleCard(
+                meritCard
         );
+
+        // =====================================================
+        // NEXT STEP
+        // =====================================================
 
         Label nextTitle =
-                new Label("NEXT STEP");
-
-        nextTitle.setStyle(
-                "-fx-font-size: 11px;" +
-                "-fx-font-weight: bold;" +
-                "-fx-text-fill: " + LIME + ";"
-        );
-
-        Label nextDescription =
-                new Label(
-                        "Your final merit rank is ready. " +
-                        "You can now search for colleges and " +
-                        "continue with preference filling."
+                sectionTitle(
+                        "NEXT STEP"
                 );
 
-        nextDescription.setWrapText(true);
+        Label nextDescription =
+                new Label();
+
+        if (finalPublished) {
+
+            nextDescription.setText(
+                    "Your final merit rank has been published. "
+                            + "You can now search colleges and continue "
+                            + "with preference filling."
+            );
+
+        } else {
+
+            nextDescription.setText(
+                    "The final merit list is not published yet. "
+                            + "Please check again after the counsellor "
+                            + "completes grievance review and publishes "
+                            + "the final merit list."
+            );
+        }
+
+        nextDescription.setWrapText(
+                true
+        );
 
         nextDescription.setStyle(
                 "-fx-font-size: 13px;" +
@@ -191,32 +347,58 @@ public class FinalMeritPage {
                 "-fx-border-radius: 10px;"
         );
 
+        // =====================================================
+        // DASHBOARD BUTTON
+        // =====================================================
+
         Button dashboard =
-                new Button("← Dashboard");
+                new Button(
+                        "← Dashboard"
+                );
 
-        dashboard.setPrefHeight(42);
-
-        dashboard.setStyle(
-                "-fx-background-color: #171F17;" +
-                "-fx-text-fill: " + WHITE + ";" +
-                "-fx-font-size: 13px;" +
-                "-fx-font-weight: bold;" +
-                "-fx-background-radius: 8px;" +
-                "-fx-border-color: #344034;" +
-                "-fx-border-radius: 8px;" +
-                "-fx-cursor: hand;"
+        styleSecondaryButton(
+                dashboard
         );
 
         dashboard.setOnAction(e ->
+
                 Navigation.goTo(
                         StudentDashboardPage.getScene()
                 )
         );
 
-        Button collegeSearch =
-                new Button("Proceed to College Search →");
+        // =====================================================
+        // REFRESH BUTTON
+        // =====================================================
 
-        collegeSearch.setPrefHeight(42);
+        Button refresh =
+                new Button(
+                        "Refresh Status"
+                );
+
+        styleSecondaryButton(
+                refresh
+        );
+
+        refresh.setOnAction(e ->
+
+                Navigation.goTo(
+                        FinalMeritPage.getScene()
+                )
+        );
+
+        // =====================================================
+        // COLLEGE SEARCH BUTTON
+        // =====================================================
+
+        Button collegeSearch =
+                new Button(
+                        "Proceed to College Search →"
+                );
+
+        collegeSearch.setPrefHeight(
+                42
+        );
 
         collegeSearch.setPadding(
                 new Insets(
@@ -236,11 +418,25 @@ public class FinalMeritPage {
                 "-fx-cursor: hand;"
         );
 
-        collegeSearch.setOnAction(e ->
-                Navigation.goTo(
-                        CollegeSearchPage.getScene()
-                )
+        collegeSearch.setDisable(
+                !finalPublished
         );
+
+        collegeSearch.setOnAction(e -> {
+
+            if (!finalPublished) {
+
+                return;
+            }
+
+            Navigation.goTo(
+                    CollegeSearchPage.getScene()
+            );
+        });
+
+        // =====================================================
+        // BUTTON ROW
+        // =====================================================
 
         Region spacer =
                 new Region();
@@ -254,6 +450,7 @@ public class FinalMeritPage {
                 new HBox(
                         12,
                         dashboard,
+                        refresh,
                         spacer,
                         collegeSearch
                 );
@@ -261,6 +458,10 @@ public class FinalMeritPage {
         buttons.setAlignment(
                 Pos.CENTER_LEFT
         );
+
+        // =====================================================
+        // CONTENT
+        // =====================================================
 
         VBox content =
                 new VBox(
@@ -277,22 +478,65 @@ public class FinalMeritPage {
                 new Insets(30)
         );
 
-        BorderPane page =
-                new BorderPane();
+        content.setStyle(
+                "-fx-background-color: " + BG + ";"
+        );
 
-        page.setCenter(content);
+        // =====================================================
+        // SCROLL
+        // =====================================================
 
-        page.setStyle(
+        ScrollPane scrollPane =
+                new ScrollPane(
+                        content
+                );
+
+        scrollPane.setFitToWidth(
+                true
+        );
+
+        scrollPane.setHbarPolicy(
+                ScrollPane.ScrollBarPolicy.NEVER
+        );
+
+        scrollPane.setStyle(
+                "-fx-background: " + BG + ";" +
                 "-fx-background-color: " + BG + ";"
         );
 
         return new Scene(
                 StudentLayout.create(
                         "Final Merit List",
-                        page
+                        scrollPane
                 )
         );
     }
+
+    // =========================================================
+    // SECTION TITLE
+    // =========================================================
+
+    private static Label sectionTitle(
+            String text
+    ) {
+
+        Label label =
+                new Label(
+                        text
+                );
+
+        label.setStyle(
+                "-fx-font-size: 11px;" +
+                "-fx-font-weight: bold;" +
+                "-fx-text-fill: " + LIME + ";"
+        );
+
+        return label;
+    }
+
+    // =========================================================
+    // DETAIL
+    // =========================================================
 
     private static VBox detail(
             String label,
@@ -300,7 +544,9 @@ public class FinalMeritPage {
     ) {
 
         Label labelText =
-                new Label(label);
+                new Label(
+                        label
+                );
 
         labelText.setStyle(
                 "-fx-font-size: 11px;" +
@@ -309,9 +555,13 @@ public class FinalMeritPage {
         );
 
         Label valueText =
-                new Label(value);
+                new Label(
+                        value(value)
+                );
 
-        valueText.setWrapText(true);
+        valueText.setWrapText(
+                true
+        );
 
         valueText.setStyle(
                 "-fx-font-size: 15px;" +
@@ -340,13 +590,19 @@ public class FinalMeritPage {
         return box;
     }
 
+    // =========================================================
+    // RANK CARD
+    // =========================================================
+
     private static VBox createRankCard(
             String label,
             String rank
     ) {
 
         Label labelText =
-                new Label(label);
+                new Label(
+                        label
+                );
 
         labelText.setStyle(
                 "-fx-font-size: 10px;" +
@@ -355,7 +611,9 @@ public class FinalMeritPage {
         );
 
         Label rankText =
-                new Label(rank);
+                new Label(
+                        rank
+                );
 
         rankText.setStyle(
                 "-fx-font-size: 36px;" +
@@ -384,6 +642,34 @@ public class FinalMeritPage {
         return box;
     }
 
+    // =========================================================
+    // SECONDARY BUTTON
+    // =========================================================
+
+    private static void styleSecondaryButton(
+            Button button
+    ) {
+
+        button.setPrefHeight(
+                42
+        );
+
+        button.setStyle(
+                "-fx-background-color: #171F17;" +
+                "-fx-text-fill: " + WHITE + ";" +
+                "-fx-font-size: 13px;" +
+                "-fx-font-weight: bold;" +
+                "-fx-background-radius: 8px;" +
+                "-fx-border-color: #344034;" +
+                "-fx-border-radius: 8px;" +
+                "-fx-cursor: hand;"
+        );
+    }
+
+    // =========================================================
+    // SAFE VALUE
+    // =========================================================
+
     private static String value(
             String text
     ) {
@@ -392,9 +678,19 @@ public class FinalMeritPage {
                 text == null ||
                 text.isBlank()
         ) {
+
             return "Not Available";
         }
 
         return text;
     }
+    private static void styleCard(Region region) {
+
+        region.setStyle(
+                "-fx-background-color: " + CARD + ";" +
+                "-fx-background-radius: 10px;" +
+                "-fx-border-color: " + BORDER + ";" +
+                "-fx-border-radius: 10px;"
+        );
+        }
 }

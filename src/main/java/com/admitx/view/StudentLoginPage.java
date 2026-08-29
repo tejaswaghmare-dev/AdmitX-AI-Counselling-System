@@ -1,11 +1,15 @@
 package com.admitx.view;
 
+import com.admitx.controller.StudentInfoAddController;
+
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -14,35 +18,80 @@ import javafx.scene.text.FontWeight;
 public class StudentLoginPage {
 
     private static final String BLACK = "#050705";
-    private static final String DARK = "#0C110B";
-    private static final String CARD = "#171E16";
-
     private static final String LIME = "#B7FF00";
     private static final String LIME_DARK = "#8CC900";
-
     private static final String WHITE = "#F8FAF5";
     private static final String GREY = "#9BA69A";
     private static final String BORDER = "#283326";
 
     public static Scene getScene() {
 
-        StackPane root = new StackPane();
+        StackPane root =
+                new StackPane();
 
-        root.setStyle(
-                "-fx-background-color:" +
-                "linear-gradient(to bottom right," +
-                BLACK + "," +
-                DARK + ",#172016);"
+        // =========================================================
+        // BACKGROUND
+        // =========================================================
+
+        Image backgroundImage =
+                new Image(
+                        StudentLoginPage.class
+                                .getResource(
+                                        "/assets/images/login.jpeg"
+                                )
+                                .toExternalForm()
+                );
+
+        ImageView backgroundView =
+                new ImageView(
+                        backgroundImage
+                );
+
+        backgroundView.setPreserveRatio(
+                false
         );
 
-        // -------------------------------------------------
+        backgroundView.fitWidthProperty()
+                .bind(
+                        root.widthProperty()
+                );
+
+        backgroundView.fitHeightProperty()
+                .bind(
+                        root.heightProperty()
+                );
+
+        Region backgroundOverlay =
+                new Region();
+
+        backgroundOverlay.setStyle(
+                "-fx-background-color:rgba(5,7,5,0.55);"
+        );
+
+        backgroundOverlay.prefWidthProperty()
+                .bind(
+                        root.widthProperty()
+                );
+
+        backgroundOverlay.prefHeightProperty()
+                .bind(
+                        root.heightProperty()
+                );
+
+        // =========================================================
         // LOGIN CARD
-        // -------------------------------------------------
+        // =========================================================
 
-        VBox card = new VBox(16);
+        VBox card =
+                new VBox(16);
 
-        card.setAlignment(Pos.CENTER);
-        card.setMaxWidth(420);
+        card.setAlignment(
+                Pos.CENTER
+        );
+
+        card.setMaxWidth(
+                420
+        );
 
         card.setPadding(
                 new Insets(40)
@@ -68,12 +117,14 @@ public class StudentLoginPage {
                 )
         );
 
-        // -------------------------------------------------
+        // =========================================================
         // HEADER
-        // -------------------------------------------------
+        // =========================================================
 
         Label smallTitle =
-                new Label("STUDENT PORTAL");
+                new Label(
+                        "STUDENT PORTAL"
+                );
 
         smallTitle.setFont(
                 Font.font(
@@ -88,7 +139,9 @@ public class StudentLoginPage {
         );
 
         Label title =
-                new Label("WELCOME BACK");
+                new Label(
+                        "WELCOME BACK"
+                );
 
         title.setFont(
                 Font.font(
@@ -118,30 +171,46 @@ public class StudentLoginPage {
                 )
         );
 
-        // -------------------------------------------------
-        // APPLICATION ID
-        // -------------------------------------------------
+        // =========================================================
+        // EMAIL
+        // =========================================================
 
         Label applicationLabel =
                 createFieldLabel(
-                        "APPLICATION ID / EMAIL"
+                        "EMAIL ADDRESS"
                 );
 
         TextField applicationId =
                 new TextField();
 
         applicationId.setPromptText(
-                "Enter Application ID or Email"
+                "Enter registered email"
         );
 
-        styleField(applicationId);
+        styleField(
+                applicationId
+        );
 
-        // -------------------------------------------------
+        // Automatically put recently registered email
+        if (
+                StudentRegistrationPage.studentemail != null
+                &&
+                !StudentRegistrationPage.studentemail.isBlank()
+        ) {
+
+            applicationId.setText(
+                    StudentRegistrationPage.studentemail
+            );
+        }
+
+        // =========================================================
         // PASSWORD
-        // -------------------------------------------------
+        // =========================================================
 
         Label passwordLabel =
-                createFieldLabel("PASSWORD");
+                createFieldLabel(
+                        "PASSWORD"
+                );
 
         PasswordField password =
                 new PasswordField();
@@ -150,11 +219,13 @@ public class StudentLoginPage {
                 "Enter Password"
         );
 
-        styleField(password);
+        styleField(
+                password
+        );
 
-        // -------------------------------------------------
+        // =========================================================
         // LOGIN BUTTON
-        // -------------------------------------------------
+        // =========================================================
 
         Button loginButton =
                 new Button(
@@ -187,15 +258,67 @@ public class StudentLoginPage {
                 )
         );
 
-        loginButton.setOnAction(e ->
+        loginButton.setOnAction(e -> {
+
+            String email =
+                    applicationId
+                            .getText()
+                            .trim()
+                            .toLowerCase();
+
+            String enteredPassword =
+                    password.getText();
+
+            // =====================================================
+            // VALIDATION
+            // =====================================================
+
+            if (
+                    email.isBlank() ||
+                    enteredPassword.isBlank()
+            ) {
+
+                showMessage(
+                        Alert.AlertType.WARNING,
+                        "Student Login",
+                        "Please enter email and password."
+                );
+
+                return;
+            }
+
+            // =====================================================
+            // LOGIN FIREBASE
+            // =====================================================
+
+            StudentInfoAddController controller =
+                    new StudentInfoAddController();
+
+            boolean loggedIn =
+                    controller.loginStudent(
+                            email,
+                            enteredPassword
+                    );
+
+            if (loggedIn) {
+
                 Navigation.goTo(
                         StudentDashboardPage.getScene()
-                )
-        );
+                );
 
-        // -------------------------------------------------
+            } else {
+
+                showMessage(
+                        Alert.AlertType.ERROR,
+                        "Login Failed",
+                        "Invalid email or password."
+                );
+            }
+        });
+
+        // =========================================================
         // CREATE ACCOUNT
-        // -------------------------------------------------
+        // =========================================================
 
         Label accountText =
                 new Label(
@@ -217,7 +340,8 @@ public class StudentLoginPage {
 
         registerButton.setStyle(
                 "-fx-background-color:transparent;" +
-                "-fx-text-fill:" + LIME + ";" +
+                "-fx-text-fill:" +
+                LIME + ";" +
                 "-fx-font-weight:bold;" +
                 "-fx-font-size:12px;"
         );
@@ -239,9 +363,9 @@ public class StudentLoginPage {
                 Pos.CENTER
         );
 
-        // -------------------------------------------------
+        // =========================================================
         // BACK
-        // -------------------------------------------------
+        // =========================================================
 
         Button backButton =
                 new Button(
@@ -256,22 +380,20 @@ public class StudentLoginPage {
                 Double.MAX_VALUE
         );
 
-        backButton.setPrefHeight(44);
+        backButton.setPrefHeight(
+                44
+        );
 
-        backButton.setStyle(
-                "-fx-background-color:transparent;" +
-                "-fx-text-fill:" + GREY + ";" +
-                "-fx-border-color:" + BORDER + ";" +
-                "-fx-border-radius:9;" +
-                "-fx-background-radius:9;" +
-                "-fx-font-weight:bold;"
+        styleSecondaryButton(
+                backButton
         );
 
         backButton.setOnMouseEntered(
                 e -> backButton.setStyle(
                         "-fx-background-color:" +
                         "rgba(183,255,0,0.07);" +
-                        "-fx-text-fill:" + LIME + ";" +
+                        "-fx-text-fill:" +
+                        LIME + ";" +
                         "-fx-border-color:" +
                         LIME_DARK + ";" +
                         "-fx-border-radius:9;" +
@@ -281,13 +403,8 @@ public class StudentLoginPage {
         );
 
         backButton.setOnMouseExited(
-                e -> backButton.setStyle(
-                        "-fx-background-color:transparent;" +
-                        "-fx-text-fill:" + GREY + ";" +
-                        "-fx-border-color:" + BORDER + ";" +
-                        "-fx-border-radius:9;" +
-                        "-fx-background-radius:9;" +
-                        "-fx-font-weight:bold;"
+                e -> styleSecondaryButton(
+                        backButton
                 )
         );
 
@@ -297,9 +414,9 @@ public class StudentLoginPage {
                 )
         );
 
-        // -------------------------------------------------
+        // =========================================================
         // FORM
-        // -------------------------------------------------
+        // =========================================================
 
         VBox applicationBox =
                 new VBox(
@@ -319,20 +436,20 @@ public class StudentLoginPage {
                 smallTitle,
                 title,
                 subtitle,
-
                 createSpacing(8),
-
                 applicationBox,
                 passwordBox,
-
                 createSpacing(4),
-
                 loginButton,
                 registerBox,
                 backButton
         );
 
-        root.getChildren().add(card);
+        root.getChildren().addAll(
+                backgroundView,
+                backgroundOverlay,
+                card
+        );
 
         StackPane.setAlignment(
                 card,
@@ -341,6 +458,10 @@ public class StudentLoginPage {
 
         return new Scene(root);
     }
+
+    // =============================================================
+    // FIELD LABEL
+    // =============================================================
 
     private static Label createFieldLabel(
             String text
@@ -364,6 +485,10 @@ public class StudentLoginPage {
         return label;
     }
 
+    // =============================================================
+    // FIELD STYLE
+    // =============================================================
+
     private static void styleField(
             TextInputControl field
     ) {
@@ -372,19 +497,27 @@ public class StudentLoginPage {
                 Double.MAX_VALUE
         );
 
-        field.setPrefHeight(46);
+        field.setPrefHeight(
+                46
+        );
 
         field.setStyle(
                 "-fx-background-color:#0C110B;" +
-                "-fx-text-fill:" + WHITE + ";" +
+                "-fx-text-fill:" +
+                WHITE + ";" +
                 "-fx-prompt-text-fill:#687266;" +
-                "-fx-border-color:" + BORDER + ";" +
+                "-fx-border-color:" +
+                BORDER + ";" +
                 "-fx-border-radius:9;" +
                 "-fx-background-radius:9;" +
                 "-fx-padding:0 14 0 14;" +
                 "-fx-font-size:13px;"
         );
     }
+
+    // =============================================================
+    // PRIMARY BUTTON
+    // =============================================================
 
     private static void stylePrimaryButton(
             Button button
@@ -394,7 +527,9 @@ public class StudentLoginPage {
                 Double.MAX_VALUE
         );
 
-        button.setPrefHeight(50);
+        button.setPrefHeight(
+                50
+        );
 
         button.setCursor(
                 Cursor.HAND
@@ -410,6 +545,26 @@ public class StudentLoginPage {
         );
     }
 
+    // =============================================================
+    // SECONDARY BUTTON
+    // =============================================================
+
+    private static void styleSecondaryButton(
+            Button button
+    ) {
+
+        button.setStyle(
+                "-fx-background-color:transparent;" +
+                "-fx-text-fill:" +
+                GREY + ";" +
+                "-fx-border-color:" +
+                BORDER + ";" +
+                "-fx-border-radius:9;" +
+                "-fx-background-radius:9;" +
+                "-fx-font-weight:bold;"
+        );
+    }
+
     private static Region createSpacing(
             double height
     ) {
@@ -417,8 +572,34 @@ public class StudentLoginPage {
         Region region =
                 new Region();
 
-        region.setPrefHeight(height);
+        region.setPrefHeight(
+                height
+        );
 
         return region;
+    }
+
+    private static void showMessage(
+            Alert.AlertType type,
+            String title,
+            String message
+    ) {
+
+        Alert alert =
+                new Alert(type);
+
+        alert.setTitle(
+                title
+        );
+
+        alert.setHeaderText(
+                null
+        );
+
+        alert.setContentText(
+                message
+        );
+
+        alert.showAndWait();
     }
 }

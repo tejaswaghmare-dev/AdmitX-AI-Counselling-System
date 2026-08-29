@@ -1,12 +1,15 @@
 package com.admitx.view;
 
-import com.admitx.model.ApplicationData;
+import com.admitx.dao.MeritDAO;
+import com.admitx.dao.MeritDAO.MeritRecord;
+import com.admitx.model.Student;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -26,11 +29,26 @@ public class ProvisionalMeritPage {
 
     public static Scene getScene() {
 
-        ApplicationData data =
-                ApplicationData.getInstance();
+        Student student =
+                Student.getInstance();
+
+        MeritDAO meritDAO =
+                new MeritDAO();
+
+        MeritRecord merit =
+                meritDAO.getCurrentStudentMerit();
+
+        boolean meritPublished =
+                merit != null;
+
+        // =====================================================
+        // HEADING
+        // =====================================================
 
         Label title =
-                new Label("Provisional Merit List");
+                new Label(
+                        "Provisional Merit List"
+                );
 
         title.setStyle(
                 "-fx-font-size: 26px;" +
@@ -55,19 +73,47 @@ public class ProvisionalMeritPage {
                         subtitle
                 );
 
-        Label published =
-                new Label("●  PUBLISHED");
+        // =====================================================
+        // PUBLISH STATUS
+        // =====================================================
 
-        published.setStyle(
-                "-fx-background-color: #1D2A10;" +
-                "-fx-text-fill: " + LIME + ";" +
-                "-fx-font-size: 11px;" +
-                "-fx-font-weight: bold;" +
-                "-fx-padding: 8 14 8 14;" +
-                "-fx-background-radius: 20px;" +
-                "-fx-border-color: #3D5520;" +
-                "-fx-border-radius: 20px;"
-        );
+        Label published =
+                new Label();
+
+        if (meritPublished) {
+
+            published.setText(
+                    "●  PUBLISHED"
+            );
+
+            published.setStyle(
+                    "-fx-background-color: #1D2A10;" +
+                    "-fx-text-fill: " + LIME + ";" +
+                    "-fx-font-size: 11px;" +
+                    "-fx-font-weight: bold;" +
+                    "-fx-padding: 8 14 8 14;" +
+                    "-fx-background-radius: 20px;" +
+                    "-fx-border-color: #3D5520;" +
+                    "-fx-border-radius: 20px;"
+            );
+
+        } else {
+
+            published.setText(
+                    "●  NOT PUBLISHED"
+            );
+
+            published.setStyle(
+                    "-fx-background-color: #241810;" +
+                    "-fx-text-fill: " + ORANGE + ";" +
+                    "-fx-font-size: 11px;" +
+                    "-fx-font-weight: bold;" +
+                    "-fx-padding: 8 14 8 14;" +
+                    "-fx-background-radius: 20px;" +
+                    "-fx-border-color: #5A3720;" +
+                    "-fx-border-radius: 20px;"
+            );
+        }
 
         HBox statusRow =
                 new HBox(
@@ -77,6 +123,10 @@ public class ProvisionalMeritPage {
         statusRow.setAlignment(
                 Pos.CENTER_LEFT
         );
+
+        // =====================================================
+        // CANDIDATE CARD
+        // =====================================================
 
         VBox candidateCard =
                 new VBox(
@@ -95,7 +145,9 @@ public class ProvisionalMeritPage {
         );
 
         Label candidateTitle =
-                new Label("CANDIDATE INFORMATION");
+                new Label(
+                        "CANDIDATE INFORMATION"
+                );
 
         candidateTitle.setStyle(
                 "-fx-font-size: 11px;" +
@@ -103,27 +155,67 @@ public class ProvisionalMeritPage {
                 "-fx-text-fill: " + LIME + ";"
         );
 
+        String candidateName;
+
+        if (
+                merit != null &&
+                merit.getCandidateName() != null &&
+                !merit.getCandidateName().isBlank()
+        ) {
+
+            candidateName =
+                    merit.getCandidateName();
+
+        } else if (
+                student.getCandidateName() != null &&
+                !student.getCandidateName().isBlank()
+        ) {
+
+            candidateName =
+                    student.getCandidateName();
+
+        } else {
+
+            candidateName =
+                    student.getUsername();
+        }
+
+        String studentEmail =
+                student.getEmail();
+
+        String percentile =
+                merit != null
+                        ? merit.getCetPercentile()
+                        : student.getCetPercentile();
+
         candidateCard.getChildren().addAll(
+
                 candidateTitle,
 
                 detail(
                         "Candidate",
-                        value(data.getCandidateName())
+                        value(candidateName)
                 ),
 
                 detail(
-                        "Application ID",
-                        "MHTCET20260001"
+                        "Student Email",
+                        value(studentEmail)
                 ),
 
                 detail(
                         "MHT CET Percentile",
-                        value(data.getCetPercentile())
+                        value(percentile)
                 )
         );
 
+        // =====================================================
+        // MERIT CARD
+        // =====================================================
+
         Label meritTitle =
-                new Label("MERIT INFORMATION");
+                new Label(
+                        "MERIT INFORMATION"
+                );
 
         meritTitle.setStyle(
                 "-fx-font-size: 11px;" +
@@ -147,34 +239,118 @@ public class ProvisionalMeritPage {
                 "-fx-border-radius: 12px;"
         );
 
-        meritCard.getChildren().addAll(
+        if (meritPublished) {
 
-                meritTitle,
+            String category =
+                    value(
+                            merit.getCategory()
+                    );
 
-                createRankCard(
-                        "PROVISIONAL MERIT NO.",
-                        "1542"
-                ),
+            String categoryRank =
+                    category
+                            + " - "
+                            + merit.getCategoryRank();
 
-                detail(
-                        "Category Rank",
-                        "Open - 742"
-                ),
+            meritCard.getChildren().addAll(
 
-                detail(
-                        "Status",
-                        "Published"
-                )
-        );
+                    meritTitle,
+
+                    createRankCard(
+                            "PROVISIONAL MERIT NO.",
+                            String.valueOf(
+                                    merit.getProvisionalMeritNumber()
+                            )
+                    ),
+
+                    detail(
+                            "Category",
+                            category
+                    ),
+
+                    detail(
+                            "Category Rank",
+                            categoryRank
+                    ),
+
+                    detail(
+                            "CET Percentile",
+                            value(
+                                    merit.getCetPercentile()
+                            )
+                    ),
+
+                    detail(
+                            "Status",
+                            "Published"
+                    )
+            );
+
+        } else {
+
+            meritCard.getChildren().addAll(
+
+                    meritTitle,
+
+                    createRankCard(
+                            "PROVISIONAL MERIT NO.",
+                            "--"
+                    ),
+
+                    detail(
+                            "Category",
+                            value(
+                                    student.getCategory()
+                            )
+                    ),
+
+                    detail(
+                            "Category Rank",
+                            "Not Available"
+                    ),
+
+                    detail(
+                            "CET Percentile",
+                            value(
+                                    student.getCetPercentile()
+                            )
+                    ),
+
+                    detail(
+                            "Status",
+                            "Not Published"
+                    )
+            );
+        }
+
+        // =====================================================
+        // INFORMATION MESSAGE
+        // =====================================================
 
         Label info =
-                new Label(
-                        "Your provisional merit number is used during " +
-                        "the CAP seat allotment process. If you find any " +
-                        "incorrect information, you can raise a grievance."
-                );
+                new Label();
 
-        info.setWrapText(true);
+        if (meritPublished) {
+
+            info.setText(
+                    "Your provisional merit number is used during "
+                            + "the CAP seat allotment process. "
+                            + "If you find any incorrect information, "
+                            + "you can raise a grievance."
+            );
+
+        } else {
+
+            info.setText(
+                    "The provisional merit list has not been published "
+                            + "for your application yet. "
+                            + "Please check again after the counsellor "
+                            + "publishes the merit list."
+            );
+        }
+
+        info.setWrapText(
+                true
+        );
 
         info.setStyle(
                 "-fx-background-color: #151B10;" +
@@ -186,29 +362,67 @@ public class ProvisionalMeritPage {
                 "-fx-border-radius: 8px;"
         );
 
+        // =====================================================
+        // GRIEVANCE BUTTON
+        // =====================================================
+
         Button grievance =
-                new Button("Raise Grievance");
+                new Button(
+                        "Raise Grievance"
+                );
 
         styleGrievanceButton(
                 grievance
         );
 
+        grievance.setDisable(
+                !meritPublished
+        );
+
         grievance.setOnAction(e ->
+
                 Navigation.goTo(
                         GrievanceSubmissionPage.getScene()
                 )
         );
 
+        // =====================================================
+        // DASHBOARD BUTTON
+        // =====================================================
+
         Button dashboard =
-                new Button("←  Dashboard");
+                new Button(
+                        "←  Dashboard"
+                );
 
         styleSecondaryButton(
                 dashboard
         );
 
         dashboard.setOnAction(e ->
+
                 Navigation.goTo(
                         StudentDashboardPage.getScene()
+                )
+        );
+
+        // =====================================================
+        // REFRESH BUTTON
+        // =====================================================
+
+        Button refresh =
+                new Button(
+                        "Refresh"
+                );
+
+        styleSecondaryButton(
+                refresh
+        );
+
+        refresh.setOnAction(e ->
+
+                Navigation.goTo(
+                        ProvisionalMeritPage.getScene()
                 )
         );
 
@@ -220,17 +434,37 @@ public class ProvisionalMeritPage {
                 Priority.ALWAYS
         );
 
-        HBox buttons =
-                new HBox(
-                        12,
-                        dashboard,
-                        spacer,
-                        grievance
-                );
+        HBox buttons;
+
+        if (meritPublished) {
+
+            buttons =
+                    new HBox(
+                            12,
+                            dashboard,
+                            refresh,
+                            spacer,
+                            grievance
+                    );
+
+        } else {
+
+            buttons =
+                    new HBox(
+                            12,
+                            dashboard,
+                            spacer,
+                            refresh
+                    );
+        }
 
         buttons.setAlignment(
                 Pos.CENTER_LEFT
         );
+
+        // =====================================================
+        // CONTENT
+        // =====================================================
 
         VBox content =
                 new VBox(
@@ -247,11 +481,37 @@ public class ProvisionalMeritPage {
                 new Insets(5)
         );
 
+        content.setStyle(
+                "-fx-background-color: " + BG + ";"
+        );
+
+        // =====================================================
+        // SCROLL
+        // =====================================================
+
+        ScrollPane scrollPane =
+                new ScrollPane(
+                        content
+                );
+
+        scrollPane.setFitToWidth(
+                true
+        );
+
+        scrollPane.setHbarPolicy(
+                ScrollPane.ScrollBarPolicy.NEVER
+        );
+
+        scrollPane.setStyle(
+                "-fx-background: " + BG + ";" +
+                "-fx-background-color: " + BG + ";"
+        );
+
         BorderPane page =
                 new BorderPane();
 
         page.setCenter(
-                content
+                scrollPane
         );
 
         page.setStyle(
@@ -266,13 +526,19 @@ public class ProvisionalMeritPage {
         );
     }
 
+    // =========================================================
+    // DETAIL
+    // =========================================================
+
     private static VBox detail(
             String label,
             String value
     ) {
 
         Label labelText =
-                new Label(label);
+                new Label(
+                        label
+                );
 
         labelText.setStyle(
                 "-fx-font-size: 11px;" +
@@ -281,9 +547,13 @@ public class ProvisionalMeritPage {
         );
 
         Label valueText =
-                new Label(value);
+                new Label(
+                        value(value)
+                );
 
-        valueText.setWrapText(true);
+        valueText.setWrapText(
+                true
+        );
 
         valueText.setStyle(
                 "-fx-font-size: 15px;" +
@@ -312,13 +582,19 @@ public class ProvisionalMeritPage {
         return box;
     }
 
+    // =========================================================
+    // RANK CARD
+    // =========================================================
+
     private static VBox createRankCard(
             String label,
             String rank
     ) {
 
         Label labelText =
-                new Label(label);
+                new Label(
+                        label
+                );
 
         labelText.setStyle(
                 "-fx-font-size: 10px;" +
@@ -327,7 +603,9 @@ public class ProvisionalMeritPage {
         );
 
         Label rankText =
-                new Label(rank);
+                new Label(
+                        rank
+                );
 
         rankText.setStyle(
                 "-fx-font-size: 34px;" +
@@ -360,11 +638,17 @@ public class ProvisionalMeritPage {
         return box;
     }
 
+    // =========================================================
+    // SECONDARY BUTTON
+    // =========================================================
+
     private static void styleSecondaryButton(
             Button button
     ) {
 
-        button.setPrefHeight(42);
+        button.setPrefHeight(
+                42
+        );
 
         button.setPadding(
                 new Insets(
@@ -387,11 +671,17 @@ public class ProvisionalMeritPage {
         );
     }
 
+    // =========================================================
+    // GRIEVANCE BUTTON
+    // =========================================================
+
     private static void styleGrievanceButton(
             Button button
     ) {
 
-        button.setPrefHeight(42);
+        button.setPrefHeight(
+                42
+        );
 
         button.setPadding(
                 new Insets(
@@ -411,6 +701,10 @@ public class ProvisionalMeritPage {
                 "-fx-cursor: hand;"
         );
     }
+
+    // =========================================================
+    // SAFE VALUE
+    // =========================================================
 
     private static String value(
             String text

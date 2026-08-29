@@ -1,11 +1,16 @@
 package com.admitx.view;
 
+import com.admitx.dao.CAPAllotmentDAO;
+import com.admitx.model.CAPAllotment;
+import com.admitx.model.Student;
+
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
@@ -23,8 +28,81 @@ public class AdmissionConfirmationPage {
 
     public static Scene getScene() {
 
+        CAPAllotmentDAO capDAO =
+                new CAPAllotmentDAO();
+
+        Student student =
+                Student.getInstance();
+
+        String studentEmail =
+                student.getEmail();
+
+        /*
+         * CHECK LOGIN
+         */
+
+        if (
+                studentEmail == null ||
+                studentEmail.isBlank()
+        ) {
+
+            showMessage(
+                    Alert.AlertType.WARNING,
+                    "Login Required",
+                    "Please login before viewing admission confirmation."
+            );
+
+            return StudentLoginPage.getScene();
+        }
+
+        /*
+         * LOAD FINAL ROUND RESULT
+         */
+
+        CAPAllotment finalAllotment =
+                capDAO.getStudentAllotment(3);
+
+        /*
+         * CHECK ROUND 3 RESULT
+         */
+
+        if (finalAllotment == null) {
+
+            return createUnavailableScene(
+                    "Final CAP Round 3 result is not available.",
+                    "Your final allotment must be published before admission can be confirmed."
+            );
+        }
+
+        /*
+         * CHECK ADMISSION ACCEPTED
+         */
+
+        String decision =
+                finalAllotment.getDecision();
+
+        if (
+                decision == null ||
+                !"Admission Accepted"
+                        .equalsIgnoreCase(
+                                decision
+                        )
+        ) {
+
+            return createUnavailableScene(
+                    "Admission Not Yet Confirmed",
+                    "You must accept your final CAP Round 3 allotment before viewing admission confirmation."
+            );
+        }
+
+        /*
+         * PAGE TITLE
+         */
+
         Label title =
-                new Label("Admission Confirmation");
+                new Label(
+                        "Admission Confirmation"
+                );
 
         title.setStyle(
                 "-fx-font-size: 26px;" +
@@ -48,6 +126,10 @@ public class AdmissionConfirmationPage {
                         title,
                         subtitle
                 );
+
+        /*
+         * SUCCESS CARD
+         */
 
         Label check =
                 new Label("✓");
@@ -87,10 +169,12 @@ public class AdmissionConfirmationPage {
 
         Label successMessage =
                 new Label(
-                        "Your final seat has been accepted and your admission record has been created."
+                        "Your final seat has been accepted and your admission confirmation is recorded."
                 );
 
-        successMessage.setWrapText(true);
+        successMessage.setWrapText(
+                true
+        );
 
         successMessage.setStyle(
                 "-fx-font-size: 13px;" +
@@ -131,6 +215,10 @@ public class AdmissionConfirmationPage {
                 "-fx-border-radius: 12px;"
         );
 
+        /*
+         * ADMISSION DETAILS
+         */
+
         Label admissionTitle =
                 createSectionTitle(
                         "ADMISSION DETAILS"
@@ -139,31 +227,64 @@ public class AdmissionConfirmationPage {
         VBox admissionCard =
                 new VBox(
                         12,
+
                         admissionTitle,
 
                         createDetail(
+                                "Student",
+                                safe(
+                                        student.getUsername()
+                                )
+                        ),
+
+                        createDetail(
+                                "Student Email",
+                                safe(
+                                        studentEmail
+                                )
+                        ),
+
+                        createDetail(
                                 "Final Seat",
-                                "Allotted"
+                                safe(
+                                        finalAllotment.getStatus()
+                                )
                         ),
 
                         createDetail(
                                 "College",
-                                "Vishwakarma Institute of Technology"
+                                safe(
+                                        finalAllotment.getCollege()
+                                )
                         ),
 
                         createDetail(
                                 "Branch",
-                                "Information Technology"
+                                safe(
+                                        finalAllotment.getBranch()
+                                )
+                        ),
+
+                        createDetail(
+                                "Allotted Preference",
+                                "Preference No. "
+                                        + finalAllotment
+                                                .getPreferenceNumber()
+                        ),
+
+                        createDetail(
+                                "CAP Round",
+                                "Round 3"
+                        ),
+
+                        createDetail(
+                                "Admission Status",
+                                "Admission Accepted"
                         ),
 
                         createDetail(
                                 "Reporting Status",
                                 "Pending"
-                        ),
-
-                        createDetail(
-                                "Admission Status",
-                                "Complete"
                         )
                 );
 
@@ -178,6 +299,10 @@ public class AdmissionConfirmationPage {
                 "-fx-border-radius: 12px;"
         );
 
+        /*
+         * DOCUMENT SECTION
+         */
+
         Label documentsTitle =
                 createSectionTitle(
                         "ADMISSION DOCUMENTS"
@@ -185,10 +310,12 @@ public class AdmissionConfirmationPage {
 
         Label documentsDescription =
                 new Label(
-                        "You can download the dummy allotment letter and admission receipt below."
+                        "Your allotment letter and admission receipt will be available from this section."
                 );
 
-        documentsDescription.setWrapText(true);
+        documentsDescription.setWrapText(
+                true
+        );
 
         documentsDescription.setStyle(
                 "-fx-font-size: 12px;" +
@@ -204,10 +331,16 @@ public class AdmissionConfirmationPage {
                 allotmentLetter
         );
 
+        /*
+         * PDF generation can be connected later.
+         */
+
         allotmentLetter.setOnAction(e ->
+
                 showMessage(
-                        "Download",
-                        "Dummy Allotment Letter downloaded."
+                        Alert.AlertType.INFORMATION,
+                        "Allotment Letter",
+                        "Allotment letter generation will be available here."
                 )
         );
 
@@ -221,9 +354,11 @@ public class AdmissionConfirmationPage {
         );
 
         receipt.setOnAction(e ->
+
                 showMessage(
-                        "Download",
-                        "Dummy Admission Receipt downloaded."
+                        Alert.AlertType.INFORMATION,
+                        "Admission Receipt",
+                        "Admission receipt generation will be available here."
                 )
         );
 
@@ -257,12 +392,20 @@ public class AdmissionConfirmationPage {
                 "-fx-border-radius: 12px;"
         );
 
+        /*
+         * REPORTING NOTE
+         */
+
         Label note =
                 new Label(
-                        "Reporting status is currently pending. Follow the college reporting instructions to complete the final admission process."
+                        "Your seat has been accepted successfully. "
+                                + "Reporting status is currently pending. "
+                                + "Complete the required college reporting process to finish admission."
                 );
 
-        note.setWrapText(true);
+        note.setWrapText(
+                true
+        );
 
         note.setStyle(
                 "-fx-background-color: #151B10;" +
@@ -274,14 +417,21 @@ public class AdmissionConfirmationPage {
                 "-fx-border-radius: 8px;"
         );
 
+        /*
+         * DASHBOARD BUTTON
+         */
+
         Button dashboard =
-                new Button("← Go to Dashboard");
+                new Button(
+                        "← Go to Dashboard"
+                );
 
         styleSecondaryButton(
                 dashboard
         );
 
         dashboard.setOnAction(e ->
+
                 Navigation.goTo(
                         StudentDashboardPage.getScene()
                 )
@@ -305,6 +455,10 @@ public class AdmissionConfirmationPage {
                 Pos.CENTER_LEFT
         );
 
+        /*
+         * CONTENT
+         */
+
         VBox content =
                 new VBox(
                         22,
@@ -321,7 +475,163 @@ public class AdmissionConfirmationPage {
         );
 
         content.setStyle(
+                "-fx-background-color: "
+                        + BG
+                        + ";"
+        );
+
+        ScrollPane scrollPane =
+                new ScrollPane(
+                        content
+                );
+
+        scrollPane.setFitToWidth(
+                true
+        );
+
+        scrollPane.setHbarPolicy(
+                ScrollPane.ScrollBarPolicy.NEVER
+        );
+
+        scrollPane.setStyle(
+                "-fx-background: " + BG + ";" +
                 "-fx-background-color: " + BG + ";"
+        );
+
+        return new Scene(
+                StudentLayout.create(
+                        "Admission Confirmation",
+                        scrollPane
+                )
+        );
+    }
+
+    // =========================================================
+    // UNAVAILABLE PAGE
+    // =========================================================
+
+    private static Scene createUnavailableScene(
+            String headingText,
+            String descriptionText
+    ) {
+
+        Label title =
+                new Label(
+                        "Admission Confirmation"
+                );
+
+        title.setStyle(
+                "-fx-font-size: 26px;" +
+                "-fx-font-weight: bold;" +
+                "-fx-text-fill: " + WHITE + ";"
+        );
+
+        Label status =
+                new Label(
+                        headingText
+                );
+
+        status.setWrapText(
+                true
+        );
+
+        status.setStyle(
+                "-fx-font-size: 18px;" +
+                "-fx-font-weight: bold;" +
+                "-fx-text-fill: " + WHITE + ";"
+        );
+
+        Label description =
+                new Label(
+                        descriptionText
+                );
+
+        description.setWrapText(
+                true
+        );
+
+        description.setStyle(
+                "-fx-font-size: 13px;" +
+                "-fx-text-fill: " + MUTED + ";"
+        );
+
+        VBox card =
+                new VBox(
+                        12,
+                        status,
+                        description
+                );
+
+        card.setPadding(
+                new Insets(22)
+        );
+
+        card.setStyle(
+                "-fx-background-color: " + CARD + ";" +
+                "-fx-background-radius: 12px;" +
+                "-fx-border-color: " + BORDER + ";" +
+                "-fx-border-radius: 12px;"
+        );
+
+        Button round3 =
+                new Button(
+                        "Go to CAP Round 3"
+                );
+
+        stylePrimaryButton(
+                round3
+        );
+
+        round3.setOnAction(e ->
+
+                Navigation.goTo(
+                        CAPRound3Page.getScene()
+                )
+        );
+
+        Button dashboard =
+                new Button(
+                        "← Dashboard"
+                );
+
+        styleSecondaryButton(
+                dashboard
+        );
+
+        dashboard.setOnAction(e ->
+
+                Navigation.goTo(
+                        StudentDashboardPage.getScene()
+                )
+        );
+
+        HBox buttons =
+                new HBox(
+                        12,
+                        dashboard,
+                        round3
+                );
+
+        buttons.setAlignment(
+                Pos.CENTER_LEFT
+        );
+
+        VBox content =
+                new VBox(
+                        22,
+                        title,
+                        card,
+                        buttons
+                );
+
+        content.setPadding(
+                new Insets(30)
+        );
+
+        content.setStyle(
+                "-fx-background-color: "
+                        + BG
+                        + ";"
         );
 
         return new Scene(
@@ -332,12 +642,18 @@ public class AdmissionConfirmationPage {
         );
     }
 
+    // =========================================================
+    // SECTION TITLE
+    // =========================================================
+
     private static Label createSectionTitle(
             String text
     ) {
 
         Label label =
-                new Label(text);
+                new Label(
+                        text
+                );
 
         label.setStyle(
                 "-fx-font-size: 11px;" +
@@ -348,13 +664,19 @@ public class AdmissionConfirmationPage {
         return label;
     }
 
+    // =========================================================
+    // DETAIL ROW
+    // =========================================================
+
     private static VBox createDetail(
             String labelText,
             String value
     ) {
 
         Label label =
-                new Label(labelText);
+                new Label(
+                        labelText
+                );
 
         label.setStyle(
                 "-fx-font-size: 11px;" +
@@ -363,9 +685,13 @@ public class AdmissionConfirmationPage {
         );
 
         Label valueLabel =
-                new Label(value);
+                new Label(
+                        value
+                );
 
-        valueLabel.setWrapText(true);
+        valueLabel.setWrapText(
+                true
+        );
 
         valueLabel.setStyle(
                 "-fx-font-size: 14px;" +
@@ -394,11 +720,17 @@ public class AdmissionConfirmationPage {
         return box;
     }
 
+    // =========================================================
+    // PRIMARY BUTTON
+    // =========================================================
+
     private static void stylePrimaryButton(
             Button button
     ) {
 
-        button.setPrefHeight(42);
+        button.setPrefHeight(
+                42
+        );
 
         button.setPadding(
                 new Insets(
@@ -419,11 +751,17 @@ public class AdmissionConfirmationPage {
         );
     }
 
+    // =========================================================
+    // SECONDARY BUTTON
+    // =========================================================
+
     private static void styleSecondaryButton(
             Button button
     ) {
 
-        button.setPrefHeight(42);
+        button.setPrefHeight(
+                42
+        );
 
         button.setPadding(
                 new Insets(
@@ -446,19 +784,50 @@ public class AdmissionConfirmationPage {
         );
     }
 
+    // =========================================================
+    // SAFE STRING
+    // =========================================================
+
+    private static String safe(
+            String value
+    ) {
+
+        if (
+                value == null ||
+                value.isBlank()
+        ) {
+
+            return "Not Available";
+        }
+
+        return value;
+    }
+
+    // =========================================================
+    // MESSAGE
+    // =========================================================
+
     private static void showMessage(
+            Alert.AlertType type,
             String title,
             String message
     ) {
 
         Alert alert =
-                new Alert(
-                        Alert.AlertType.INFORMATION
-                );
+                new Alert(type);
 
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
+        alert.setTitle(
+                title
+        );
+
+        alert.setHeaderText(
+                null
+        );
+
+        alert.setContentText(
+                message
+        );
+
         alert.showAndWait();
     }
 }

@@ -1,11 +1,15 @@
 package com.admitx.view;
 
+import com.admitx.controller.StudentInfoAddController;
+
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -13,12 +17,11 @@ import javafx.scene.text.FontWeight;
 
 public class StudentRegistrationPage {
 
-    private static final String BLACK = "#050705";
-    private static final String DARK = "#0C110B";
+    public static String studentemail;
 
+    private static final String BLACK = "#050705";
     private static final String LIME = "#B7FF00";
     private static final String LIME_DARK = "#8CC900";
-
     private static final String WHITE = "#F8FAF5";
     private static final String GREY = "#9BA69A";
     private static final String BORDER = "#283326";
@@ -27,17 +30,55 @@ public class StudentRegistrationPage {
 
         StackPane root = new StackPane();
 
-        root.setStyle(
-                "-fx-background-color:" +
-                "linear-gradient(to bottom right," +
-                BLACK + "," +
-                DARK + ",#172016);"
+        // =========================================================
+        // BACKGROUND IMAGE
+        // =========================================================
+
+        Image backgroundImage = new Image(
+                StudentRegistrationPage.class
+                        .getResource(
+                                "/assets/images/signup.jpeg"
+                        )
+                        .toExternalForm()
         );
+
+        ImageView backgroundView =
+                new ImageView(backgroundImage);
+
+        backgroundView.setPreserveRatio(false);
+
+        backgroundView.fitWidthProperty()
+                .bind(root.widthProperty());
+
+        backgroundView.fitHeightProperty()
+                .bind(root.heightProperty());
+
+        Region backgroundOverlay =
+                new Region();
+
+        backgroundOverlay.setStyle(
+                "-fx-background-color: rgba(5,7,5,0.55);"
+        );
+
+        backgroundOverlay.prefWidthProperty()
+                .bind(root.widthProperty());
+
+        backgroundOverlay.prefHeightProperty()
+                .bind(root.heightProperty());
+
+        // =========================================================
+        // CARD
+        // =========================================================
 
         VBox card = new VBox(14);
 
-        card.setAlignment(Pos.CENTER);
-        card.setMaxWidth(440);
+        card.setAlignment(
+                Pos.CENTER
+        );
+
+        card.setMaxWidth(
+                440
+        );
 
         card.setPadding(
                 new Insets(
@@ -68,12 +109,14 @@ public class StudentRegistrationPage {
                 )
         );
 
-        // -------------------------------------------------
+        // =========================================================
         // HEADER
-        // -------------------------------------------------
+        // =========================================================
 
         Label portal =
-                new Label("STUDENT PORTAL");
+                new Label(
+                        "STUDENT PORTAL"
+                );
 
         portal.setFont(
                 Font.font(
@@ -88,7 +131,9 @@ public class StudentRegistrationPage {
         );
 
         Label title =
-                new Label("CREATE ACCOUNT");
+                new Label(
+                        "CREATE ACCOUNT"
+                );
 
         title.setFont(
                 Font.font(
@@ -118,9 +163,9 @@ public class StudentRegistrationPage {
                 )
         );
 
-        // -------------------------------------------------
+        // =========================================================
         // NAME
-        // -------------------------------------------------
+        // =========================================================
 
         TextField name =
                 new TextField();
@@ -135,9 +180,9 @@ public class StudentRegistrationPage {
                         name
                 );
 
-        // -------------------------------------------------
+        // =========================================================
         // EMAIL
-        // -------------------------------------------------
+        // =========================================================
 
         TextField email =
                 new TextField();
@@ -152,9 +197,9 @@ public class StudentRegistrationPage {
                         email
                 );
 
-        // -------------------------------------------------
+        // =========================================================
         // MOBILE
-        // -------------------------------------------------
+        // =========================================================
 
         TextField mobile =
                 new TextField();
@@ -169,9 +214,9 @@ public class StudentRegistrationPage {
                         mobile
                 );
 
-        // -------------------------------------------------
+        // =========================================================
         // PASSWORD
-        // -------------------------------------------------
+        // =========================================================
 
         PasswordField password =
                 new PasswordField();
@@ -186,9 +231,9 @@ public class StudentRegistrationPage {
                         password
                 );
 
-        // -------------------------------------------------
+        // =========================================================
         // CONFIRM PASSWORD
-        // -------------------------------------------------
+        // =========================================================
 
         PasswordField confirmPassword =
                 new PasswordField();
@@ -203,9 +248,9 @@ public class StudentRegistrationPage {
                         confirmPassword
                 );
 
-        // -------------------------------------------------
-        // REGISTER
-        // -------------------------------------------------
+        // =========================================================
+        // REGISTER BUTTON
+        // =========================================================
 
         Button registerButton =
                 new Button(
@@ -240,12 +285,33 @@ public class StudentRegistrationPage {
 
         registerButton.setOnAction(e -> {
 
+            String studentName =
+                    name.getText().trim();
+
+            String studentEmail =
+                    email.getText()
+                            .trim()
+                            .toLowerCase();
+
+            String mobileNumber =
+                    mobile.getText().trim();
+
+            String studentPassword =
+                    password.getText();
+
+            String confirmStudentPassword =
+                    confirmPassword.getText();
+
+            // =====================================================
+            // EMPTY VALIDATION
+            // =====================================================
+
             if (
-                    name.getText().isBlank() ||
-                    email.getText().isBlank() ||
-                    mobile.getText().isBlank() ||
-                    password.getText().isBlank() ||
-                    confirmPassword.getText().isBlank()
+                    studentName.isBlank() ||
+                    studentEmail.isBlank() ||
+                    mobileNumber.isBlank() ||
+                    studentPassword.isBlank() ||
+                    confirmStudentPassword.isBlank()
             ) {
 
                 showMessage(
@@ -257,11 +323,62 @@ public class StudentRegistrationPage {
                 return;
             }
 
+            // =====================================================
+            // EMAIL VALIDATION
+            // =====================================================
+
             if (
-                    !password.getText()
-                            .equals(
-                                    confirmPassword.getText()
-                            )
+                    !studentEmail.contains("@") ||
+                    !studentEmail.contains(".")
+            ) {
+
+                showMessage(
+                        Alert.AlertType.WARNING,
+                        "Registration",
+                        "Please enter a valid email address."
+                );
+
+                return;
+            }
+
+            // =====================================================
+            // MOBILE VALIDATION
+            // =====================================================
+
+            if (
+                    !mobileNumber.matches("\\d{10}")
+            ) {
+
+                showMessage(
+                        Alert.AlertType.WARNING,
+                        "Registration",
+                        "Mobile number must contain exactly 10 digits."
+                );
+
+                return;
+            }
+
+            // =====================================================
+            // PASSWORD VALIDATION
+            // =====================================================
+
+            if (
+                    studentPassword.length() < 6
+            ) {
+
+                showMessage(
+                        Alert.AlertType.WARNING,
+                        "Registration",
+                        "Password must contain at least 6 characters."
+                );
+
+                return;
+            }
+
+            if (
+                    !studentPassword.equals(
+                            confirmStudentPassword
+                    )
             ) {
 
                 showMessage(
@@ -273,20 +390,49 @@ public class StudentRegistrationPage {
                 return;
             }
 
-            showMessage(
-                    Alert.AlertType.INFORMATION,
-                    "Registration Successful",
-                    "Student account created successfully."
-            );
+            // =====================================================
+            // SAVE TO FIREBASE
+            // =====================================================
 
-            Navigation.goTo(
-                    StudentLoginPage.getScene()
-            );
+            StudentInfoAddController controller =
+                    new StudentInfoAddController();
+
+            boolean registered =
+                    controller.registrationDetails(
+                            studentName,
+                            studentEmail,
+                            mobileNumber,
+                            studentPassword
+                    );
+
+            if (registered) {
+
+                studentemail =
+                        studentEmail;
+
+                showMessage(
+                        Alert.AlertType.INFORMATION,
+                        "Registration Successful",
+                        "Student account created successfully. Please login."
+                );
+
+                Navigation.goTo(
+                        StudentLoginPage.getScene()
+                );
+
+            } else {
+
+                showMessage(
+                        Alert.AlertType.ERROR,
+                        "Registration Failed",
+                        "This email is already registered or registration failed."
+                );
+            }
         });
 
-        // -------------------------------------------------
+        // =========================================================
         // EXISTING ACCOUNT
-        // -------------------------------------------------
+        // =========================================================
 
         Label loginText =
                 new Label(
@@ -298,7 +444,9 @@ public class StudentRegistrationPage {
         );
 
         Button loginButton =
-                new Button("LOGIN");
+                new Button(
+                        "LOGIN"
+                );
 
         loginButton.setCursor(
                 Cursor.HAND
@@ -328,9 +476,9 @@ public class StudentRegistrationPage {
                 Pos.CENTER
         );
 
-        // -------------------------------------------------
-        // BACK
-        // -------------------------------------------------
+        // =========================================================
+        // BACK BUTTON
+        // =========================================================
 
         Button backButton =
                 new Button(
@@ -345,7 +493,8 @@ public class StudentRegistrationPage {
                 e -> backButton.setStyle(
                         "-fx-background-color:" +
                         "rgba(183,255,0,0.07);" +
-                        "-fx-text-fill:" + LIME + ";" +
+                        "-fx-text-fill:" +
+                        LIME + ";" +
                         "-fx-border-color:" +
                         LIME_DARK + ";" +
                         "-fx-border-radius:9;" +
@@ -366,52 +515,77 @@ public class StudentRegistrationPage {
                 )
         );
 
+        // =========================================================
+        // CARD CONTENT
+        // =========================================================
+
         card.getChildren().addAll(
                 portal,
                 title,
                 subtitle,
-
                 createSpacing(5),
-
                 nameBox,
                 emailBox,
                 mobileBox,
                 passwordBox,
                 confirmBox,
-
                 createSpacing(3),
-
                 registerButton,
                 loginBox,
                 backButton
         );
 
+        // =========================================================
+        // SCROLL PANE
+        // =========================================================
+
         ScrollPane scrollPane =
-                new ScrollPane(card);
+                new ScrollPane(
+                        card
+                );
 
-        scrollPane.setFitToWidth(true);
-        scrollPane.setFitToHeight(true);
+        scrollPane.setFitToWidth(
+                true
+        );
 
-        scrollPane.setPannable(true);
+        scrollPane.setFitToHeight(
+                true
+        );
+
+        scrollPane.setPannable(
+                true
+        );
+
+        scrollPane.setHbarPolicy(
+                ScrollPane.ScrollBarPolicy.NEVER
+        );
 
         scrollPane.setStyle(
-                "-fx-background: transparent;" +
-                "-fx-background-color: transparent;"
+                "-fx-background:transparent;" +
+                "-fx-background-color:transparent;"
         );
 
         StackPane wrapper =
-                new StackPane(scrollPane);
+                new StackPane(
+                        scrollPane
+                );
 
         wrapper.setPadding(
                 new Insets(30)
         );
 
-        root.getChildren().add(
+        root.getChildren().addAll(
+                backgroundView,
+                backgroundOverlay,
                 wrapper
         );
 
         return new Scene(root);
     }
+
+    // =============================================================
+    // FIELD BOX
+    // =============================================================
 
     private static VBox createFieldBox(
             String labelText,
@@ -419,7 +593,9 @@ public class StudentRegistrationPage {
     ) {
 
         Label label =
-                new Label(labelText);
+                new Label(
+                        labelText
+                );
 
         label.setTextFill(
                 Color.web(GREY)
@@ -437,7 +613,9 @@ public class StudentRegistrationPage {
                 Double.MAX_VALUE
         );
 
-        field.setPrefHeight(45);
+        field.setPrefHeight(
+                45
+        );
 
         field.setStyle(
                 "-fx-background-color:#0C110B;" +
@@ -450,15 +628,16 @@ public class StudentRegistrationPage {
                 "-fx-font-size:13px;"
         );
 
-        VBox box =
-                new VBox(
-                        6,
-                        label,
-                        field
-                );
-
-        return box;
+        return new VBox(
+                6,
+                label,
+                field
+        );
     }
+
+    // =============================================================
+    // PRIMARY BUTTON
+    // =============================================================
 
     private static void stylePrimaryButton(
             Button button
@@ -468,7 +647,9 @@ public class StudentRegistrationPage {
                 Double.MAX_VALUE
         );
 
-        button.setPrefHeight(50);
+        button.setPrefHeight(
+                50
+        );
 
         button.setCursor(
                 Cursor.HAND
@@ -484,6 +665,10 @@ public class StudentRegistrationPage {
         );
     }
 
+    // =============================================================
+    // SECONDARY BUTTON
+    // =============================================================
+
     private static void styleSecondaryButton(
             Button button
     ) {
@@ -492,7 +677,9 @@ public class StudentRegistrationPage {
                 Double.MAX_VALUE
         );
 
-        button.setPrefHeight(44);
+        button.setPrefHeight(
+                44
+        );
 
         button.setCursor(
                 Cursor.HAND
@@ -531,9 +718,18 @@ public class StudentRegistrationPage {
         Alert alert =
                 new Alert(type);
 
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
+        alert.setTitle(
+                title
+        );
+
+        alert.setHeaderText(
+                null
+        );
+
+        alert.setContentText(
+                message
+        );
+
         alert.showAndWait();
     }
 }

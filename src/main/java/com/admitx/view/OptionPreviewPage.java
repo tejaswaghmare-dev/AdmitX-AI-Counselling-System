@@ -1,138 +1,263 @@
 package com.admitx.view;
 
+import java.util.Optional;
+
+import com.admitx.dao.PreferenceDAO;
+import com.admitx.model.Student;
+
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 
 public class OptionPreviewPage {
 
-    private static final String BG = "#0B100B";
-    private static final String CARD = "#141B14";
-    private static final String FIELD = "#101610";
-    private static final String BORDER = "#293529";
-    private static final String LIME = "#B7FF00";
-    private static final String WHITE = "#F5F7F2";
-    private static final String MUTED = "#9AA59A";
+    private static final String BG =
+            "#0B100B";
+
+    private static final String CARD =
+            "#141B14";
+
+    private static final String BORDER =
+            "#293529";
+
+    private static final String LIME =
+            "#B7FF00";
+
+    private static final String WHITE =
+            "#F5F7F2";
+
+    private static final String MUTED =
+            "#9AA59A";
 
     public static Scene getScene() {
 
+        // =========================================================
+        // LOGIN CHECK
+        // =========================================================
+
+        String studentEmail =
+                Student.getInstance()
+                        .getEmail();
+
+        if (
+                studentEmail == null ||
+                studentEmail.isBlank()
+        ) {
+
+            showAlert(
+                    Alert.AlertType.ERROR,
+                    "Login Required",
+                    "Please login again."
+            );
+
+            return StudentLoginPage.getScene();
+        }
+
+        PreferenceDAO preferenceDAO =
+                new PreferenceDAO();
+
+        boolean locked =
+                preferenceDAO
+                        .isPreferenceLocked();
+
+        ObservableList<
+                PreferenceFillingPage.Preference
+        > preferences =
+                PreferenceFillingPage
+                        .getPreferences();
+
+        // =========================================================
+        // IF LOCKED, LOAD FIREBASE DATA
+        // =========================================================
+
+        if (locked) {
+
+            preferences.clear();
+
+            preferences.addAll(
+                    preferenceDAO
+                            .loadPreferences()
+            );
+        }
+
+        // =========================================================
+        // MAIN
+        // =========================================================
+
+        VBox content =
+                new VBox(22);
+
+        content.setPadding(
+                new Insets(30)
+        );
+
+        content.setStyle(
+                "-fx-background-color:"
+                        + BG + ";"
+        );
+
+        // =========================================================
+        // TITLE
+        // =========================================================
+
         Label title =
-                new Label("Option Form Preview");
+                new Label(
+                        "Option Form Preview"
+                );
 
         title.setStyle(
-                "-fx-font-size: 26px;" +
-                "-fx-font-weight: bold;" +
-                "-fx-text-fill: " + WHITE + ";"
+                "-fx-text-fill:"
+                        + WHITE + ";" +
+                "-fx-font-size:28px;" +
+                "-fx-font-weight:bold;"
         );
 
-        Label instruction =
+        Label subtitle =
                 new Label(
-                        "Review your preferences carefully before locking your choices."
+                        "Review your preferences carefully before locking the option form."
                 );
 
-        instruction.setStyle(
-                "-fx-font-size: 13px;" +
-                "-fx-text-fill: " + MUTED + ";"
+        subtitle.setStyle(
+                "-fx-text-fill:"
+                        + MUTED + ";" +
+                "-fx-font-size:13px;"
         );
 
-        VBox heading =
-                new VBox(
-                        6,
-                        title,
-                        instruction
+        Label studentLabel =
+                new Label(
+                        "Student: "
+                                + studentEmail
                 );
 
-        ObservableList<PreferenceFillingPage.Preference> preferences =
-                PreferenceFillingPage.getPreferences();
-
-        Label status =
-                new Label("READY TO LOCK");
-
-        status.setStyle(
-                "-fx-background-color: #1D2A10;" +
-                "-fx-text-fill: " + LIME + ";" +
-                "-fx-font-size: 11px;" +
-                "-fx-font-weight: bold;" +
-                "-fx-padding: 8 14 8 14;" +
-                "-fx-background-radius: 20px;" +
-                "-fx-border-color: #3D5520;" +
-                "-fx-border-radius: 20px;"
+        studentLabel.setStyle(
+                "-fx-text-fill:"
+                        + MUTED + ";" +
+                "-fx-font-size:12px;"
         );
 
-        TableView<PreferenceFillingPage.Preference> table =
+        Label statusLabel =
+                new Label();
+
+        if (locked) {
+
+            statusLabel.setText(
+                    "✓ OPTION FORM LOCKED"
+            );
+
+            statusLabel.setStyle(
+                    "-fx-text-fill:"
+                            + LIME + ";" +
+                    "-fx-font-size:13px;" +
+                    "-fx-font-weight:bold;"
+            );
+
+        } else {
+
+            statusLabel.setText(
+                    "Not locked yet"
+            );
+
+            statusLabel.setStyle(
+                    "-fx-text-fill:"
+                            + MUTED + ";" +
+                    "-fx-font-size:12px;"
+            );
+        }
+
+        // =========================================================
+        // TABLE
+        // =========================================================
+
+        TableView<
+                PreferenceFillingPage.Preference
+        > table =
                 new TableView<>();
 
-        TableColumn<
-                PreferenceFillingPage.Preference,
-                Number> numberColumn =
-                new TableColumn<>("Preference No.");
-
-        numberColumn.setCellValueFactory(
-                new PropertyValueFactory<>("preferenceNumber")
+        table.setItems(
+                preferences
         );
 
-        TableColumn<
-                PreferenceFillingPage.Preference,
-                String> collegeColumn =
-                new TableColumn<>("College");
-
-        collegeColumn.setCellValueFactory(
-                new PropertyValueFactory<>("college")
+        table.setPrefHeight(
+                450
         );
-
-        TableColumn<
-                PreferenceFillingPage.Preference,
-                String> branchColumn =
-                new TableColumn<>("Branch");
-
-        branchColumn.setCellValueFactory(
-                new PropertyValueFactory<>("branch")
-        );
-
-        table.getColumns().addAll(
-                numberColumn,
-                collegeColumn,
-                branchColumn
-        );
-
-        table.setItems(preferences);
-
-        table.setPrefHeight(400);
 
         table.setColumnResizePolicy(
-                TableView.CONSTRAINED_RESIZE_POLICY
+                TableView
+                        .CONSTRAINED_RESIZE_POLICY
         );
 
-        table.setStyle(
-                "-fx-background-color: " + CARD + ";" +
-                "-fx-control-inner-background: " + FIELD + ";" +
-                "-fx-table-cell-border-color: " + BORDER + ";" +
-                "-fx-text-background-color: " + WHITE + ";" +
-                "-fx-selection-bar: " + LIME + ";" +
-                "-fx-selection-bar-non-focused: " + LIME + ";"
-        );
-
-        Label totalLabel =
-                new Label(
-                        "Total Preferences: " +
-                        preferences.size()
+        TableColumn<
+                PreferenceFillingPage.Preference,
+                Integer
+        > numberColumn =
+                new TableColumn<>(
+                        "Preference No."
                 );
 
-        totalLabel.setStyle(
-                "-fx-font-size: 12px;" +
-                "-fx-font-weight: bold;" +
-                "-fx-text-fill: " + MUTED + ";"
+        numberColumn.setCellValueFactory(
+                data ->
+                        new ReadOnlyObjectWrapper<>(
+                                data.getValue()
+                                        .getPreferenceNumber()
+                        )
         );
+
+        TableColumn<
+                PreferenceFillingPage.Preference,
+                String
+        > collegeColumn =
+                new TableColumn<>(
+                        "College"
+                );
+
+        collegeColumn.setCellValueFactory(
+                data ->
+                        new ReadOnlyStringWrapper(
+                                data.getValue()
+                                        .getCollege()
+                        )
+        );
+
+        TableColumn<
+                PreferenceFillingPage.Preference,
+                String
+        > branchColumn =
+                new TableColumn<>(
+                        "Branch"
+                );
+
+        branchColumn.setCellValueFactory(
+                data ->
+                        new ReadOnlyStringWrapper(
+                                data.getValue()
+                                        .getBranch()
+                        )
+        );
+
+        table.getColumns()
+                .addAll(
+                        numberColumn,
+                        collegeColumn,
+                        branchColumn
+                );
 
         VBox tableCard =
                 new VBox(
                         12,
-                        createSectionTitle("OPTION FORM"),
-                        totalLabel,
                         table
                 );
 
@@ -141,72 +266,90 @@ public class OptionPreviewPage {
         );
 
         tableCard.setStyle(
-                "-fx-background-color: " + CARD + ";" +
-                "-fx-background-radius: 12px;" +
-                "-fx-border-color: " + BORDER + ";" +
-                "-fx-border-radius: 12px;"
+                "-fx-background-color:"
+                        + CARD + ";" +
+                "-fx-background-radius:14;" +
+                "-fx-border-color:"
+                        + BORDER + ";" +
+                "-fx-border-radius:14;"
         );
 
-        Label warning =
-                new Label(
-                        "Please check the order carefully. Once the option form is locked, "
-                        + "your choices will be submitted for CAP allotment."
-                );
-
-        warning.setWrapText(true);
-
-        warning.setStyle(
-                "-fx-background-color: #211F0F;" +
-                "-fx-text-fill: #D9E6C8;" +
-                "-fx-font-size: 12px;" +
-                "-fx-padding: 14px;" +
-                "-fx-background-radius: 8px;" +
-                "-fx-border-color: #665F20;" +
-                "-fx-border-radius: 8px;"
-        );
+        // =========================================================
+        // EDIT BUTTON
+        // =========================================================
 
         Button editButton =
-                new Button("← Edit Preferences");
+                new Button(
+                        "← Edit Preferences"
+                );
 
         styleSecondaryButton(
                 editButton
         );
 
         editButton.setOnAction(e ->
+
                 Navigation.goTo(
-                        PreferenceFillingPage.getScene()
+                        PreferenceFillingPage
+                                .getScene()
                 )
         );
 
+        // =========================================================
+        // LOCK BUTTON
+        // =========================================================
+
         Button lockButton =
-                new Button("Lock Choices  ✓");
+                new Button(
+                        locked
+                                ? "✓ Choices Locked"
+                                : "Lock Choices ✓"
+                );
 
         stylePrimaryButton(
                 lockButton
         );
 
+        if (locked) {
+
+            lockButton.setDisable(
+                    true
+            );
+
+            editButton.setText(
+                    "← View Preferences"
+            );
+        }
+
+        // =========================================================
+        // LOCK ACTION
+        // =========================================================
+
         lockButton.setOnAction(e -> {
+
+            // CHECK AGAIN FROM FIREBASE
+
+            if (
+                    preferenceDAO
+                            .isPreferenceLocked()
+            ) {
+
+                showAlert(
+                        Alert.AlertType.INFORMATION,
+                        "Option Form",
+                        "Your option form is already locked."
+                );
+
+                return;
+            }
 
             if (preferences.isEmpty()) {
 
-                Alert alert =
-                        new Alert(
-                                Alert.AlertType.WARNING
-                        );
-
-                alert.setTitle(
-                        "Option Form"
-                );
-
-                alert.setHeaderText(
-                        null
-                );
-
-                alert.setContentText(
+                showAlert(
+                        Alert.AlertType.WARNING,
+                        "Option Form",
                         "Please add at least one preference."
                 );
-
-                alert.showAndWait();
 
                 return;
             }
@@ -225,25 +368,72 @@ public class OptionPreviewPage {
             );
 
             confirmation.setContentText(
-                    "Once locked, your preference list "
-                            + "will be submitted for CAP allotment."
+                    "Once locked, you cannot edit "
+                            + "your preference list."
             );
 
-            confirmation.showAndWait()
-                    .ifPresent(response -> {
+            Optional<ButtonType> result =
+                    confirmation.showAndWait();
 
-                        if (
-                                response ==
-                                ButtonType.OK
-                        ) {
+            if (
+                    result.isEmpty()
+                    ||
+                    result.get()
+                            != ButtonType.OK
+            ) {
 
-                            Navigation.goTo(
-                                    OptionConfirmationPage
-                                            .getScene()
+                return;
+            }
+
+            boolean saved =
+                    preferenceDAO
+                            .savePreferences(
+                                    preferences
                             );
-                        }
-                    });
+
+            if (!saved) {
+
+                showAlert(
+                        Alert.AlertType.ERROR,
+                        "Option Form",
+                        "Failed to save preferences."
+                );
+
+                return;
+            }
+
+            showAlert(
+                    Alert.AlertType.INFORMATION,
+                    "Option Form",
+                    "Your preferences have been locked successfully."
+            );
+
+            Navigation.goTo(
+                    OptionConfirmationPage
+                            .getScene()
+            );
         });
+
+        // =========================================================
+        // BACK BUTTON
+        // =========================================================
+
+        Button backButton =
+                new Button(
+                        "← Back"
+                );
+
+        styleSecondaryButton(
+                backButton
+        );
+
+        backButton.setOnAction(e ->
+
+                Navigation.goTo(
+                        PreferenceFillingPage
+                                .getScene()
+                )
+        );
 
         Region spacer =
                 new Region();
@@ -253,82 +443,78 @@ public class OptionPreviewPage {
                 Priority.ALWAYS
         );
 
-        HBox buttons =
+        HBox actions =
                 new HBox(
                         12,
+                        backButton,
                         editButton,
                         spacer,
                         lockButton
                 );
 
-        buttons.setAlignment(
+        actions.setAlignment(
                 Pos.CENTER_LEFT
         );
 
-        VBox content =
-                new VBox(
-                        22,
-                        heading,
-                        status,
+        content.getChildren()
+                .addAll(
+                        title,
+                        subtitle,
+                        studentLabel,
+                        statusLabel,
                         tableCard,
-                        warning,
-                        buttons
+                        actions
                 );
 
-        content.setPadding(
-                new Insets(30)
+        // =========================================================
+        // SCROLL
+        // =========================================================
+
+        ScrollPane scrollPane =
+                new ScrollPane(
+                        content
+                );
+
+        scrollPane.setFitToWidth(
+                true
         );
 
-        content.setStyle(
-                "-fx-background-color: " + BG + ";"
+        scrollPane.setHbarPolicy(
+                ScrollPane
+                        .ScrollBarPolicy
+                        .NEVER
+        );
+
+        scrollPane.setStyle(
+                "-fx-background:"
+                        + BG + ";" +
+                "-fx-background-color:"
+                        + BG + ";"
         );
 
         return new Scene(
                 StudentLayout.create(
                         "Option Form Preview",
-                        content
+                        scrollPane
                 )
         );
-    }
-
-    private static Label createSectionTitle(
-            String text
-    ) {
-
-        Label label =
-                new Label(text);
-
-        label.setStyle(
-                "-fx-font-size: 11px;" +
-                "-fx-font-weight: bold;" +
-                "-fx-text-fill: " + LIME + ";"
-        );
-
-        return label;
     }
 
     private static void stylePrimaryButton(
             Button button
     ) {
 
-        button.setPrefHeight(42);
-
-        button.setPadding(
-                new Insets(
-                        0,
-                        20,
-                        0,
-                        20
-                )
+        button.setPrefHeight(
+                44
         );
 
         button.setStyle(
-                "-fx-background-color: " + LIME + ";" +
-                "-fx-text-fill: #0B100B;" +
-                "-fx-font-size: 13px;" +
-                "-fx-font-weight: bold;" +
-                "-fx-background-radius: 8px;" +
-                "-fx-cursor: hand;"
+                "-fx-background-color:"
+                        + LIME + ";" +
+                "-fx-text-fill:#071007;" +
+                "-fx-background-radius:8;" +
+                "-fx-font-weight:bold;" +
+                "-fx-padding:0 20 0 20;"
         );
     }
 
@@ -336,26 +522,41 @@ public class OptionPreviewPage {
             Button button
     ) {
 
-        button.setPrefHeight(42);
-
-        button.setPadding(
-                new Insets(
-                        0,
-                        20,
-                        0,
-                        20
-                )
+        button.setPrefHeight(
+                44
         );
 
         button.setStyle(
-                "-fx-background-color: #171F17;" +
-                "-fx-text-fill: " + WHITE + ";" +
-                "-fx-border-color: #344034;" +
-                "-fx-border-radius: 8px;" +
-                "-fx-background-radius: 8px;" +
-                "-fx-font-size: 13px;" +
-                "-fx-font-weight: bold;" +
-                "-fx-cursor: hand;"
+                "-fx-background-color:#253325;" +
+                "-fx-text-fill:"
+                        + WHITE + ";" +
+                "-fx-background-radius:8;" +
+                "-fx-font-weight:bold;" +
+                "-fx-padding:0 20 0 20;"
         );
+    }
+
+    private static void showAlert(
+            Alert.AlertType type,
+            String title,
+            String message
+    ) {
+
+        Alert alert =
+                new Alert(type);
+
+        alert.setTitle(
+                title
+        );
+
+        alert.setHeaderText(
+                null
+        );
+
+        alert.setContentText(
+                message
+        );
+
+        alert.showAndWait();
     }
 }

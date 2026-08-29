@@ -1,5 +1,7 @@
 package com.admitx.view;
 
+import com.admitx.dao.CAPAllotmentDAO;
+
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -23,6 +25,9 @@ public class CAPRound3ManagementPage {
     private static final String MUTED = "#9AA59A";
 
     public static Scene getScene() {
+
+        CAPAllotmentDAO capDAO =
+                new CAPAllotmentDAO();
 
         Label title =
                 new Label("CAP Round 3 Management");
@@ -51,7 +56,9 @@ public class CAPRound3ManagementPage {
                 );
 
         Label statusBadge =
-                new Label("●  ROUND 3 READY");
+                new Label(
+                        "●  ROUND 3 READY"
+                );
 
         statusBadge.setStyle(
                 "-fx-background-color: #1D2A10;" +
@@ -65,7 +72,9 @@ public class CAPRound3ManagementPage {
         );
 
         Label currentStatus =
-                new Label("Current Status");
+                new Label(
+                        "Current Status"
+                );
 
         currentStatus.setStyle(
                 "-fx-font-size: 11px;" +
@@ -74,7 +83,9 @@ public class CAPRound3ManagementPage {
         );
 
         Label currentValue =
-                new Label("Ready for Final Allotment");
+                new Label(
+                        "Ready for Final Allotment"
+                );
 
         currentValue.setStyle(
                 "-fx-font-size: 20px;" +
@@ -84,10 +95,12 @@ public class CAPRound3ManagementPage {
 
         Label statusDescription =
                 new Label(
-                        "Round 2 betterment is complete and final seat allotment can now be processed."
+                        "Students who requested Betterment in Round 2 are ready for final CAP Round 3 processing."
                 );
 
-        statusDescription.setWrapText(true);
+        statusDescription.setWrapText(
+                true
+        );
 
         statusDescription.setStyle(
                 "-fx-font-size: 12px;" +
@@ -114,10 +127,14 @@ public class CAPRound3ManagementPage {
                 "-fx-border-radius: 10px;"
         );
 
+        /*
+         * ROUND 3 ACTIONS
+         */
+
         Button finalAllotment =
                 createPrimaryAction(
                         "Run Final Allotment",
-                        "Process the remaining eligible students and finalize Round 3 seats."
+                        "Process Round 2 betterment students and finalize CAP Round 3 seats."
                 );
 
         Button publish =
@@ -126,24 +143,114 @@ public class CAPRound3ManagementPage {
                         "Make the final CAP Round 3 results visible to students."
                 );
 
-        finalAllotment.setOnAction(e ->
-                showMessage(
-                        "Final Allotment",
-                        "Final CAP Round 3 allotment completed."
-                )
-        );
+        /*
+         * RUN FINAL ALLOTMENT
+         */
 
-        publish.setOnAction(e ->
+        finalAllotment.setOnAction(e -> {
+
+            finalAllotment.setDisable(
+                    true
+            );
+
+            currentValue.setText(
+                    "Processing Final Allotment..."
+            );
+
+            boolean success =
+                    capDAO.runRound3Allotment();
+
+            if (success) {
+
+                currentValue.setText(
+                        "Final Allotment Completed"
+                );
+
+                statusBadge.setText(
+                        "●  ROUND 3 COMPLETED"
+                );
+
+                statusDescription.setText(
+                        "CAP Round 3 final allotment has been generated. Publish results to make them visible to students."
+                );
+
                 showMessage(
-                        "Results",
-                        "CAP Round 3 results published."
-                )
-        );
+                        Alert.AlertType.INFORMATION,
+                        "Final Allotment",
+                        "CAP Round 3 final allotment completed successfully."
+                );
+
+            } else {
+
+                currentValue.setText(
+                        "No Final Allotment Processed"
+                );
+
+                showMessage(
+                        Alert.AlertType.WARNING,
+                        "Final Allotment",
+                        "No students were processed.\n\nMake sure at least one student selected Betterment in CAP Round 2."
+                );
+            }
+
+            finalAllotment.setDisable(
+                    false
+            );
+        });
+
+        /*
+         * PUBLISH ROUND 3
+         */
+
+        publish.setOnAction(e -> {
+
+            publish.setDisable(
+                    true
+            );
+
+            boolean success =
+                    capDAO.publishRound3();
+
+            if (success) {
+
+                currentValue.setText(
+                        "Final Results Published"
+                );
+
+                statusBadge.setText(
+                        "●  ROUND 3 PUBLISHED"
+                );
+
+                statusDescription.setText(
+                        "CAP Round 3 final allotment results are now available to students."
+                );
+
+                showMessage(
+                        Alert.AlertType.INFORMATION,
+                        "Results Published",
+                        "CAP Round 3 results have been published successfully."
+                );
+
+            } else {
+
+                showMessage(
+                        Alert.AlertType.ERROR,
+                        "Publish Failed",
+                        "CAP Round 3 results could not be published."
+                );
+            }
+
+            publish.setDisable(
+                    false
+            );
+        });
 
         VBox actionsCard =
                 new VBox(
                         12,
-                        createSectionTitle("ROUND 3 ACTIONS"),
+                        createSectionTitle(
+                                "ROUND 3 ACTIONS"
+                        ),
                         finalAllotment,
                         publish
                 );
@@ -159,22 +266,38 @@ public class CAPRound3ManagementPage {
                 "-fx-border-radius: 10px;"
         );
 
+        /*
+         * FIRESTORE COUNTS
+         */
+
+        int remainingStudents =
+                capDAO.getRound2BettermentCount();
+
         VBox overviewCard =
                 new VBox(
                         12,
-                        createSectionTitle("ROUND 3 OVERVIEW"),
+
+                        createSectionTitle(
+                                "ROUND 3 OVERVIEW"
+                        ),
+
                         createStatRow(
                                 "Students Remaining",
-                                "286"
+                                String.valueOf(
+                                        remainingStudents
+                                )
                         ),
+
                         createStatRow(
                                 "Available Seats",
-                                "196"
+                                "Not Connected"
                         ),
+
                         createStatRow(
                                 "Confirmed Admissions",
-                                "712"
+                                "Not Connected"
                         ),
+
                         createStatRow(
                                 "Round Status",
                                 "Ready"
@@ -211,10 +334,12 @@ public class CAPRound3ManagementPage {
 
         Label note =
                 new Label(
-                        "Round 3 is the final CAP allotment stage. Verify remaining vacancies before publishing the final results."
+                        "Round 3 is the final CAP round. Only students who requested Betterment in Round 2 will be processed."
                 );
 
-        note.setWrapText(true);
+        note.setWrapText(
+                true
+        );
 
         note.setStyle(
                 "-fx-background-color: #151B10;" +
@@ -240,7 +365,9 @@ public class CAPRound3ManagementPage {
         );
 
         root.setStyle(
-                "-fx-background-color: " + BG + ";"
+                "-fx-background-color: "
+                        + BG
+                        + ";"
         );
 
         BorderPane layout =
@@ -289,7 +416,9 @@ public class CAPRound3ManagementPage {
         Label descriptionLabel =
                 new Label(description);
 
-        descriptionLabel.setWrapText(true);
+        descriptionLabel.setWrapText(
+                true
+        );
 
         descriptionLabel.setStyle(
                 "-fx-font-size: 10px;" +
@@ -312,7 +441,9 @@ public class CAPRound3ManagementPage {
         );
 
         Label arrow =
-                new Label("→");
+                new Label(
+                        "→"
+                );
 
         arrow.setStyle(
                 "-fx-text-fill: " + MUTED + ";" +
@@ -387,7 +518,9 @@ public class CAPRound3ManagementPage {
     ) {
 
         Label labelText =
-                new Label(label);
+                new Label(
+                        label
+                );
 
         labelText.setStyle(
                 "-fx-font-size: 12px;" +
@@ -403,7 +536,9 @@ public class CAPRound3ManagementPage {
         );
 
         Label valueText =
-                new Label(value);
+                new Label(
+                        value
+                );
 
         valueText.setStyle(
                 "-fx-font-size: 13px;" +
@@ -435,18 +570,26 @@ public class CAPRound3ManagementPage {
     }
 
     private static void showMessage(
+            Alert.AlertType type,
             String title,
             String message
     ) {
 
         Alert alert =
-                new Alert(
-                        Alert.AlertType.INFORMATION
-                );
+                new Alert(type);
 
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
+        alert.setTitle(
+                title
+        );
+
+        alert.setHeaderText(
+                null
+        );
+
+        alert.setContentText(
+                message
+        );
+
         alert.showAndWait();
     }
 }

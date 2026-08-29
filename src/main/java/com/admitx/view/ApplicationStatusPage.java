@@ -1,13 +1,14 @@
 package com.admitx.view;
 
-import com.admitx.view.Navigation;
-import com.admitx.view.StudentLayout;
+import com.admitx.dao.ApplicationDAO;
+import com.admitx.model.Student;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
@@ -17,16 +18,60 @@ public class ApplicationStatusPage {
 
     private static final String BG = "#0B100B";
     private static final String CARD = "#141B14";
-    private static final String ROW = "#0F150F";
     private static final String BORDER = "#293529";
     private static final String LIME = "#B7FF00";
     private static final String WHITE = "#F5F7F2";
     private static final String MUTED = "#9AA59A";
+    private static final String RED = "#FF5A5A";
+    private static final String ORANGE = "#F59E0B";
 
     public static Scene getScene() {
 
+        // =====================================================
+        // LOAD FIRESTORE DATA
+        // =====================================================
+
+        Student student =
+                Student.getInstance();
+
+        ApplicationDAO applicationDAO =
+                new ApplicationDAO();
+
+        String studentEmail =
+                student.getEmail();
+
+        String applicationStatus =
+                applicationDAO.getApplicationStatus();
+
+        String verificationStatus =
+                applicationDAO.getVerificationStatus();
+
+        boolean submitted =
+                applicationDAO.isApplicationSubmitted();
+
+        boolean verified =
+                "Verified".equalsIgnoreCase(
+                        verificationStatus
+                );
+
+        boolean rejected =
+                "Rejected".equalsIgnoreCase(
+                        verificationStatus
+                );
+
+        boolean pending =
+                submitted &&
+                !verified &&
+                !rejected;
+
+        // =====================================================
+        // PAGE HEADING
+        // =====================================================
+
         Label title =
-                new Label("Application Status");
+                new Label(
+                        "Application Status"
+                );
 
         title.setStyle(
                 "-fx-font-size: 26px;" +
@@ -51,9 +96,14 @@ public class ApplicationStatusPage {
                         subtitle
                 );
 
+        // =====================================================
+        // APPLICATION IDENTIFIER
+        // =====================================================
+
         Label applicationId =
                 new Label(
-                        "APPLICATION ID   MHTCET20260001"
+                        "STUDENT EMAIL   "
+                                + safe(studentEmail)
                 );
 
         applicationId.setStyle(
@@ -62,8 +112,14 @@ public class ApplicationStatusPage {
                 "-fx-text-fill: " + LIME + ";"
         );
 
+        // =====================================================
+        // CURRENT STATUS
+        // =====================================================
+
         Label statusLabel =
-                new Label("CURRENT STATUS");
+                new Label(
+                        "CURRENT STATUS"
+                );
 
         statusLabel.setStyle(
                 "-fx-font-size: 10px;" +
@@ -71,22 +127,91 @@ public class ApplicationStatusPage {
                 "-fx-text-fill: " + MUTED + ";"
         );
 
+        String statusText;
+        String statusDescription;
+        String statusColor;
+        String indicatorText;
+
+        if (verified) {
+
+            statusText =
+                    "VERIFIED";
+
+            statusDescription =
+                    "Your application has been successfully verified "
+                            + "by the counsellor.";
+
+            statusColor =
+                    LIME;
+
+            indicatorText =
+                    "✓";
+
+        } else if (rejected) {
+
+            statusText =
+                    "REJECTED";
+
+            statusDescription =
+                    "Your application was rejected during verification. "
+                            + "Please review the counsellor remarks.";
+
+            statusColor =
+                    RED;
+
+            indicatorText =
+                    "✕";
+
+        } else if (pending) {
+
+            statusText =
+                    "UNDER VERIFICATION";
+
+            statusDescription =
+                    "Your application has been submitted successfully "
+                            + "and is waiting for counsellor verification.";
+
+            statusColor =
+                    ORANGE;
+
+            indicatorText =
+                    "…";
+
+        } else {
+
+            statusText =
+                    "DRAFT";
+
+            statusDescription =
+                    "Your application has not been submitted yet. "
+                            + "Complete all required details and submit it.";
+
+            statusColor =
+                    MUTED;
+
+            indicatorText =
+                    "!";
+        }
+
         Label status =
-                new Label("SUBMITTED");
+                new Label(
+                        statusText
+                );
 
         status.setStyle(
                 "-fx-font-size: 24px;" +
                 "-fx-font-weight: bold;" +
-                "-fx-text-fill: " + LIME + ";"
+                "-fx-text-fill: " + statusColor + ";"
         );
 
         Label description =
                 new Label(
-                        "Your application has been successfully submitted " +
-                        "and is currently under verification."
+                        statusDescription
                 );
 
-        description.setWrapText(true);
+        description.setWrapText(
+                true
+        );
 
         description.setStyle(
                 "-fx-font-size: 13px;" +
@@ -96,7 +221,10 @@ public class ApplicationStatusPage {
         HBox statusRow =
                 new HBox(
                         15,
-                        createStatusIndicator(),
+                        createStatusIndicator(
+                                indicatorText,
+                                statusColor
+                        ),
                         new VBox(
                                 5,
                                 statusLabel,
@@ -127,14 +255,82 @@ public class ApplicationStatusPage {
                 "-fx-border-radius: 12px;"
         );
 
+        // =====================================================
+        // STATUS INFORMATION
+        // =====================================================
+
+        Label detailsTitle =
+                new Label(
+                        "APPLICATION DETAILS"
+                );
+
+        detailsTitle.setStyle(
+                "-fx-font-size: 12px;" +
+                "-fx-font-weight: bold;" +
+                "-fx-text-fill: " + LIME + ";"
+        );
+
+        VBox details =
+                new VBox(
+                        0,
+                        createDetailRow(
+                                "Application Status",
+                                applicationStatus
+                        ),
+                        createDetailRow(
+                                "Verification Status",
+                                verificationStatus
+                        ),
+                        createDetailRow(
+                                "Student Email",
+                                safe(studentEmail)
+                        )
+                );
+
+        VBox detailsCard =
+                new VBox(
+                        15,
+                        detailsTitle,
+                        details
+                );
+
+        detailsCard.setPadding(
+                new Insets(22)
+        );
+
+        detailsCard.setStyle(
+                "-fx-background-color: " + CARD + ";" +
+                "-fx-background-radius: 12px;" +
+                "-fx-border-color: " + BORDER + ";" +
+                "-fx-border-radius: 12px;"
+        );
+
+        // =====================================================
+        // APPLICATION PROGRESS
+        // =====================================================
+
         Label progressTitle =
-                new Label("APPLICATION PROGRESS");
+                new Label(
+                        "APPLICATION PROGRESS"
+                );
 
         progressTitle.setStyle(
                 "-fx-font-size: 12px;" +
                 "-fx-font-weight: bold;" +
                 "-fx-text-fill: " + LIME + ";"
         );
+
+        boolean draftComplete =
+                true;
+
+        boolean submittedComplete =
+                submitted;
+
+        boolean verificationStarted =
+                submitted;
+
+        boolean verificationComplete =
+                verified;
 
         VBox timeline =
                 new VBox(
@@ -144,40 +340,56 @@ public class ApplicationStatusPage {
                                 "01",
                                 "Application Draft",
                                 "Application created",
-                                true,
+                                draftComplete,
                                 true
                         ),
 
                         createTimelineItem(
                                 "02",
                                 "Application Submitted",
-                                "Application successfully submitted",
-                                true,
+                                submitted
+                                        ? "Application successfully submitted"
+                                        : "Application not submitted yet",
+                                submittedComplete,
                                 true
                         ),
 
                         createTimelineItem(
                                 "03",
                                 "Under Verification",
-                                "Documents are being verified",
-                                true,
+                                rejected
+                                        ? "Application verification completed with rejection"
+                                        : verified
+                                        ? "Counsellor verification completed"
+                                        : submitted
+                                        ? "Waiting for counsellor verification"
+                                        : "Submit your application first",
+                                verificationStarted,
                                 true
                         ),
 
                         createTimelineItem(
                                 "04",
-                                "Application Verified",
-                                "Waiting for verification",
-                                false,
+                                rejected
+                                        ? "Application Rejected"
+                                        : "Application Verified",
+                                rejected
+                                        ? "Application was rejected by counsellor"
+                                        : verified
+                                        ? "Application verified successfully"
+                                        : "Waiting for verification",
+                                verificationComplete || rejected,
                                 true
                         ),
 
                         createTimelineItem(
                                 "05",
                                 "Provisional Merit List",
-                                "Merit status will be published",
+                                verified
+                                        ? "Waiting for merit list publication"
+                                        : "Application verification required",
                                 false,
-                                false
+                                true
                         ),
 
                         createTimelineItem(
@@ -185,13 +397,13 @@ public class ApplicationStatusPage {
                                 "CAP Rounds",
                                 "Seat allotment process",
                                 false,
-                                false
+                                true
                         ),
 
                         createTimelineItem(
                                 "07",
                                 "Admission",
-                                "Confirm your allotted seat",
+                                "Confirm your final allotted seat",
                                 false,
                                 false
                         )
@@ -215,31 +427,154 @@ public class ApplicationStatusPage {
                 "-fx-border-radius: 12px;"
         );
 
+        // =====================================================
+        // STATUS MESSAGE
+        // =====================================================
+
+        Label note =
+                new Label();
+
+        note.setWrapText(
+                true
+        );
+
+        if (verified) {
+
+            note.setText(
+                    "✓  Your application has been verified successfully. "
+                            + "You are now eligible to continue with the "
+                            + "next stages of the counselling process."
+            );
+
+            note.setStyle(
+                    "-fx-background-color: #15210F;" +
+                    "-fx-text-fill: #C8F59A;" +
+                    "-fx-padding: 14px;" +
+                    "-fx-background-radius: 8px;" +
+                    "-fx-border-color: #425A2D;" +
+                    "-fx-border-radius: 8px;" +
+                    "-fx-font-size: 12px;"
+            );
+
+        } else if (rejected) {
+
+            note.setText(
+                    "✕  Your application was rejected during verification. "
+                            + "Please check the counsellor remarks or contact "
+                            + "the counselling authority."
+            );
+
+            note.setStyle(
+                    "-fx-background-color: #251313;" +
+                    "-fx-text-fill: #FFAAAA;" +
+                    "-fx-padding: 14px;" +
+                    "-fx-background-radius: 8px;" +
+                    "-fx-border-color: #633333;" +
+                    "-fx-border-radius: 8px;" +
+                    "-fx-font-size: 12px;"
+            );
+
+        } else if (submitted) {
+
+            note.setText(
+                    "ⓘ  Your application is currently under verification. "
+                            + "Keep checking your dashboard for updates."
+            );
+
+            note.setStyle(
+                    "-fx-background-color: #211D10;" +
+                    "-fx-text-fill: #E7CC80;" +
+                    "-fx-padding: 14px;" +
+                    "-fx-background-radius: 8px;" +
+                    "-fx-border-color: #5C4D20;" +
+                    "-fx-border-radius: 8px;" +
+                    "-fx-font-size: 12px;"
+            );
+
+        } else {
+
+            note.setText(
+                    "ⓘ  Your application is still in Draft status. "
+                            + "Complete the required information and submit it."
+            );
+
+            note.setStyle(
+                    "-fx-background-color: #151B10;" +
+                    "-fx-text-fill: #B9C5B2;" +
+                    "-fx-padding: 14px;" +
+                    "-fx-background-radius: 8px;" +
+                    "-fx-border-color: #38452B;" +
+                    "-fx-border-radius: 8px;" +
+                    "-fx-font-size: 12px;"
+            );
+        }
+
+        // =====================================================
+        // BUTTONS
+        // =====================================================
+
         Button dashboardButton =
-                new Button("←  Go to Dashboard");
+                new Button(
+                        "←  Go to Dashboard"
+                );
 
         styleSecondaryButton(
                 dashboardButton
         );
 
         dashboardButton.setOnAction(e ->
+
                 Navigation.goTo(
                         StudentDashboardPage.getScene()
                 )
         );
 
-        Button meritButton =
-                new Button("View Provisional Merit List  →");
+        Button actionButton =
+                new Button();
 
         stylePrimaryButton(
-                meritButton
+                actionButton
         );
 
-        meritButton.setOnAction(e ->
-                Navigation.goTo(
-                        ProvisionalMeritPage.getScene()
-                )
-        );
+        if (verified) {
+
+            actionButton.setText(
+                    "View Provisional Merit List  →"
+            );
+
+            actionButton.setOnAction(e ->
+
+                    Navigation.goTo(
+                            ProvisionalMeritPage.getScene()
+                    )
+            );
+
+        } else if (submitted) {
+
+            actionButton.setText(
+                    "Refresh Status"
+            );
+
+            actionButton.setOnAction(e ->
+
+                    Navigation.goTo(
+                            ApplicationStatusPage.getScene()
+                    )
+            );
+
+        } else {
+
+            actionButton.setText(
+                    "Continue Application  →"
+            );
+
+            actionButton.setOnAction(e ->
+
+                    Navigation.goTo(
+                            PersonalDetailsPage.getScene()
+                    )
+            );
+        }
 
         Region spacer =
                 new Region();
@@ -254,36 +589,23 @@ public class ApplicationStatusPage {
                         12,
                         dashboardButton,
                         spacer,
-                        meritButton
+                        actionButton
                 );
 
         buttons.setAlignment(
                 Pos.CENTER_LEFT
         );
 
-        Label note =
-                new Label(
-                        "ⓘ  Keep checking your dashboard for verification updates, " +
-                        "merit list publication and CAP round announcements."
-                );
-
-        note.setWrapText(true);
-
-        note.setStyle(
-                "-fx-background-color: #151B10;" +
-                "-fx-text-fill: #B9C5B2;" +
-                "-fx-padding: 14px;" +
-                "-fx-background-radius: 8px;" +
-                "-fx-border-color: #38452B;" +
-                "-fx-border-radius: 8px;" +
-                "-fx-font-size: 12px;"
-        );
+        // =====================================================
+        // CONTENT
+        // =====================================================
 
         VBox content =
                 new VBox(
                         22,
                         heading,
                         statusCard,
+                        detailsCard,
                         progressCard,
                         note,
                         buttons
@@ -297,43 +619,145 @@ public class ApplicationStatusPage {
                 "-fx-background-color: " + BG + ";"
         );
 
+        ScrollPane scrollPane =
+                new ScrollPane(
+                        content
+                );
+
+        scrollPane.setFitToWidth(
+                true
+        );
+
+        scrollPane.setHbarPolicy(
+                ScrollPane.ScrollBarPolicy.NEVER
+        );
+
+        scrollPane.setStyle(
+                "-fx-background: " + BG + ";" +
+                "-fx-background-color: " + BG + ";"
+        );
+
         return new Scene(
                 StudentLayout.create(
                         "Application Status",
-                        content
+                        scrollPane
                 )
         );
     }
 
-    private static Region createStatusIndicator() {
+    // =========================================================
+    // DETAIL ROW
+    // =========================================================
 
-        Label check =
-                new Label("✓");
+    private static HBox createDetailRow(
+            String name,
+            String value
+    ) {
 
-        check.setMinSize(
+        Label nameLabel =
+                new Label(
+                        name
+                );
+
+        nameLabel.setStyle(
+                "-fx-text-fill: " + MUTED + ";" +
+                "-fx-font-size: 12px;"
+        );
+
+        Label valueLabel =
+                new Label(
+                        safe(value)
+                );
+
+        valueLabel.setStyle(
+                "-fx-text-fill: " + WHITE + ";" +
+                "-fx-font-size: 12px;" +
+                "-fx-font-weight: bold;"
+        );
+
+        Region spacer =
+                new Region();
+
+        HBox.setHgrow(
+                spacer,
+                Priority.ALWAYS
+        );
+
+        HBox row =
+                new HBox(
+                        10,
+                        nameLabel,
+                        spacer,
+                        valueLabel
+                );
+
+        row.setAlignment(
+                Pos.CENTER_LEFT
+        );
+
+        row.setPadding(
+                new Insets(
+                        13,
+                        4,
+                        13,
+                        4
+                )
+        );
+
+        row.setStyle(
+                "-fx-border-color: transparent transparent "
+                        + BORDER
+                        + " transparent;" +
+                "-fx-border-width: 0 0 1 0;"
+        );
+
+        return row;
+    }
+
+    // =========================================================
+    // STATUS INDICATOR
+    // =========================================================
+
+    private static Region createStatusIndicator(
+            String text,
+            String color
+    ) {
+
+        Label indicator =
+                new Label(
+                        text
+                );
+
+        indicator.setMinSize(
                 55,
                 55
         );
 
-        check.setMaxSize(
+        indicator.setMaxSize(
                 55,
                 55
         );
 
-        check.setAlignment(
+        indicator.setAlignment(
                 Pos.CENTER
         );
 
-        check.setStyle(
-                "-fx-background-color: " + LIME + ";" +
+        indicator.setStyle(
+                "-fx-background-color: "
+                        + color
+                        + ";" +
                 "-fx-background-radius: 50%;" +
                 "-fx-text-fill: #0B100B;" +
                 "-fx-font-size: 25px;" +
                 "-fx-font-weight: bold;"
         );
 
-        return check;
+        return indicator;
     }
+
+    // =========================================================
+    // TIMELINE ITEM
+    // =========================================================
 
     private static VBox createTimelineItem(
             String number,
@@ -345,7 +769,9 @@ public class ApplicationStatusPage {
 
         Label numberLabel =
                 new Label(
-                        completed ? "✓" : number
+                        completed
+                                ? "✓"
+                                : number
                 );
 
         numberLabel.setMinSize(
@@ -363,33 +789,46 @@ public class ApplicationStatusPage {
         );
 
         numberLabel.setStyle(
-                "-fx-background-color: " +
-                        (completed
+                "-fx-background-color: "
+                        + (
+                        completed
                                 ? LIME
-                                : "#252D25") + ";" +
+                                : "#252D25"
+                )
+                        + ";" +
                 "-fx-background-radius: 50%;" +
-                "-fx-text-fill: " +
-                        (completed
+                "-fx-text-fill: "
+                        + (
+                        completed
                                 ? "#0B100B"
-                                : MUTED) + ";" +
+                                : MUTED
+                )
+                        + ";" +
                 "-fx-font-size: 11px;" +
                 "-fx-font-weight: bold;"
         );
 
         Label titleLabel =
-                new Label(title);
+                new Label(
+                        title
+                );
 
         titleLabel.setStyle(
                 "-fx-font-size: 14px;" +
                 "-fx-font-weight: bold;" +
-                "-fx-text-fill: " +
-                        (completed
+                "-fx-text-fill: "
+                        + (
+                        completed
                                 ? WHITE
-                                : MUTED) + ";"
+                                : MUTED
+                )
+                        + ";"
         );
 
         Label descriptionLabel =
-                new Label(description);
+                new Label(
+                        description
+                );
 
         descriptionLabel.setStyle(
                 "-fx-font-size: 11px;" +
@@ -433,16 +872,26 @@ public class ApplicationStatusPage {
             Region connector =
                     new Region();
 
-            connector.setPrefWidth(2);
-            connector.setPrefHeight(18);
+            connector.setPrefWidth(
+                    2
+            );
 
-            connector.setTranslateX(16);
+            connector.setPrefHeight(
+                    18
+            );
+
+            connector.setTranslateX(
+                    16
+            );
 
             connector.setStyle(
-                    "-fx-background-color: " +
-                            (completed
+                    "-fx-background-color: "
+                            + (
+                            completed
                                     ? LIME
-                                    : BORDER) + ";"
+                                    : BORDER
+                    )
+                            + ";"
             );
 
             item.getChildren().add(
@@ -453,11 +902,17 @@ public class ApplicationStatusPage {
         return item;
     }
 
+    // =========================================================
+    // PRIMARY BUTTON
+    // =========================================================
+
     private static void stylePrimaryButton(
             Button button
     ) {
 
-        button.setPrefHeight(42);
+        button.setPrefHeight(
+                42
+        );
 
         button.setPadding(
                 new Insets(
@@ -478,11 +933,17 @@ public class ApplicationStatusPage {
         );
     }
 
+    // =========================================================
+    // SECONDARY BUTTON
+    // =========================================================
+
     private static void styleSecondaryButton(
             Button button
     ) {
 
-        button.setPrefHeight(42);
+        button.setPrefHeight(
+                42
+        );
 
         button.setPadding(
                 new Insets(
@@ -503,5 +964,24 @@ public class ApplicationStatusPage {
                 "-fx-font-weight: bold;" +
                 "-fx-cursor: hand;"
         );
+    }
+
+    // =========================================================
+    // SAFE
+    // =========================================================
+
+    private static String safe(
+            String value
+    ) {
+
+        if (
+                value == null ||
+                value.isBlank()
+        ) {
+
+            return "Not Available";
+        }
+
+        return value;
     }
 }

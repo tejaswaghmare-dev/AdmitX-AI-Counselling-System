@@ -1,7 +1,6 @@
 package com.admitx.view;
 
-import com.admitx.view.Navigation;
-import com.admitx.view.StudentLayout;
+import com.admitx.model.College;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -11,74 +10,94 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
 public class CollegeInfoPage {
 
-    public static Scene getScene(
-            CollegeSearchPage.College college) {
+    private static final String BG = "#0B100B";
+    private static final String CARD = "#141B14";
+    private static final String FIELD = "#101610";
+    private static final String BORDER = "#293529";
+    private static final String LIME = "#B7FF00";
+    private static final String WHITE = "#F5F7F2";
+    private static final String MUTED = "#9AA59A";
+
+    public static Scene getScene(College college) {
 
         Label title = new Label("College Information");
 
         title.setStyle(
-                "-fx-font-size: 26px;" +
-                "-fx-font-weight: bold;" +
-                "-fx-text-fill: #0A0A0A;"
+                "-fx-font-size:26px;" +
+                "-fx-font-weight:bold;" +
+                "-fx-text-fill:" + WHITE + ";"
         );
 
-        Label collegeName =
-                new Label(college.getName());
-
-        collegeName.setStyle(
-                "-fx-font-size: 23px;" +
-                "-fx-font-weight: bold;" +
-                "-fx-text-fill: #65A30D;"
+        Label subtitle = new Label(
+                "View complete information about the selected college."
         );
-
-        Label subtitle =
-                new Label(
-                        college.getDistrict() +
-                        " • " +
-                        college.getType()
-                );
 
         subtitle.setStyle(
-                "-fx-font-size: 14px;" +
-                "-fx-text-fill: #3F6212;"
+                "-fx-font-size:13px;" +
+                "-fx-text-fill:" + MUTED + ";"
         );
 
-        VBox collegeHeader =
-                new VBox(
-                        6,
-                        collegeName,
-                        subtitle
-                );
+        VBox heading = new VBox(
+                5,
+                title,
+                subtitle
+        );
+
+        Label collegeName = new Label(
+                safe(college.getCollegeName())
+        );
+
+        collegeName.setWrapText(true);
+
+        collegeName.setStyle(
+                "-fx-font-size:23px;" +
+                "-fx-font-weight:bold;" +
+                "-fx-text-fill:" + LIME + ";"
+        );
+
+        Label location = new Label(
+                safe(college.getDistrict())
+                + "  •  "
+                + safe(college.getUniversity())
+        );
+
+        location.setStyle(
+                "-fx-font-size:13px;" +
+                "-fx-text-fill:" + MUTED + ";"
+        );
+
+        VBox collegeHeader = new VBox(
+                8,
+                collegeName,
+                location
+        );
 
         collegeHeader.setPadding(
-                new Insets(20)
+                new Insets(22)
         );
 
         collegeHeader.setStyle(
-                "-fx-background-color: white;" +
-                "-fx-background-radius: 10px;" +
-                "-fx-border-color: #D9F99D;" +
-                "-fx-border-radius: 10px;"
+                "-fx-background-color:" + CARD + ";" +
+                "-fx-background-radius:12px;" +
+                "-fx-border-color:" + BORDER + ";" +
+                "-fx-border-radius:12px;"
         );
 
-        Label basicTitle =
-                createSectionTitle("College Details");
+        GridPane details = new GridPane();
 
-        GridPane details =
-                new GridPane();
-
-        details.setHgap(25);
-        details.setVgap(18);
-        details.setPadding(new Insets(20));
+        details.setHgap(35);
+        details.setVgap(22);
 
         addDetail(
                 details,
-                "College Code",
-                college.getCode(),
+                "College ID",
+                safe(college.getCollegeID()),
                 0,
                 0
         );
@@ -86,186 +105,129 @@ public class CollegeInfoPage {
         addDetail(
                 details,
                 "College Name",
-                college.getName(),
-                2,
+                safe(college.getCollegeName()),
+                1,
                 0
         );
 
         addDetail(
                 details,
                 "District",
-                college.getDistrict(),
+                safe(college.getDistrict()),
                 0,
-                1
-        );
-
-        addDetail(
-                details,
-                "College Type",
-                college.getType(),
-                2,
                 1
         );
 
         addDetail(
                 details,
                 "University",
-                "Savitribai Phule Pune University",
-                0,
-                2
+                safe(college.getUniversity()),
+                1,
+                1
         );
 
-        addDetail(
-                details,
-                "Intake",
-                "120",
-                2,
-                2
+        VBox detailsCard = new VBox(
+                18,
+                createSectionTitle("COLLEGE DETAILS"),
+                details
         );
-
-        VBox detailsCard =
-                new VBox(
-                        basicTitle,
-                        details
-                );
 
         detailsCard.setPadding(
-                new Insets(5, 0, 5, 0)
+                new Insets(22)
         );
 
         detailsCard.setStyle(
-                "-fx-background-color: white;" +
-                "-fx-background-radius: 10px;" +
-                "-fx-border-color: #D9F99D;" +
-                "-fx-border-radius: 10px;"
+                "-fx-background-color:" + CARD + ";" +
+                "-fx-background-radius:12px;" +
+                "-fx-border-color:" + BORDER + ";" +
+                "-fx-border-radius:12px;"
         );
 
-        Label branchesTitle =
-                createSectionTitle("Available Branches");
+        GridPane courseDetails = new GridPane();
 
-        VBox branches =
-                new VBox(10);
-
-        branches.getChildren().add(
-                createBranch(
-                        "Computer Engineering",
-                        "120",
-                        "95.20"
-                )
-        );
-
-        branches.getChildren().add(
-                createBranch(
-                        "Information Technology",
-                        "60",
-                        "93.45"
-                )
-        );
-
-        branches.getChildren().add(
-                createBranch(
-                        "Mechanical Engineering",
-                        "60",
-                        "82.30"
-                )
-        );
-
-        branches.getChildren().add(
-                createBranch(
-                        "Civil Engineering",
-                        "60",
-                        "78.50"
-                )
-        );
-
-        VBox branchCard =
-                new VBox(
-                        branchesTitle,
-                        branches
-                );
-
-        branchCard.setPadding(
-                new Insets(20)
-        );
-
-        branchCard.setStyle(
-                "-fx-background-color: white;" +
-                "-fx-background-radius: 10px;" +
-                "-fx-border-color: #D9F99D;" +
-                "-fx-border-radius: 10px;"
-        );
-
-        Label cutoffTitle =
-                createSectionTitle(
-                        "Previous Year Dummy Cutoffs"
-                );
-
-        GridPane cutoff =
-                new GridPane();
-
-        cutoff.setHgap(25);
-        cutoff.setVgap(15);
+        courseDetails.setHgap(35);
+        courseDetails.setVgap(22);
 
         addDetail(
-                cutoff,
-                "Computer Engineering",
-                "95.20",
+                courseDetails,
+                "Available Branch",
+                safe(college.getBranch()),
                 0,
                 0
         );
 
         addDetail(
-                cutoff,
-                "Information Technology",
-                "93.45",
-                2,
+                courseDetails,
+                "Intake",
+                String.valueOf(college.getIntake()),
+                1,
                 0
         );
 
-        addDetail(
-                cutoff,
-                "Mechanical Engineering",
-                "82.30",
-                0,
-                1
+        VBox courseCard = new VBox(
+                18,
+                createSectionTitle("COURSE & INTAKE"),
+                courseDetails
         );
 
-        addDetail(
-                cutoff,
-                "Civil Engineering",
-                "78.50",
-                2,
-                1
+        courseCard.setPadding(
+                new Insets(22)
         );
 
-        VBox cutoffCard =
-                new VBox(
-                        cutoffTitle,
-                        cutoff
-                );
-
-        cutoffCard.setPadding(
-                new Insets(20)
+        courseCard.setStyle(
+                "-fx-background-color:" + CARD + ";" +
+                "-fx-background-radius:12px;" +
+                "-fx-border-color:" + BORDER + ";" +
+                "-fx-border-radius:12px;"
         );
 
-        cutoffCard.setStyle(
-                "-fx-background-color: white;" +
-                "-fx-background-radius: 10px;" +
-                "-fx-border-color: #D9F99D;" +
-                "-fx-border-radius: 10px;"
+        Label infoTitle =
+                createSectionTitle("DATABASE INFORMATION");
+
+        Label info = new Label(
+                "This college information is provided from the "
+                + "college records managed by the counsellor."
+        );
+
+        info.setWrapText(true);
+
+        info.setStyle(
+                "-fx-font-size:13px;" +
+                "-fx-text-fill:" + MUTED + ";"
+        );
+
+        VBox informationCard = new VBox(
+                10,
+                infoTitle,
+                info
+        );
+
+        informationCard.setPadding(
+                new Insets(22)
+        );
+
+        informationCard.setStyle(
+                "-fx-background-color:" + FIELD + ";" +
+                "-fx-background-radius:12px;" +
+                "-fx-border-color:" + BORDER + ";" +
+                "-fx-border-radius:12px;"
         );
 
         Button backButton =
-                new Button("Back");
+                new Button("← Back");
+
+        backButton.setPrefWidth(120);
+        backButton.setPrefHeight(42);
 
         backButton.setStyle(
-                "-fx-background-color: #4D7C0F;" +
-                "-fx-text-fill: white;" +
-                "-fx-font-size: 14px;" +
-                "-fx-font-weight: bold;" +
-                "-fx-pref-width: 120px;" +
-                "-fx-pref-height: 40px;" +
-                "-fx-background-radius: 6px;"
+                "-fx-background-color:" + FIELD + ";" +
+                "-fx-text-fill:" + WHITE + ";" +
+                "-fx-font-size:13px;" +
+                "-fx-font-weight:bold;" +
+                "-fx-background-radius:8px;" +
+                "-fx-border-color:" + BORDER + ";" +
+                "-fx-border-radius:8px;" +
+                "-fx-cursor:hand;"
         );
 
         backButton.setOnAction(e ->
@@ -277,14 +239,16 @@ public class CollegeInfoPage {
         Button preferenceButton =
                 new Button("Add to Preferences");
 
+        preferenceButton.setPrefWidth(190);
+        preferenceButton.setPrefHeight(42);
+
         preferenceButton.setStyle(
-                "-fx-background-color: #65A30D;" +
-                "-fx-text-fill: white;" +
-                "-fx-font-size: 14px;" +
-                "-fx-font-weight: bold;" +
-                "-fx-pref-width: 190px;" +
-                "-fx-pref-height: 40px;" +
-                "-fx-background-radius: 6px;"
+                "-fx-background-color:" + LIME + ";" +
+                "-fx-text-fill:#101510;" +
+                "-fx-font-size:13px;" +
+                "-fx-font-weight:bold;" +
+                "-fx-background-radius:8px;" +
+                "-fx-cursor:hand;"
         );
 
         preferenceButton.setOnAction(e ->
@@ -293,42 +257,54 @@ public class CollegeInfoPage {
                 )
         );
 
-        HBox buttons =
-                new HBox(
-                        15,
-                        backButton,
-                        preferenceButton
-                );
+        Region spacer = new Region();
 
-        buttons.setAlignment(
-                Pos.CENTER_RIGHT
+        HBox.setHgrow(
+                spacer,
+                Priority.ALWAYS
         );
 
-        VBox content =
-                new VBox(
-                        20,
-                        title,
-                        collegeHeader,
-                        detailsCard,
-                        branchCard,
-                        cutoffCard,
-                        buttons
-                );
+        HBox buttons = new HBox(
+                15,
+                backButton,
+                spacer,
+                preferenceButton
+        );
+
+        buttons.setAlignment(
+                Pos.CENTER_LEFT
+        );
+
+        VBox content = new VBox(
+                22,
+                heading,
+                collegeHeader,
+                detailsCard,
+                courseCard,
+                informationCard,
+                buttons
+        );
 
         content.setPadding(
                 new Insets(30)
         );
 
         content.setStyle(
-                "-fx-background-color: #F7FEE7;"
+                "-fx-background-color:" + BG + ";"
         );
 
         ScrollPane scrollPane =
                 new ScrollPane(content);
 
         scrollPane.setFitToWidth(true);
+
+        scrollPane.setHbarPolicy(
+                ScrollPane.ScrollBarPolicy.NEVER
+        );
+
         scrollPane.setStyle(
-                "-fx-background: #F7FEE7;"
+                "-fx-background:" + BG + ";" +
+                "-fx-background-color:" + BG + ";"
         );
 
         return new Scene(
@@ -340,15 +316,16 @@ public class CollegeInfoPage {
     }
 
     private static Label createSectionTitle(
-            String text) {
+            String text
+    ) {
 
         Label label =
                 new Label(text);
 
         label.setStyle(
-                "-fx-font-size: 18px;" +
-                "-fx-font-weight: bold;" +
-                "-fx-text-fill: #65A30D;"
+                "-fx-font-size:11px;" +
+                "-fx-font-weight:bold;" +
+                "-fx-text-fill:" + LIME + ";"
         );
 
         return label;
@@ -359,33 +336,36 @@ public class CollegeInfoPage {
             String labelText,
             String value,
             int column,
-            int row) {
+            int row
+    ) {
 
         Label label =
                 new Label(labelText);
 
         label.setStyle(
-                "-fx-font-size: 14px;" +
-                "-fx-font-weight: bold;" +
-                "-fx-text-fill: #1A1A1A;"
+                "-fx-font-size:12px;" +
+                "-fx-font-weight:bold;" +
+                "-fx-text-fill:" + MUTED + ";"
         );
 
         Label valueLabel =
                 new Label(value);
 
+        valueLabel.setWrapText(true);
+
         valueLabel.setStyle(
-                "-fx-font-size: 14px;" +
-                "-fx-text-fill: #3F6212;"
+                "-fx-font-size:14px;" +
+                "-fx-font-weight:bold;" +
+                "-fx-text-fill:" + WHITE + ";"
         );
 
-        VBox box =
-                new VBox(
-                        5,
-                        label,
-                        valueLabel
-                );
+        VBox box = new VBox(
+                6,
+                label,
+                valueLabel
+        );
 
-        box.setPrefWidth(280);
+        box.setPrefWidth(300);
 
         grid.add(
                 box,
@@ -394,64 +374,17 @@ public class CollegeInfoPage {
         );
     }
 
-    private static HBox createBranch(
-            String branch,
-            String intake,
-            String cutoff) {
+    private static String safe(
+            String value
+    ) {
 
-        Label branchLabel =
-                new Label(branch);
+        if (
+                value == null ||
+                value.isBlank()
+        ) {
+            return "Not Available";
+        }
 
-        branchLabel.setPrefWidth(300);
-
-        branchLabel.setStyle(
-                "-fx-font-size: 14px;" +
-                "-fx-font-weight: bold;" +
-                "-fx-text-fill: #1A1A1A;"
-        );
-
-        Label intakeLabel =
-                new Label("Intake: " + intake);
-
-        intakeLabel.setPrefWidth(130);
-
-        intakeLabel.setStyle(
-                "-fx-font-size: 14px;" +
-                "-fx-text-fill: #3F6212;"
-        );
-
-        Label cutoffLabel =
-                new Label("Cutoff: " + cutoff);
-
-        cutoffLabel.setStyle(
-                "-fx-font-size: 14px;" +
-                "-fx-font-weight: bold;" +
-                "-fx-text-fill: #65A30D;"
-        );
-
-        HBox row =
-                new HBox(
-                        15,
-                        branchLabel,
-                        intakeLabel,
-                        cutoffLabel
-                );
-
-        row.setAlignment(
-                Pos.CENTER_LEFT
-        );
-
-        row.setPadding(
-                new Insets(12)
-        );
-
-        row.setStyle(
-                "-fx-background-color: #F7FEE7;" +
-                "-fx-background-radius: 7px;" +
-                "-fx-border-color: #D9F99D;" +
-                "-fx-border-radius: 7px;"
-        );
-
-        return row;
+        return value;
     }
 }

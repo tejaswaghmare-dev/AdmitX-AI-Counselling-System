@@ -1,277 +1,630 @@
 package com.admitx.view;
 
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+import com.admitx.dao.MeritDAO;
+import com.admitx.dao.CollegeDAO;
+import com.admitx.dao.PreferenceDAO;
+import com.admitx.model.College;
+import com.admitx.model.Student;
+
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 
 public class PreferenceFillingPage {
 
-    private static final ObservableList<Preference> preferences =
-            FXCollections.observableArrayList();
+    private static final String BG =
+            "#0B100B";
 
-    private static final String BG = "#0B100B";
-    private static final String CARD = "#141B14";
-    private static final String FIELD = "#101610";
-    private static final String BORDER = "#293529";
-    private static final String LIME = "#B7FF00";
-    private static final String WHITE = "#F5F7F2";
-    private static final String MUTED = "#9AA59A";
-    private static final String RED = "#DC2626";
+    private static final String CARD =
+            "#141B14";
+
+    private static final String FIELD =
+            "#101610";
+
+    private static final String BORDER =
+            "#293529";
+
+    private static final String LIME =
+            "#B7FF00";
+
+    private static final String WHITE =
+            "#F5F7F2";
+
+    private static final String MUTED =
+            "#9AA59A";
+
+    private static final ObservableList<Preference>
+            preferences =
+            FXCollections.observableArrayList();
 
     public static Scene getScene() {
 
+        // =========================================================
+        // CHECK LOGIN
+        // =========================================================
+
+        String studentEmail =
+                Student.getInstance()
+                        .getEmail();
+
+        if (
+                studentEmail == null ||
+                studentEmail.isBlank()
+        ) {
+
+            showAlert(
+                    Alert.AlertType.ERROR,
+                    "Login Required",
+                    "Please login before filling preferences."
+            );
+
+            return StudentLoginPage.getScene();
+        }
+
+        // =========================================================
+        // CHECK FINAL MERIT ELIGIBILITY
+        // =========================================================
+
+        MeritDAO meritDAO =
+                new MeritDAO();
+
+        if (
+                meritDAO.getCurrentStudentFinalMerit()
+                        == null
+        ) {
+
+        showAlert(
+                Alert.AlertType.WARNING,
+                "Final Merit Required",
+                "Preference Filling is available only after "
+                        + "your Final Merit List is published."
+        );
+
+        return FinalMeritPage.getScene();
+        }
+
+        // =========================================================
+        // DAO
+        // =========================================================
+
+        PreferenceDAO preferenceDAO =
+                new PreferenceDAO();
+
+        boolean locked =
+                preferenceDAO
+                        .isPreferenceLocked();
+
+        boolean choiceFillingOpen =
+                preferenceDAO
+                        .isChoiceFillingOpen();
+        // =========================================================
+        // LOAD SAVED PREFERENCES WHEN LOCKED
+        // =========================================================
+
+        if (locked) {
+
+            preferences.clear();
+
+            preferences.addAll(
+                    preferenceDAO
+                            .loadPreferences()
+            );
+        }
+
+        // =========================================================
+        // LOAD COLLEGES FROM FIREBASE
+        // =========================================================
+
+        CollegeDAO collegeDAO =
+                new CollegeDAO();
+
+        List<College> firebaseColleges =
+                collegeDAO.getAllColleges();
+
+        if (firebaseColleges == null) {
+
+            firebaseColleges =
+                    FXCollections
+                            .observableArrayList();
+        }
+
+        // =========================================================
+        // MAIN CONTENT
+        // =========================================================
+
+        VBox content =
+                new VBox(22);
+
+        content.setPadding(
+                new Insets(30)
+        );
+
+        content.setAlignment(
+                Pos.TOP_LEFT
+        );
+
+        content.setStyle(
+                "-fx-background-color:"
+                        + BG + ";"
+        );
+
+        // =========================================================
+        // TITLE
+        // =========================================================
+
         Label title =
-                new Label("Preference Filling");
+                new Label(
+                        "Preference Filling"
+                );
 
         title.setStyle(
-                "-fx-font-size: 26px;" +
-                "-fx-font-weight: bold;" +
-                "-fx-text-fill: " + WHITE + ";"
+                "-fx-text-fill:"
+                        + WHITE + ";" +
+                "-fx-font-size:28px;" +
+                "-fx-font-weight:bold;"
         );
 
-        Label instruction =
+        Label subtitle =
                 new Label(
-                        "Add colleges and branches in the exact order of your preference."
+                        "Add colleges and branches in the order of your preference."
                 );
 
-        instruction.setStyle(
-                "-fx-font-size: 13px;" +
-                "-fx-text-fill: " + MUTED + ";"
+        subtitle.setStyle(
+                "-fx-text-fill:"
+                        + MUTED + ";" +
+                "-fx-font-size:13px;"
         );
 
-        VBox heading =
-                new VBox(
-                        6,
-                        title,
-                        instruction
+        // =========================================================
+        // LOCK STATUS
+        // =========================================================
+
+        Label lockStatus =
+                new Label();
+
+        if (locked) {
+
+                lockStatus.setText(
+                        "✓ OPTION FORM LOCKED"
                 );
 
-        ComboBox<String> collegeCombo =
+                lockStatus.setStyle(
+                        "-fx-text-fill:"
+                                + LIME + ";" +
+                        "-fx-font-size:13px;" +
+                        "-fx-font-weight:bold;"
+                );
+
+        } else if (!choiceFillingOpen) {
+
+                lockStatus.setText(
+                        "● CHOICE FILLING CLOSED"
+                );
+
+                lockStatus.setStyle(
+                        "-fx-text-fill:#E7D65A;" +
+                        "-fx-font-size:13px;" +
+                        "-fx-font-weight:bold;"
+                );
+
+        } else {
+
+                lockStatus.setText(
+                        "● CHOICE FILLING OPEN"
+                );
+
+                lockStatus.setStyle(
+                        "-fx-text-fill:"
+                                + LIME + ";" +
+                        "-fx-font-size:13px;" +
+                        "-fx-font-weight:bold;"
+                );
+                }
+
+        // =========================================================
+        // COLLEGE COMBOBOX
+        // =========================================================
+
+        ComboBox<String> collegeBox =
                 new ComboBox<>();
 
-        collegeCombo.getItems().addAll(
-                "College of Engineering Pune",
-                "Vishwakarma Institute of Technology",
-                "Pune Institute of Computer Technology",
-                "Walchand College of Engineering",
-                "Sardar Patel Institute of Technology"
-        );
-
-        collegeCombo.setPromptText(
+        collegeBox.setPromptText(
                 "Select College"
         );
 
-        ComboBox<String> branchCombo =
-                new ComboBox<>();
-
-        branchCombo.getItems().addAll(
-                "Computer Engineering",
-                "Information Technology",
-                "Mechanical Engineering",
-                "Electronics Engineering",
-                "Civil Engineering"
+        collegeBox.setPrefWidth(
+                350
         );
 
-        branchCombo.setPromptText(
+        collegeBox.setPrefHeight(
+                42
+        );
+
+        // =========================================================
+        // BRANCH COMBOBOX
+        // =========================================================
+
+        ComboBox<String> branchBox =
+                new ComboBox<>();
+
+        branchBox.setPromptText(
                 "Select Branch"
         );
 
-        styleField(collegeCombo);
-        styleField(branchCombo);
+        branchBox.setPrefWidth(
+                300
+        );
+
+        branchBox.setPrefHeight(
+                42
+        );
+
+        branchBox.setDisable(
+                true
+        );
+
+        styleComboBox(
+                collegeBox
+        );
+
+        styleComboBox(
+                branchBox
+        );
+
+        // =========================================================
+        // UNIQUE COLLEGES
+        // =========================================================
+
+        Set<String> collegeNames =
+                new LinkedHashSet<>();
+
+        for (
+                College college
+                : firebaseColleges
+        ) {
+
+            if (
+                    college.getCollegeName()
+                            != null
+                    &&
+                    !college.getCollegeName()
+                            .isBlank()
+            ) {
+
+                collegeNames.add(
+                        college.getCollegeName()
+                );
+            }
+        }
+
+        collegeBox.getItems()
+                .addAll(
+                        collegeNames
+                );
+
+        // =========================================================
+        // FINAL COLLEGE LIST FOR LAMBDA
+        // =========================================================
+
+        List<College> colleges =
+                firebaseColleges;
+
+        // =========================================================
+        // WHEN COLLEGE SELECTED
+        // =========================================================
+
+        collegeBox.setOnAction(e -> {
+
+            branchBox.getItems()
+                    .clear();
+
+            branchBox.setValue(
+                    null
+            );
+
+            String selectedCollege =
+                    collegeBox.getValue();
+
+            if (
+                    selectedCollege == null
+            ) {
+
+                branchBox.setDisable(
+                        true
+                );
+
+                return;
+            }
+
+            Set<String> branches =
+                    new LinkedHashSet<>();
+
+            for (
+                    College college
+                    : colleges
+            ) {
+
+                if (
+                        selectedCollege.equals(
+                                college.getCollegeName()
+                        )
+                        &&
+                        college.getBranch()
+                                != null
+                        &&
+                        !college.getBranch()
+                                .isBlank()
+                ) {
+
+                    branches.add(
+                            college.getBranch()
+                    );
+                }
+            }
+
+            branchBox.getItems()
+                    .addAll(
+                            branches
+                    );
+
+            branchBox.setDisable(
+                    branches.isEmpty()
+            );
+        });
+
+        // =========================================================
+        // ADD BUTTON
+        // =========================================================
 
         Button addButton =
-                new Button("Add Preference");
+                new Button(
+                        "+ Add Preference"
+                );
 
-        stylePrimaryButton(addButton);
+        stylePrimaryButton(
+                addButton
+        );
 
-        HBox addBox =
+        // =========================================================
+        // FORM CARD
+        // =========================================================
+
+        HBox formRow =
                 new HBox(
-                        12,
-                        collegeCombo,
-                        branchCombo,
+                        15,
+                        collegeBox,
+                        branchBox,
                         addButton
                 );
 
-        addBox.setAlignment(
+        formRow.setAlignment(
                 Pos.CENTER_LEFT
         );
 
-        VBox addCard =
+        VBox formCard =
                 new VBox(
-                        14,
-                        createSectionTitle("ADD PREFERENCE"),
-                        addBox
+                        15,
+                        new Label(
+                                "Select College & Branch"
+                        ),
+                        formRow
                 );
 
-        addCard.setPadding(
+        ((Label) formCard
+                .getChildren()
+                .get(0))
+                .setStyle(
+                        "-fx-text-fill:"
+                                + WHITE + ";" +
+                        "-fx-font-size:16px;" +
+                        "-fx-font-weight:bold;"
+                );
+
+        formCard.setPadding(
                 new Insets(20)
         );
 
-        addCard.setStyle(
-                "-fx-background-color: " + CARD + ";" +
-                "-fx-background-radius: 12px;" +
-                "-fx-border-color: " + BORDER + ";" +
-                "-fx-border-radius: 12px;"
+        formCard.setStyle(
+                "-fx-background-color:"
+                        + CARD + ";" +
+                "-fx-background-radius:14;" +
+                "-fx-border-color:"
+                        + BORDER + ";" +
+                "-fx-border-radius:14;"
         );
+
+        // =========================================================
+        // TABLE
+        // =========================================================
 
         TableView<Preference> table =
                 new TableView<>();
-
-        TableColumn<Preference, Number> numberColumn =
-                new TableColumn<>("Preference No.");
-
-        numberColumn.setCellValueFactory(
-                new PropertyValueFactory<>("preferenceNumber")
-        );
-
-        TableColumn<Preference, String> collegeColumn =
-                new TableColumn<>("College");
-
-        collegeColumn.setCellValueFactory(
-                new PropertyValueFactory<>("college")
-        );
-
-        TableColumn<Preference, String> branchColumn =
-                new TableColumn<>("Branch");
-
-        branchColumn.setCellValueFactory(
-                new PropertyValueFactory<>("branch")
-        );
-
-        table.getColumns().addAll(
-                numberColumn,
-                collegeColumn,
-                branchColumn
-        );
 
         table.setItems(
                 preferences
         );
 
         table.setPrefHeight(
-                390
+                400
         );
 
         table.setColumnResizePolicy(
-                TableView.CONSTRAINED_RESIZE_POLICY
+                TableView
+                        .CONSTRAINED_RESIZE_POLICY
         );
 
-        table.setStyle(
-                "-fx-background-color: " + CARD + ";" +
-                "-fx-control-inner-background: " + FIELD + ";" +
-                "-fx-table-cell-border-color: " + BORDER + ";" +
-                "-fx-text-background-color: " + WHITE + ";" +
-                "-fx-selection-bar: " + LIME + ";" +
-                "-fx-selection-bar-non-focused: " + LIME + ";"
-        );
-
-        Label countLabel =
-                new Label();
-
-        updateCountLabel(
-                countLabel
-        );
-
-        Button removeButton =
-                new Button("Remove");
-
-        styleDangerButton(
-                removeButton
-        );
-
-        Button moveUpButton =
-                new Button("Move Up");
-
-        styleSecondaryButton(
-                moveUpButton
-        );
-
-        Button moveDownButton =
-                new Button("Move Down");
-
-        styleSecondaryButton(
-                moveDownButton
-        );
-
-        HBox managementButtons =
-                new HBox(
-                        10,
-                        removeButton,
-                        moveUpButton,
-                        moveDownButton
+        TableColumn<Preference, Integer>
+                numberColumn =
+                new TableColumn<>(
+                        "Preference No."
                 );
 
-        managementButtons.setAlignment(
-                Pos.CENTER_LEFT
+        numberColumn.setCellValueFactory(
+                data ->
+                        new ReadOnlyObjectWrapper<>(
+                                data.getValue()
+                                        .getPreferenceNumber()
+                        )
         );
 
-        VBox tableCard =
-                new VBox(
-                        12,
-                        createSectionTitle("YOUR PREFERENCES"),
-                        countLabel,
-                        table,
-                        managementButtons
+        TableColumn<Preference, String>
+                collegeColumn =
+                new TableColumn<>(
+                        "College"
                 );
 
-        tableCard.setPadding(
-                new Insets(20)
+        collegeColumn.setCellValueFactory(
+                data ->
+                        new ReadOnlyStringWrapper(
+                                data.getValue()
+                                        .getCollege()
+                        )
         );
 
-        tableCard.setStyle(
-                "-fx-background-color: " + CARD + ";" +
-                "-fx-background-radius: 12px;" +
-                "-fx-border-color: " + BORDER + ";" +
-                "-fx-border-radius: 12px;"
+        TableColumn<Preference, String>
+                branchColumn =
+                new TableColumn<>(
+                        "Branch"
+                );
+
+        branchColumn.setCellValueFactory(
+                data ->
+                        new ReadOnlyStringWrapper(
+                                data.getValue()
+                                        .getBranch()
+                        )
         );
+
+        table.getColumns()
+                .addAll(
+                        numberColumn,
+                        collegeColumn,
+                        branchColumn
+                );
+
+        // =========================================================
+        // ADD ACTION
+        // =========================================================
 
         addButton.setOnAction(e -> {
 
-            String college =
-                    collegeCombo.getValue();
-
-            String branch =
-                    branchCombo.getValue();
-
             if (
-                    college == null ||
-                    branch == null
+                    preferenceDAO
+                            .isPreferenceLocked()
             ) {
 
                 showAlert(
-                        "Please select both college and branch."
+                        Alert.AlertType.WARNING,
+                        "Option Form Locked",
+                        "Your option form is already locked."
                 );
 
                 return;
             }
 
-            int preferenceNumber =
-                    preferences.size() + 1;
+            String selectedCollege =
+                    collegeBox.getValue();
+
+            String selectedBranch =
+                    branchBox.getValue();
+
+            if (
+                    selectedCollege == null ||
+                    selectedBranch == null
+            ) {
+
+                showAlert(
+                        Alert.AlertType.WARNING,
+                        "Preference",
+                        "Please select college and branch."
+                );
+
+                return;
+            }
+
+            // CHECK DUPLICATE
+            for (
+                    Preference preference
+                    : preferences
+            ) {
+
+                if (
+                        preference.getCollege()
+                                .equals(
+                                        selectedCollege
+                                )
+                        &&
+                        preference.getBranch()
+                                .equals(
+                                        selectedBranch
+                                )
+                ) {
+
+                    showAlert(
+                            Alert.AlertType.WARNING,
+                            "Duplicate Preference",
+                            "This college and branch is already added."
+                    );
+
+                    return;
+                }
+            }
 
             preferences.add(
                     new Preference(
-                            preferenceNumber,
-                            college,
-                            branch
+                            preferences.size()
+                                    + 1,
+                            selectedCollege,
+                            selectedBranch
                     )
             );
 
-            collegeCombo.setValue(null);
-            branchCombo.setValue(null);
+            collegeBox.setValue(
+                    null
+            );
 
-            renumber();
+            branchBox.setValue(
+                    null
+            );
 
-            table.refresh();
+            branchBox.getItems()
+                    .clear();
 
-            updateCountLabel(
-                    countLabel
+            branchBox.setDisable(
+                    true
             );
         });
+
+        // =========================================================
+        // REMOVE BUTTON
+        // =========================================================
+
+        Button removeButton =
+                new Button(
+                        "Remove"
+                );
+
+        styleDangerButton(
+                removeButton
+        );
 
         removeButton.setOnAction(e -> {
 
@@ -282,7 +635,9 @@ public class PreferenceFillingPage {
             if (selected == null) {
 
                 showAlert(
-                        "Please select a preference."
+                        Alert.AlertType.WARNING,
+                        "Preference",
+                        "Please select a preference to remove."
                 );
 
                 return;
@@ -293,105 +648,117 @@ public class PreferenceFillingPage {
             );
 
             renumber();
-
-            table.refresh();
-
-            updateCountLabel(
-                    countLabel
-            );
         });
+
+        // =========================================================
+        // MOVE UP
+        // =========================================================
+
+        Button moveUpButton =
+                new Button(
+                        "↑ Move Up"
+                );
+
+        styleSecondaryButton(
+                moveUpButton
+        );
 
         moveUpButton.setOnAction(e -> {
 
-            int selectedIndex =
+            int index =
                     table.getSelectionModel()
                             .getSelectedIndex();
 
-            if (selectedIndex > 0) {
+            if (index > 0) {
 
-                Preference item =
+                Preference preference =
                         preferences.remove(
-                                selectedIndex
+                                index
                         );
 
                 preferences.add(
-                        selectedIndex - 1,
-                        item
+                        index - 1,
+                        preference
                 );
 
                 renumber();
 
-                table.refresh();
-
                 table.getSelectionModel()
                         .select(
-                                selectedIndex - 1
+                                index - 1
                         );
             }
         });
 
+        // =========================================================
+        // MOVE DOWN
+        // =========================================================
+
+        Button moveDownButton =
+                new Button(
+                        "↓ Move Down"
+                );
+
+        styleSecondaryButton(
+                moveDownButton
+        );
+
         moveDownButton.setOnAction(e -> {
 
-            int selectedIndex =
+            int index =
                     table.getSelectionModel()
                             .getSelectedIndex();
 
             if (
-                    selectedIndex >= 0 &&
-                    selectedIndex <
-                            preferences.size() - 1
+                    index >= 0
+                    &&
+                    index <
+                    preferences.size() - 1
             ) {
 
-                Preference item =
+                Preference preference =
                         preferences.remove(
-                                selectedIndex
+                                index
                         );
 
                 preferences.add(
-                        selectedIndex + 1,
-                        item
+                        index + 1,
+                        preference
                 );
 
                 renumber();
 
-                table.refresh();
-
                 table.getSelectionModel()
                         .select(
-                                selectedIndex + 1
+                                index + 1
                         );
             }
         });
 
-        Label note =
-                new Label(
-                        "Your order matters. Preference 1 will be considered before Preference 2 during allotment."
-                );
-
-        note.setWrapText(true);
-
-        note.setStyle(
-                "-fx-background-color: #151B10;" +
-                "-fx-text-fill: #B9C5B2;" +
-                "-fx-padding: 14px;" +
-                "-fx-background-radius: 8px;" +
-                "-fx-border-color: #38452B;" +
-                "-fx-border-radius: 8px;" +
-                "-fx-font-size: 12px;"
-        );
+        // =========================================================
+        // BACK BUTTON
+        // =========================================================
 
         Button backButton =
-                new Button("← Back");
+                new Button(
+                        "← Back"
+                );
 
         styleSecondaryButton(
                 backButton
         );
 
         backButton.setOnAction(e ->
+
                 Navigation.goTo(
-                        CollegeSearchPage.getScene()
+                        CollegeSearchPage
+                                .getScene()
                 )
         );
+
+        // =========================================================
+        // PREVIEW
+        // =========================================================
 
         Button previewButton =
                 new Button(
@@ -404,11 +771,11 @@ public class PreferenceFillingPage {
 
         previewButton.setOnAction(e -> {
 
-            if (
-                    preferences.isEmpty()
-            ) {
+            if (preferences.isEmpty()) {
 
                 showAlert(
+                        Alert.AlertType.WARNING,
+                        "Preference",
                         "Please add at least one preference."
                 );
 
@@ -416,7 +783,8 @@ public class PreferenceFillingPage {
             }
 
             Navigation.goTo(
-                    OptionPreviewPage.getScene()
+                    OptionPreviewPage
+                            .getScene()
             );
         });
 
@@ -428,46 +796,86 @@ public class PreferenceFillingPage {
                 Priority.ALWAYS
         );
 
-        HBox bottomButtons =
+        HBox actionRow =
                 new HBox(
                         12,
-                        backButton,
+                        removeButton,
+                        moveUpButton,
+                        moveDownButton,
                         spacer,
+                        backButton,
                         previewButton
                 );
 
-        bottomButtons.setAlignment(
+        actionRow.setAlignment(
                 Pos.CENTER_LEFT
         );
 
-        VBox content =
-                new VBox(
-                        22,
-                        heading,
-                        addCard,
-                        tableCard,
-                        note,
-                        bottomButtons
+        // =========================================================
+        // LOCK UI
+        // =========================================================
+
+        if (locked) {
+
+            collegeBox.setDisable(
+                    true
+            );
+
+            branchBox.setDisable(
+                    true
+            );
+
+            addButton.setDisable(
+                    true
+            );
+
+            removeButton.setDisable(
+                    true
+            );
+
+            moveUpButton.setDisable(
+                    true
+            );
+
+            moveDownButton.setDisable(
+                    true
+            );
+        }
+
+        // =========================================================
+        // CONTENT
+        // =========================================================
+
+        content.getChildren()
+                .addAll(
+                        title,
+                        subtitle,
+                        lockStatus,
+                        formCard,
+                        table,
+                        actionRow
                 );
 
-        content.setPadding(
-                new Insets(30)
-        );
-
-        content.setStyle(
-                "-fx-background-color: " + BG + ";"
-        );
-
         ScrollPane scrollPane =
-                new ScrollPane(content);
+                new ScrollPane(
+                        content
+                );
 
         scrollPane.setFitToWidth(
                 true
         );
 
+        scrollPane.setHbarPolicy(
+                ScrollPane
+                        .ScrollBarPolicy
+                        .NEVER
+        );
+
         scrollPane.setStyle(
-                "-fx-background: " + BG + ";" +
-                "-fx-background-color: " + BG + ";"
+                "-fx-background:"
+                        + BG + ";" +
+                "-fx-background-color:"
+                        + BG + ";"
         );
 
         return new Scene(
@@ -478,41 +886,53 @@ public class PreferenceFillingPage {
         );
     }
 
-    private static Label createSectionTitle(
-            String text
-    ) {
+    // =============================================================
+    // GET PREFERENCES
+    // =============================================================
 
-        Label label =
-                new Label(text);
+    public static ObservableList<Preference>
+    getPreferences() {
 
-        label.setStyle(
-                "-fx-font-size: 11px;" +
-                "-fx-font-weight: bold;" +
-                "-fx-text-fill: " + LIME + ";"
-        );
-
-        return label;
+        return preferences;
     }
 
-    private static void styleField(
-            Control control
+    // =============================================================
+    // RENUMBER
+    // =============================================================
+
+    private static void renumber() {
+
+        for (
+                int i = 0;
+                i < preferences.size();
+                i++
+        ) {
+
+            preferences
+                    .get(i)
+                    .setPreferenceNumber(
+                            i + 1
+                    );
+        }
+    }
+
+    // =============================================================
+    // STYLES
+    // =============================================================
+
+    private static void styleComboBox(
+            ComboBox<String> box
     ) {
 
-        control.setPrefHeight(
-                40
-        );
-
-        control.setPrefWidth(
-                260
-        );
-
-        control.setStyle(
-                "-fx-background-color: " + FIELD + ";" +
-                "-fx-text-fill: " + WHITE + ";" +
-                "-fx-prompt-text-fill: " + MUTED + ";" +
-                "-fx-border-color: " + BORDER + ";" +
-                "-fx-border-radius: 7px;" +
-                "-fx-background-radius: 7px;"
+        box.setStyle(
+                "-fx-background-color:"
+                        + FIELD + ";" +
+                "-fx-border-color:"
+                        + BORDER + ";" +
+                "-fx-border-radius:8;" +
+                "-fx-background-radius:8;" +
+                "-fx-text-fill:"
+                        + WHITE + ";"
         );
     }
 
@@ -524,22 +944,13 @@ public class PreferenceFillingPage {
                 42
         );
 
-        button.setPadding(
-                new Insets(
-                        0,
-                        20,
-                        0,
-                        20
-                )
-        );
-
         button.setStyle(
-                "-fx-background-color: " + LIME + ";" +
-                "-fx-text-fill: #0B100B;" +
-                "-fx-font-size: 13px;" +
-                "-fx-font-weight: bold;" +
-                "-fx-background-radius: 8px;" +
-                "-fx-cursor: hand;"
+                "-fx-background-color:"
+                        + LIME + ";" +
+                "-fx-text-fill:#071007;" +
+                "-fx-background-radius:8;" +
+                "-fx-font-weight:bold;" +
+                "-fx-padding:0 18 0 18;"
         );
     }
 
@@ -548,27 +959,16 @@ public class PreferenceFillingPage {
     ) {
 
         button.setPrefHeight(
-                40
-        );
-
-        button.setPadding(
-                new Insets(
-                        0,
-                        16,
-                        0,
-                        16
-                )
+                42
         );
 
         button.setStyle(
-                "-fx-background-color: #171F17;" +
-                "-fx-text-fill: " + WHITE + ";" +
-                "-fx-border-color: #344034;" +
-                "-fx-border-radius: 8px;" +
-                "-fx-background-radius: 8px;" +
-                "-fx-font-size: 12px;" +
-                "-fx-font-weight: bold;" +
-                "-fx-cursor: hand;"
+                "-fx-background-color:#253325;" +
+                "-fx-text-fill:"
+                        + WHITE + ";" +
+                "-fx-background-radius:8;" +
+                "-fx-font-weight:bold;" +
+                "-fx-padding:0 18 0 18;"
         );
     }
 
@@ -577,75 +977,29 @@ public class PreferenceFillingPage {
     ) {
 
         button.setPrefHeight(
-                40
-        );
-
-        button.setPadding(
-                new Insets(
-                        0,
-                        16,
-                        0,
-                        16
-                )
+                42
         );
 
         button.setStyle(
-                "-fx-background-color: " + RED + ";" +
-                "-fx-text-fill: white;" +
-                "-fx-background-radius: 8px;" +
-                "-fx-font-size: 12px;" +
-                "-fx-font-weight: bold;" +
-                "-fx-cursor: hand;"
+                "-fx-background-color:#991B1B;" +
+                "-fx-text-fill:white;" +
+                "-fx-background-radius:8;" +
+                "-fx-font-weight:bold;" +
+                "-fx-padding:0 18 0 18;"
         );
-    }
-
-    private static void updateCountLabel(
-            Label label
-    ) {
-
-        label.setText(
-                preferences.size() +
-                        " preferences added"
-        );
-
-        label.setStyle(
-                "-fx-font-size: 12px;" +
-                "-fx-text-fill: " + MUTED + ";"
-        );
-    }
-
-    private static void renumber() {
-
-        for (
-                int i = 0;
-                i < preferences.size();
-                i++
-        ) {
-
-            preferences.get(i)
-                    .setPreferenceNumber(
-                            i + 1
-                    );
-        }
-    }
-
-    public static ObservableList<Preference>
-    getPreferences() {
-
-        return preferences;
     }
 
     private static void showAlert(
+            Alert.AlertType type,
+            String title,
             String message
     ) {
 
         Alert alert =
-                new Alert(
-                        Alert.AlertType.INFORMATION
-                );
+                new Alert(type);
 
         alert.setTitle(
-                "Preference Filling"
+                title
         );
 
         alert.setHeaderText(
@@ -659,13 +1013,17 @@ public class PreferenceFillingPage {
         alert.showAndWait();
     }
 
+    // =============================================================
+    // PREFERENCE MODEL
+    // =============================================================
+
     public static class Preference {
 
         private int preferenceNumber;
 
-        private final String college;
+        private String college;
 
-        private final String branch;
+        private String branch;
 
         public Preference(
                 int preferenceNumber,
@@ -701,9 +1059,25 @@ public class PreferenceFillingPage {
             return college;
         }
 
+        public void setCollege(
+                String college
+        ) {
+
+            this.college =
+                    college;
+        }
+
         public String getBranch() {
 
             return branch;
+        }
+
+        public void setBranch(
+                String branch
+        ) {
+
+            this.branch =
+                    branch;
         }
     }
 }

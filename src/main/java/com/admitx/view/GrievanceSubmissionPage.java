@@ -1,10 +1,24 @@
 package com.admitx.view;
 
+import java.io.File;
+import java.util.Map;
+
+import com.admitx.config.CloudinaryConfig;
+import com.admitx.dao.GrievanceDAO;
+import com.admitx.dao.GrievanceDAO.GrievanceRecord;
+import com.admitx.dao.MeritDAO;
+import com.admitx.dao.MeritDAO.MeritRecord;
+import com.admitx.util.AsyncTaskRunner;
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
+
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -12,8 +26,6 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-
-import java.io.File;
 
 public class GrievanceSubmissionPage {
 
@@ -29,11 +41,46 @@ public class GrievanceSubmissionPage {
 
     public static Scene getScene() {
 
+        proofFile = null;
+        Scene loadingScene = createLoadingScene();
+
+        AsyncTaskRunner.run(
+                () -> {
+                    MeritDAO meritDAO = new MeritDAO();
+                    GrievanceDAO grievanceDAO = new GrievanceDAO();
+                    MeritRecord merit = meritDAO.getCurrentStudentMerit();
+                    GrievanceRecord grievance = grievanceDAO.getCurrentStudentGrievance();
+                    return new GrievancePageData(merit, grievance);
+                },
+                data -> Navigation.goTo(createScene(data)),
+                error -> {
+                    error.printStackTrace();
+                    Navigation.goTo(createScene(new GrievancePageData(null, null)));
+                }
+        );
+
+        return loadingScene;
+    }
+
+    private static Scene createScene(GrievancePageData pageData) {
+
+        proofFile = null;
+        MeritRecord merit = pageData.merit();
+        GrievanceRecord existingGrievance = pageData.grievance();
+        MeritDAO meritDAO = new MeritDAO();
+        GrievanceDAO grievanceDAO = new GrievanceDAO();
+
+        // =====================================================
+        // HEADING
+        // =====================================================
+
         Label title =
-                new Label("Raise Grievance");
+                new Label(
+                        "Raise Grievance"
+                );
 
         title.setStyle(
-                "-fx-font-size: 26px;" +
+                "-fx-font-size: 28px;" +
                 "-fx-font-weight: bold;" +
                 "-fx-text-fill: " + WHITE + ";"
         );
@@ -55,8 +102,87 @@ public class GrievanceSubmissionPage {
                         subtitle
                 );
 
+        // =====================================================
+        // MERIT INFORMATION
+        // =====================================================
+
+        VBox meritBox =
+                new VBox(
+                        10
+                );
+
+        meritBox.setPadding(
+                new Insets(20)
+        );
+
+        meritBox.setStyle(
+                "-fx-background-color: " + CARD + ";" +
+                "-fx-background-radius: 12px;" +
+                "-fx-border-color: " + BORDER + ";" +
+                "-fx-border-width: 1px;" +
+                "-fx-border-radius: 12px;"
+        );
+
+        Label meritTitle =
+                new Label(
+                        "PROVISIONAL MERIT"
+                );
+
+        meritTitle.setStyle(
+                "-fx-font-size: 11px;" +
+                "-fx-font-weight: bold;" +
+                "-fx-text-fill: " + LIME + ";"
+        );
+
+        if (merit != null) {
+
+            meritBox.getChildren().addAll(
+
+                    meritTitle,
+
+                    detail(
+                            "Provisional Merit Number",
+                            String.valueOf(
+                                    merit.getProvisionalMeritNumber()
+                            )
+                    ),
+
+                    detail(
+                            "CET Percentile",
+                            safe(
+                                    merit.getCetPercentile()
+                            )
+                    ),
+
+                    detail(
+                            "Category",
+                            safe(
+                                    merit.getCategory()
+                            )
+                    )
+            );
+
+        } else {
+
+            meritBox.getChildren().addAll(
+
+                    meritTitle,
+
+                    detail(
+                            "Status",
+                            "Provisional merit list not available."
+                    )
+            );
+        }
+
+        // =====================================================
+        // GRIEVANCE DETAILS
+        // =====================================================
+
         Label grievanceLabel =
-                new Label("GRIEVANCE DETAILS");
+                new Label(
+                        "GRIEVANCE DETAILS"
+                );
 
         grievanceLabel.setStyle(
                 "-fx-font-size: 11px;" +
@@ -71,15 +197,23 @@ public class GrievanceSubmissionPage {
                 "Describe your grievance clearly..."
         );
 
-        grievance.setPrefRowCount(7);
-        grievance.setWrapText(true);
+        grievance.setPrefRowCount(
+                7
+        );
+
+        grievance.setWrapText(
+                true
+        );
 
         grievance.setStyle(
-                "-fx-control-inner-background: " + CARD + ";" +
-                "-fx-background-color: " + CARD + ";" +
+                "-fx-control-inner-background: #0F150F;" +
+                "-fx-background-color: #0F150F;" +
                 "-fx-text-fill: " + WHITE + ";" +
-                "-fx-prompt-text-fill: #667066;" +
-                "-fx-border-color: " + BORDER + ";" +
+                "-fx-prompt-text-fill: " + MUTED + ";" +
+                "-fx-highlight-fill: " + LIME + ";" +
+                "-fx-highlight-text-fill: #0B100B;" +
+                "-fx-border-color: #3A493A;" +
+                "-fx-border-width: 1px;" +
                 "-fx-border-radius: 10px;" +
                 "-fx-background-radius: 10px;" +
                 "-fx-font-size: 14px;" +
@@ -101,11 +235,18 @@ public class GrievanceSubmissionPage {
                 "-fx-background-color: " + CARD + ";" +
                 "-fx-background-radius: 12px;" +
                 "-fx-border-color: " + BORDER + ";" +
+                "-fx-border-width: 1px;" +
                 "-fx-border-radius: 12px;"
         );
 
+        // =====================================================
+        // SUPPORTING PROOF
+        // =====================================================
+
         Label proofLabel =
-                new Label("SUPPORTING PROOF");
+                new Label(
+                        "SUPPORTING PROOF"
+                );
 
         proofLabel.setStyle(
                 "-fx-font-size: 11px;" +
@@ -114,7 +255,9 @@ public class GrievanceSubmissionPage {
         );
 
         Label fileName =
-                new Label("No proof uploaded");
+                new Label(
+                        "No proof uploaded"
+                );
 
         fileName.setStyle(
                 "-fx-text-fill: " + MUTED + ";" +
@@ -122,20 +265,45 @@ public class GrievanceSubmissionPage {
         );
 
         Button upload =
-                new Button("Choose File");
+                new Button(
+                        "Choose File"
+                );
 
-        upload.setPrefHeight(40);
-
-        upload.setStyle(
-                "-fx-background-color: #1B2615;" +
-                "-fx-text-fill: " + LIME + ";" +
-                "-fx-font-size: 13px;" +
-                "-fx-font-weight: bold;" +
-                "-fx-background-radius: 8px;" +
-                "-fx-border-color: #3D5520;" +
-                "-fx-border-radius: 8px;" +
-                "-fx-cursor: hand;"
+        upload.setPrefHeight(
+                40
         );
+
+        String uploadNormal =
+                "-fx-background-color:#1B2615;" +
+                "-fx-text-fill:" + LIME + ";" +
+                "-fx-font-size:13px;" +
+                "-fx-font-weight:bold;" +
+                "-fx-background-radius:8px;" +
+                "-fx-border-color:#3D5520;" +
+                "-fx-border-width:1px;" +
+                "-fx-border-radius:8px;" +
+                "-fx-padding:0 16 0 16;" +
+                "-fx-cursor:hand;";
+
+        String uploadHover =
+                "-fx-background-color:" + LIME + ";" +
+                "-fx-text-fill:#0B100B;" +
+                "-fx-font-size:13px;" +
+                "-fx-font-weight:bold;" +
+                "-fx-background-radius:8px;" +
+                "-fx-border-color:" + LIME + ";" +
+                "-fx-border-width:1px;" +
+                "-fx-border-radius:8px;" +
+                "-fx-padding:0 16 0 16;" +
+                "-fx-cursor:hand;";
+
+        upload.setStyle(uploadNormal);
+        upload.setOnMouseEntered(e -> {
+            if (!upload.isDisabled()) upload.setStyle(uploadHover);
+        });
+        upload.setOnMouseExited(e -> {
+            if (!upload.isDisabled()) upload.setStyle(uploadNormal);
+        });
 
         upload.setOnAction(e -> {
 
@@ -147,6 +315,7 @@ public class GrievanceSubmissionPage {
             );
 
             chooser.getExtensionFilters().add(
+
                     new FileChooser.ExtensionFilter(
                             "Documents",
                             "*.pdf",
@@ -162,11 +331,14 @@ public class GrievanceSubmissionPage {
                             .getWindow();
 
             File file =
-                    chooser.showOpenDialog(stage);
+                    chooser.showOpenDialog(
+                            stage
+                    );
 
             if (file != null) {
 
-                proofFile = file;
+                proofFile =
+                        file;
 
                 fileName.setText(
                         file.getName()
@@ -191,11 +363,22 @@ public class GrievanceSubmissionPage {
                 Pos.CENTER_LEFT
         );
 
+        Label proofNote =
+                new Label(
+                        "Supported formats: PDF, JPG, JPEG and PNG."
+                );
+
+        proofNote.setStyle(
+                "-fx-font-size: 11px;" +
+                "-fx-text-fill: " + MUTED + ";"
+        );
+
         VBox proofBox =
                 new VBox(
                         10,
                         proofLabel,
-                        uploadRow
+                        uploadRow,
+                        proofNote
                 );
 
         proofBox.setPadding(
@@ -206,60 +389,316 @@ public class GrievanceSubmissionPage {
                 "-fx-background-color: " + CARD + ";" +
                 "-fx-background-radius: 12px;" +
                 "-fx-border-color: " + BORDER + ";" +
+                "-fx-border-width: 1px;" +
                 "-fx-border-radius: 12px;"
         );
 
-        Label note =
-                new Label(
-                        "Supported formats: PDF, JPG, JPEG and PNG."
+        // =====================================================
+        // EXISTING GRIEVANCE
+        // =====================================================
+
+        VBox statusBox =
+                new VBox(
+                        10
                 );
 
-        note.setStyle(
-                "-fx-font-size: 11px;" +
-                "-fx-text-fill: " + MUTED + ";"
+        statusBox.setPadding(
+                new Insets(20)
         );
 
-        Button back =
-                new Button("← Back");
+        statusBox.setStyle(
+                "-fx-background-color: " + CARD + ";" +
+                "-fx-background-radius: 12px;" +
+                "-fx-border-color: " + BORDER + ";" +
+                "-fx-border-width: 1px;" +
+                "-fx-border-radius: 12px;"
+        );
 
-        back.setPrefHeight(42);
+        Label statusTitle =
+                new Label(
+                        "GRIEVANCE STATUS"
+                );
 
-        back.setStyle(
-                "-fx-background-color: #171F17;" +
-                "-fx-text-fill: " + WHITE + ";" +
-                "-fx-font-size: 13px;" +
+        statusTitle.setStyle(
+                "-fx-font-size: 11px;" +
                 "-fx-font-weight: bold;" +
-                "-fx-background-radius: 8px;" +
-                "-fx-border-color: #344034;" +
-                "-fx-border-radius: 8px;" +
-                "-fx-cursor: hand;"
+                "-fx-text-fill: " + LIME + ";"
+        );
+
+        statusBox.getChildren().add(
+                statusTitle
+        );
+
+        if (existingGrievance != null) {
+
+            statusBox.getChildren().addAll(
+
+                    detail(
+                            "Status",
+                            safe(
+                                    existingGrievance.getStatus()
+                            )
+                    ),
+
+                    detail(
+                            "Submitted Grievance",
+                            safe(
+                                    existingGrievance.getGrievanceText()
+                            )
+                    )
+            );
+
+            if (
+                    existingGrievance.getCounsellorComment() != null &&
+                    !existingGrievance
+                            .getCounsellorComment()
+                            .isBlank()
+            ) {
+
+                statusBox.getChildren().add(
+
+                        detail(
+                                "Counsellor Comment",
+                                existingGrievance
+                                        .getCounsellorComment()
+                        )
+                );
+            }
+
+        } else {
+
+            statusBox.getChildren().add(
+
+                    detail(
+                            "Status",
+                            "No grievance submitted"
+                    )
+            );
+        }
+
+        // =====================================================
+        // BUTTONS
+        // =====================================================
+
+        Button back =
+                new Button(
+                        "← Back"
+                );
+
+        styleSecondaryButton(
+                back
         );
 
         back.setOnAction(e ->
+
                 Navigation.goTo(
                         ProvisionalMeritPage.getScene()
                 )
         );
 
         Button submit =
-                new Button("Submit Grievance");
+                new Button(
+                        "Submit Grievance"
+                );
 
-        submit.setPrefHeight(42);
-
-        submit.setStyle(
-                "-fx-background-color: " + ORANGE + ";" +
-                "-fx-text-fill: white;" +
-                "-fx-font-size: 13px;" +
-                "-fx-font-weight: bold;" +
-                "-fx-background-radius: 8px;" +
-                "-fx-cursor: hand;"
+        submit.setPrefHeight(
+                42
         );
 
-        submit.setOnAction(e ->
-                Navigation.goTo(
-                        FinalMeritPage.getScene()
+        String submitNormal =
+                "-fx-background-color:" + ORANGE + ";" +
+                "-fx-text-fill:white;" +
+                "-fx-font-size:13px;" +
+                "-fx-font-weight:bold;" +
+                "-fx-background-radius:8px;" +
+                "-fx-padding:0 18 0 18;" +
+                "-fx-cursor:hand;";
+
+        String submitHover =
+                "-fx-background-color:#FB923C;" +
+                "-fx-text-fill:white;" +
+                "-fx-font-size:13px;" +
+                "-fx-font-weight:bold;" +
+                "-fx-background-radius:8px;" +
+                "-fx-padding:0 18 0 18;" +
+                "-fx-cursor:hand;";
+
+        submit.setStyle(submitNormal);
+        submit.setOnMouseEntered(e -> {
+            if (!submit.isDisabled()) submit.setStyle(submitHover);
+        });
+        submit.setOnMouseExited(e -> {
+            if (!submit.isDisabled()) submit.setStyle(submitNormal);
+        });
+
+        // =====================================================
+        // PREVENT INVALID / DUPLICATE SUBMISSION
+        // =====================================================
+
+        if (merit == null) {
+
+            submit.setDisable(
+                    true
+            );
+        }
+
+        if (
+                existingGrievance != null &&
+                (
+                        "Pending".equalsIgnoreCase(
+                                existingGrievance.getStatus()
+                        ) ||
+                        "Approved".equalsIgnoreCase(
+                                existingGrievance.getStatus()
+                        )
                 )
-        );
+        ) {
+
+            submit.setDisable(
+                    true
+            );
+
+            grievance.setDisable(
+                    true
+            );
+
+            upload.setDisable(
+                    true
+            );
+        }
+
+        // =====================================================
+        // SUBMIT GRIEVANCE
+        // =====================================================
+
+        submit.setOnAction(e -> {
+
+            String grievanceText =
+                    grievance.getText();
+
+            if (
+                    grievanceText == null ||
+                    grievanceText.trim().isEmpty()
+            ) {
+
+                message(
+                        Alert.AlertType.WARNING,
+                        "Grievance Required",
+                        "Please describe your grievance before submitting."
+                );
+
+                return;
+            }
+
+            if (merit == null) {
+
+                message(
+                        Alert.AlertType.WARNING,
+                        "Merit Not Available",
+                        "Your provisional merit list is not available."
+                );
+
+                return;
+            }
+
+            submit.setDisable(
+                    true
+            );
+
+            String proofUrl =
+                    "";
+
+            String uploadedFileName =
+                    "";
+
+            try {
+
+                if (proofFile != null) {
+
+                    Cloudinary cloudinary =
+                            CloudinaryConfig
+                                    .getCloudinary();
+
+                    Map<?, ?> uploadResult =
+                            cloudinary
+                                    .uploader()
+                                    .upload(
+                                            proofFile,
+                                            ObjectUtils.asMap(
+                                                    "resource_type",
+                                                    "auto",
+                                                    "folder",
+                                                    "admitx/grievances"
+                                            )
+                                    );
+
+                    Object secureUrl =
+                            uploadResult.get(
+                                    "secure_url"
+                            );
+
+                    if (secureUrl != null) {
+
+                        proofUrl =
+                                secureUrl.toString();
+                    }
+
+                    uploadedFileName =
+                            proofFile.getName();
+                }
+
+                boolean success =
+                        grievanceDAO.submitGrievance(
+                                grievanceText.trim(),
+                                proofUrl,
+                                uploadedFileName,
+                                merit.getProvisionalMeritNumber()
+                        );
+
+                if (success) {
+
+                    proofFile =
+                            null;
+
+                    message(
+                            Alert.AlertType.INFORMATION,
+                            "Grievance Submitted",
+                            "Your grievance has been submitted successfully. "
+                                    + "It is now pending counsellor review."
+                    );
+
+                    Navigation.goTo(
+                            GrievanceSubmissionPage.getScene()
+                    );
+
+                } else {
+
+                    submit.setDisable(
+                            false
+                    );
+
+                    message(
+                            Alert.AlertType.ERROR,
+                            "Submission Failed",
+                            "Unable to submit your grievance."
+                    );
+                }
+
+            } catch (Exception exception) {
+
+                exception.printStackTrace();
+
+                submit.setDisable(
+                        false
+                );
+
+                message(
+                        Alert.AlertType.ERROR,
+                        "Upload Failed",
+                        "Unable to upload the supporting proof."
+                );
+            }
+        });
 
         Region spacer =
                 new Region();
@@ -281,34 +720,234 @@ public class GrievanceSubmissionPage {
                 Pos.CENTER_LEFT
         );
 
+        // =====================================================
+        // CONTENT
+        // =====================================================
+
         VBox content =
                 new VBox(
                         22,
                         heading,
+                        meritBox,
                         grievanceBox,
                         proofBox,
-                        note,
+                        statusBox,
                         buttons
                 );
 
         content.setPadding(
-                new Insets(30)
+                new Insets(20, 24, 30, 24)
         );
 
+        content.setFillWidth(true);
+        content.setMaxWidth(Double.MAX_VALUE);
+
         content.setStyle(
+                "-fx-background-color: " + BG + ";"
+        );
+
+        // =====================================================
+        // SCROLL PANE
+        // =====================================================
+
+        ScrollPane scrollPane =
+                new ScrollPane(
+                        content
+                );
+
+        scrollPane.setFitToWidth(
+                true
+        );
+
+        scrollPane.setHbarPolicy(
+                ScrollPane.ScrollBarPolicy.NEVER
+        );
+
+        scrollPane.setVbarPolicy(
+                ScrollPane.ScrollBarPolicy.NEVER
+        );
+
+        scrollPane.setPannable(true);
+
+        scrollPane.setStyle(
+                "-fx-background: " + BG + ";" +
                 "-fx-background-color: " + BG + ";"
         );
 
         return new Scene(
                 StudentLayout.create(
                         "Grievance",
-                        content
+                        scrollPane
                 )
         );
+    
+    
+
+    // =========================================================
+    // DETAIL BOX
+    // =========================================================
+
+    }
+
+    private static VBox detail(
+            String label,
+            String value
+    ) {
+
+        Label labelText =
+                new Label(
+                        label
+                );
+
+        labelText.setStyle(
+                "-fx-font-size: 11px;" +
+                "-fx-text-fill: " + MUTED + ";"
+        );
+
+        Label valueText =
+                new Label(
+                        safe(value)
+                );
+
+        valueText.setWrapText(
+                true
+        );
+
+        valueText.setStyle(
+                "-fx-font-size: 14px;" +
+                "-fx-font-weight: bold;" +
+                "-fx-text-fill: " + WHITE + ";"
+        );
+
+        VBox box =
+                new VBox(
+                        5,
+                        labelText,
+                        valueText
+                );
+
+        box.setPadding(
+                new Insets(12)
+        );
+
+        box.setStyle(
+                "-fx-background-color: #0F150F;" +
+                "-fx-background-radius: 8px;" +
+                "-fx-border-color: " + BORDER + ";" +
+                "-fx-border-width: 1px;" +
+                "-fx-border-radius: 8px;"
+        );
+
+        return box;
+    }
+
+    // =========================================================
+    // SECONDARY BUTTON
+    // =========================================================
+
+    private static void styleSecondaryButton(
+            Button button
+    ) {
+
+        button.setPrefHeight(42);
+
+        String normal =
+                "-fx-background-color:#171F17;" +
+                "-fx-text-fill:" + WHITE + ";" +
+                "-fx-font-size:13px;" +
+                "-fx-font-weight:bold;" +
+                "-fx-background-radius:8px;" +
+                "-fx-border-color:#344034;" +
+                "-fx-border-width:1px;" +
+                "-fx-border-radius:8px;" +
+                "-fx-padding:0 18 0 18;" +
+                "-fx-cursor:hand;";
+
+        String hover =
+                "-fx-background-color:#202B20;" +
+                "-fx-text-fill:" + WHITE + ";" +
+                "-fx-font-size:13px;" +
+                "-fx-font-weight:bold;" +
+                "-fx-background-radius:8px;" +
+                "-fx-border-color:" + LIME + ";" +
+                "-fx-border-width:1px;" +
+                "-fx-border-radius:8px;" +
+                "-fx-padding:0 18 0 18;" +
+                "-fx-cursor:hand;";
+
+        button.setStyle(normal);
+        button.setOnMouseEntered(e -> {
+            if (!button.isDisabled()) button.setStyle(hover);
+        });
+        button.setOnMouseExited(e -> {
+            if (!button.isDisabled()) button.setStyle(normal);
+        });
+    }
+
+    // =========================================================
+    // ALERT
+    // =========================================================
+
+    private static void message(
+            Alert.AlertType type,
+            String title,
+            String text
+    ) {
+
+        Alert alert =
+                new Alert(
+                        type
+                );
+
+        alert.setTitle(
+                title
+        );
+
+        alert.setHeaderText(
+                null
+        );
+
+        alert.setContentText(
+                text
+        );
+
+        alert.showAndWait();
+    }
+
+    private static String safe(
+            String value
+    ) {
+
+        if (
+                value == null ||
+                value.isBlank()
+        ) {
+
+            return "Not Available";
+        }
+
+        return value;
     }
 
     public static File getProofFile() {
 
         return proofFile;
+    }
+
+    private record GrievancePageData(
+            MeritRecord merit,
+            GrievanceRecord grievance
+    ) {}
+
+    private static Scene createLoadingScene() {
+        Label label = new Label("Loading grievance details...");
+        label.setStyle("-fx-text-fill: " + MUTED + "; -fx-font-size: 14px;");
+
+        VBox box = new VBox(14, label);
+        box.setAlignment(Pos.CENTER);
+        box.setPadding(new Insets(40));
+        box.setStyle("-fx-background-color: " + BG + ";");
+
+        return new Scene(StudentLayout.create("Raise Grievance", box));
     }
 }

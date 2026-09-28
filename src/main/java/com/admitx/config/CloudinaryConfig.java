@@ -1,23 +1,60 @@
 package com.admitx.config;
+
 import java.util.HashMap;
 import java.util.Map;
 
 import com.cloudinary.Cloudinary;
-public class CloudinaryConfig {
 
-    public static Cloudinary cloudinary ;
-    public static Cloudinary getCloudinary(){
-        if(cloudinary == null){
-            Map<String, Object> config = new HashMap<>();
+public final class CloudinaryConfig {
 
-            config.put("cloud_name", "phgupzcr");
-            config.put("api_key", "452938494314543");
-            config.put("api_secret","ot1Cvw0UMYHPN3oKFRm-kIunP48");
-            config.put("secure",true);
+    private static Cloudinary cloudinary;
 
-            cloudinary = new Cloudinary(config);
+    private static final String CLOUD_NAME =
+            System.getenv("CLOUDINARY_CLOUD_NAME");
+
+    private static final String API_KEY =
+            System.getenv("CLOUDINARY_API_KEY");
+
+    private static final String API_SECRET =
+            System.getenv("CLOUDINARY_API_SECRET");
+
+    private CloudinaryConfig() {
+    }
+
+    public static synchronized Cloudinary getCloudinary() {
+
+        if (cloudinary != null) {
+            return cloudinary;
         }
+
+        if (CLOUD_NAME == null || CLOUD_NAME.isBlank()) {
+            throw new IllegalStateException(
+                    "Cloudinary cloud name is not configured."
+            );
+        }
+
+        if (API_KEY == null || API_KEY.isBlank()) {
+            throw new IllegalStateException(
+                    "Cloudinary API key is not configured."
+            );
+        }
+
+        if (API_SECRET == null || API_SECRET.isBlank()) {
+            throw new IllegalStateException(
+                    "Cloudinary API secret is not configured."
+            );
+        }
+
+        Map<String, Object> config =
+                new HashMap<>();
+
+        config.put("cloud_name", CLOUD_NAME);
+        config.put("api_key", API_KEY);
+        config.put("api_secret", API_SECRET);
+        config.put("secure", true);
+
+        cloudinary = new Cloudinary(config);
+
         return cloudinary;
     }
-    
 }

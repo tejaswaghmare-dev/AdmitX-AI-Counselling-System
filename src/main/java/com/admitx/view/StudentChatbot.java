@@ -15,6 +15,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -58,8 +59,20 @@ public class StudentChatbot {
 
         VBox container = new VBox(10);
 
-        container.setAlignment(
-                Pos.BOTTOM_RIGHT
+        container.setAlignment(Pos.BOTTOM_RIGHT);
+
+        // Allow clicks to pass through the empty chatbot area
+        container.setPickOnBounds(false);
+
+        // Prevent the chatbot container from covering the whole screen
+        container.setMaxSize(
+                Region.USE_PREF_SIZE,
+                Region.USE_PREF_SIZE
+        );
+
+        root.setMaxSize(
+                Region.USE_PREF_SIZE,
+                Region.USE_PREF_SIZE
         );
 
         container.getChildren().addAll(
@@ -302,7 +315,7 @@ public class StudentChatbot {
         );
 
         scrollPane.setVbarPolicy(
-                ScrollPane.ScrollBarPolicy.AS_NEEDED
+                ScrollPane.ScrollBarPolicy.NEVER
         );
 
         scrollPane.setStyle(

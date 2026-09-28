@@ -1,5 +1,11 @@
 package com.admitx.view;
 
+import java.util.List;
+
+import com.admitx.dao.ApplicationDAO;
+import com.admitx.dao.ApplicationDAO.ApplicationRecord;
+import com.admitx.util.AsyncTaskRunner;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -11,16 +17,52 @@ import javafx.scene.layout.*;
 
 public class StudentManagementPage {
 
-    private static final String BG = "#0B100B";
-    private static final String CARD = "#131A13";
-    private static final String LIME = "#B7FF00";
-    private static final String TEXT = "#F5F7F2";
-    private static final String MUTED = "#9AA59A";
-    private static final String BORDER = "#293529";
+    private static final String BG =
+            "#0B100B";
+
+    private static final String CARD =
+            "#131A13";
+
+    private static final String LIME =
+            "#B7FF00";
+
+    private static final String TEXT =
+            "#F5F7F2";
+
+    private static final String MUTED =
+            "#9AA59A";
+
+    private static final String BORDER =
+            "#293529";
+
+    private static final String FIELD =
+            "#0F150F";
+
+    private static final String FIELD_HOVER =
+            "#121A12";
+
+    private static final String ORANGE =
+            "#F97316";
+
+    private static final String RED =
+            "#DC2626";
 
     public static Scene getScene() {
 
-        Label title = new Label("Student Management");
+        ApplicationDAO applicationDAO =
+                new ApplicationDAO();
+
+        ObservableList<ApplicationRecord> applications =
+                FXCollections.observableArrayList();
+
+        // =====================================================
+        // TITLE
+        // =====================================================
+
+        Label title =
+                new Label(
+                        "Student Applications"
+                );
 
         title.setStyle(
                 "-fx-font-size: 28px;" +
@@ -28,40 +70,122 @@ public class StudentManagementPage {
                 "-fx-text-fill: " + TEXT + ";"
         );
 
-        Label subtitle = new Label(
-                "Search, verify and manage registered students."
-        );
+        Label subtitle =
+                new Label(
+                        "Review and verify submitted student applications."
+                );
 
         subtitle.setStyle(
                 "-fx-font-size: 13px;" +
                 "-fx-text-fill: " + MUTED + ";"
         );
 
-        VBox heading = new VBox(
-                4,
-                title,
-                subtitle
+        VBox heading =
+                new VBox(
+                        6,
+                        title,
+                        subtitle
+                );
+
+        heading.setPadding(
+                new Insets(0, 0, 4, 0)
         );
 
-        // =========================
-        // SEARCH
-        // =========================
+        // =====================================================
+        // STATISTICS
+        // =====================================================
 
-        TextField search = new TextField();
+        Label totalValue =
+                createStatValue("0");
+
+        Label pendingValue =
+                createStatValue("0");
+
+        Label verifiedValue =
+                createStatValue("0");
+
+        Label rejectedValue =
+                createStatValue("0");
+
+        GridPane stats =
+                new GridPane();
+
+        stats.setHgap(14);
+        stats.setMaxWidth(Double.MAX_VALUE);
+
+        stats.add(
+                createStatCard(
+                        "TOTAL APPLICATIONS",
+                        totalValue
+                ),
+                0,
+                0
+        );
+
+        stats.add(
+                createStatCard(
+                        "PENDING",
+                        pendingValue
+                ),
+                1,
+                0
+        );
+
+        stats.add(
+                createStatCard(
+                        "VERIFIED",
+                        verifiedValue
+                ),
+                2,
+                0
+        );
+
+        stats.add(
+                createStatCard(
+                        "REJECTED",
+                        rejectedValue
+                ),
+                3,
+                0
+        );
+
+        for (int i = 0; i < 4; i++) {
+
+            ColumnConstraints column =
+                    new ColumnConstraints();
+
+            column.setPercentWidth(
+                    25
+            );
+
+            stats.getColumnConstraints()
+                    .add(column);
+        }
+
+        // =====================================================
+        // SEARCH
+        // =====================================================
+
+        TextField search =
+                new TextField();
 
         search.setPromptText(
-                "Search by Application ID or Student Name"
+                "Search by student name or email"
         );
 
-        search.setPrefHeight(42);
+        search.setPrefHeight(
+                44
+        );
 
         search.setStyle(
-                "-fx-background-color: #0D120D;" +
-                "-fx-text-fill: white;" +
-                "-fx-prompt-text-fill: #6F7A6F;" +
-                "-fx-border-color: " + BORDER + ";" +
-                "-fx-border-radius: 7px;" +
-                "-fx-background-radius: 7px;" +
+                "-fx-background-color: " + FIELD + ";" +
+                "-fx-text-fill: " + TEXT + ";" +
+                "-fx-prompt-text-fill: " + MUTED + ";" +
+                "-fx-border-color: #3A493A;" +
+                "-fx-border-width: 1px;" +
+                "-fx-border-radius: 8px;" +
+                "-fx-background-radius: 8px;" +
+                "-fx-font-size: 13px;" +
                 "-fx-padding: 0 14 0 14;"
         );
 
@@ -71,56 +195,77 @@ public class StudentManagementPage {
         );
 
         Button searchButton =
-                createPrimaryButton("Search", 110);
+                createPrimaryButton(
+                        "Search",
+                        100
+                );
 
-        HBox searchBox = new HBox(
-                10,
-                search,
-                searchButton
-        );
+        Button refreshButton =
+                createDarkButton(
+                        "Refresh",
+                        100
+                );
+
+        HBox searchBox =
+                new HBox(
+                        10,
+                        search,
+                        searchButton,
+                        refreshButton
+                );
 
         searchBox.setAlignment(
                 Pos.CENTER_LEFT
         );
 
         searchBox.setPadding(
-                new Insets(18)
+                new Insets(18, 20, 18, 20)
         );
 
         searchBox.setStyle(
                 "-fx-background-color: " + CARD + ";" +
-                "-fx-background-radius: 10px;" +
+                "-fx-background-radius: 12px;" +
                 "-fx-border-color: " + BORDER + ";" +
-                "-fx-border-radius: 10px;"
+                "-fx-border-width: 1px;" +
+                "-fx-border-radius: 12px;"
         );
 
-        // =========================
+        // =====================================================
         // TABLE
-        // =========================
+        // =====================================================
 
-        TableView<Student> table =
+        TableView<ApplicationRecord> table =
                 new TableView<>();
 
-        TableColumn<Student, String> idColumn =
-                new TableColumn<>("Application ID");
-
-        idColumn.setCellValueFactory(
-                new PropertyValueFactory<>(
-                        "applicationId"
-                )
-        );
-
-        TableColumn<Student, String> nameColumn =
-                new TableColumn<>("Student Name");
+        TableColumn<ApplicationRecord, String>
+                nameColumn =
+                new TableColumn<>(
+                        "Candidate"
+                );
 
         nameColumn.setCellValueFactory(
                 new PropertyValueFactory<>(
-                        "name"
+                        "candidateName"
                 )
         );
 
-        TableColumn<Student, String> categoryColumn =
-                new TableColumn<>("Category");
+        TableColumn<ApplicationRecord, String>
+                emailColumn =
+                new TableColumn<>(
+                        "Student Email"
+                );
+
+        emailColumn.setCellValueFactory(
+                new PropertyValueFactory<>(
+                        "studentEmail"
+                )
+        );
+
+        TableColumn<ApplicationRecord, String>
+                categoryColumn =
+                new TableColumn<>(
+                        "Category"
+                );
 
         categoryColumn.setCellValueFactory(
                 new PropertyValueFactory<>(
@@ -128,139 +273,342 @@ public class StudentManagementPage {
                 )
         );
 
-        TableColumn<Student, String> statusColumn =
-                new TableColumn<>("Document Status");
+        TableColumn<ApplicationRecord, String>
+                applicationColumn =
+                new TableColumn<>(
+                        "Application"
+                );
 
-        statusColumn.setCellValueFactory(
+        applicationColumn.setCellValueFactory(
                 new PropertyValueFactory<>(
                         "status"
                 )
         );
 
-        idColumn.setPrefWidth(200);
-        nameColumn.setPrefWidth(300);
-        categoryColumn.setPrefWidth(150);
-        statusColumn.setPrefWidth(200);
-
-        table.getColumns().addAll(
-                idColumn,
-                nameColumn,
-                categoryColumn,
-                statusColumn
-        );
-
-        ObservableList<Student> students =
-                FXCollections.observableArrayList(
-
-                        new Student(
-                                "MHTCET20260001",
-                                "Yash Batte",
-                                "Open",
-                                "Pending"
-                        ),
-
-                        new Student(
-                                "MHTCET20260002",
-                                "Rahul Patil",
-                                "OBC",
-                                "Verified"
-                        ),
-
-                        new Student(
-                                "MHTCET20260003",
-                                "Sneha Sharma",
-                                "EWS",
-                                "Pending"
-                        ),
-
-                        new Student(
-                                "MHTCET20260004",
-                                "Amit Kulkarni",
-                                "SC",
-                                "Verified"
-                        )
+        TableColumn<ApplicationRecord, String>
+                verificationColumn =
+                new TableColumn<>(
+                        "Verification"
                 );
 
-        table.setItems(students);
+        verificationColumn.setCellValueFactory(
+                new PropertyValueFactory<>(
+                        "verificationStatus"
+                )
+        );
 
-        table.setPrefHeight(380);
+        TableColumn<ApplicationRecord, String>
+                submittedColumn =
+                new TableColumn<>(
+                        "Submitted"
+                );
+
+        submittedColumn.setCellValueFactory(
+                new PropertyValueFactory<>(
+                        "submittedAt"
+                )
+        );
+
+        table.getColumns().addAll(
+                nameColumn,
+                emailColumn,
+                categoryColumn,
+                applicationColumn,
+                verificationColumn,
+                submittedColumn
+        );
+
+        styleTableColumn(nameColumn, "Candidate");
+        styleTableColumn(emailColumn, "Student Email");
+        styleTableColumn(categoryColumn, "Category");
+        styleTableColumn(applicationColumn, "Application");
+        styleTableColumn(verificationColumn, "Verification");
+        styleTableColumn(submittedColumn, "Submitted");
+
+        table.setPrefHeight(
+                430
+        );
+
+        table.setMinHeight(
+                330
+        );
 
         table.setColumnResizePolicy(
                 TableView.CONSTRAINED_RESIZE_POLICY
         );
 
         table.setStyle(
-                "-fx-background-color: " + CARD + ";" +
+                "-fx-background-color: " + FIELD + ";" +
+                "-fx-control-inner-background: " + FIELD + ";" +
+                "-fx-table-cell-border-color: " + BORDER + ";" +
+                "-fx-table-header-border-color: " + BORDER + ";" +
+                "-fx-text-background-color: " + TEXT + ";" +
+                "-fx-selection-bar: " + LIME + ";" +
+                "-fx-selection-bar-text: #0B100B;" +
+                "-fx-selection-bar-non-focused: " + LIME + ";" +
+                "-fx-selection-bar-non-focused-text: #0B100B;" +
                 "-fx-border-color: " + BORDER + ";" +
-                "-fx-border-radius: 8px;" +
-                "-fx-background-radius: 8px;"
+                "-fx-border-width: 1px;" +
+                "-fx-border-radius: 10px;" +
+                "-fx-background-radius: 10px;"
         );
 
-        // =========================
-        // SEARCH FUNCTION
-        // =========================
+        ProgressIndicator loadingIndicator =
+                new ProgressIndicator();
+
+        loadingIndicator.setPrefSize(
+                42,
+                42
+        );
+
+        table.setPlaceholder(
+                loadingIndicator
+        );
+
+        // =====================================================
+        // COMMENTS
+        // =====================================================
+
+        Label commentTitle =
+                new Label(
+                        "Counsellor Comments"
+                );
+
+        commentTitle.setStyle(
+                "-fx-font-size: 16px;" +
+                "-fx-font-weight: bold;" +
+                "-fx-text-fill: " + TEXT + ";"
+        );
+
+        TextArea comments =
+                new TextArea();
+
+        comments.setPromptText(
+                "Enter counsellor remarks..."
+        );
+
+        comments.setPrefRowCount(
+                3
+        );
+
+        comments.setWrapText(
+                true
+        );
+
+        comments.setStyle(
+                "-fx-control-inner-background: " + FIELD + ";" +
+                "-fx-background-color: " + FIELD + ";" +
+                "-fx-text-fill: " + TEXT + ";" +
+                "-fx-prompt-text-fill: " + MUTED + ";" +
+                "-fx-highlight-fill: " + LIME + ";" +
+                "-fx-highlight-text-fill: #0B100B;" +
+                "-fx-border-color: #3A493A;" +
+                "-fx-border-width: 1px;" +
+                "-fx-border-radius: 8px;" +
+                "-fx-background-radius: 8px;" +
+                "-fx-font-size: 13px;" +
+                "-fx-padding: 8px;"
+        );
+
+        // =====================================================
+        // LOAD DATA
+        // =====================================================
+
+        Runnable loadApplications = () -> {
+
+            searchButton.setDisable(true);
+            refreshButton.setDisable(true);
+
+            table.setPlaceholder(
+                    loadingIndicator
+            );
+
+            AsyncTaskRunner.run(
+                    applicationDAO::getAllApplications,
+
+                    loadedData -> {
+
+                        List<ApplicationRecord> data =
+                                loadedData == null
+                                        ? List.of()
+                                        : loadedData;
+
+                        applications.setAll(
+                                data
+                        );
+
+                        table.setItems(
+                                applications
+                        );
+
+                        updateStatistics(
+                                data,
+                                totalValue,
+                                pendingValue,
+                                verifiedValue,
+                                rejectedValue
+                        );
+
+                        Label emptyLabel =
+                                new Label(
+                                        "No student applications found."
+                                );
+
+                        emptyLabel.setStyle(
+                                "-fx-text-fill: " + MUTED + ";"
+                        );
+
+                        table.setPlaceholder(
+                                emptyLabel
+                        );
+
+                        searchButton.setDisable(false);
+                        refreshButton.setDisable(false);
+                    },
+
+                    error -> {
+
+                        error.printStackTrace();
+
+                        Label errorLabel =
+                                new Label(
+                                        "Could not load student applications."
+                                );
+
+                        errorLabel.setStyle(
+                                "-fx-text-fill: #F97316;"
+                        );
+
+                        table.setPlaceholder(
+                                errorLabel
+                        );
+
+                        searchButton.setDisable(false);
+                        refreshButton.setDisable(false);
+
+                        showMessage(
+                                Alert.AlertType.ERROR,
+                                "Loading Error",
+                                "Could not load student applications. "
+                                        + "Please check your internet connection."
+                        );
+                    }
+            );
+        };
+
+        loadApplications.run();
+
+        // =====================================================
+        // SEARCH
+        // =====================================================
 
         searchButton.setOnAction(e -> {
 
-            String text =
+            String keyword =
                     search.getText()
                             .trim()
                             .toLowerCase();
 
-            if (text.isEmpty()) {
+            if (keyword.isEmpty()) {
 
-                table.setItems(students);
+                table.setItems(
+                        applications
+                );
+
                 return;
             }
 
-            ObservableList<Student> filtered =
-                    FXCollections.observableArrayList();
+            ObservableList<ApplicationRecord>
+                    filtered =
+                    FXCollections
+                            .observableArrayList();
 
-            for (Student student : students) {
+            for (
+                    ApplicationRecord application :
+                    applications
+            ) {
+
+                String name =
+                        safe(
+                                application
+                                        .getCandidateName()
+                        )
+                                .toLowerCase();
+
+                String email =
+                        safe(
+                                application
+                                        .getStudentEmail()
+                        )
+                                .toLowerCase();
 
                 if (
-                        student.getApplicationId()
-                                .toLowerCase()
-                                .contains(text)
-
-                        ||
-
-                        student.getName()
-                                .toLowerCase()
-                                .contains(text)
+                        name.contains(keyword)
+                                ||
+                        email.contains(keyword)
                 ) {
 
-                    filtered.add(student);
+                    filtered.add(
+                            application
+                    );
                 }
             }
 
-            table.setItems(filtered);
+            table.setItems(
+                    filtered
+            );
         });
 
         search.setOnAction(e ->
                 searchButton.fire()
         );
 
-        // =========================
-        // ACTION BUTTONS
-        // =========================
+        refreshButton.setOnAction(e -> {
 
-        Button viewProfile =
+            search.clear();
+
+            loadApplications.run();
+        });
+
+        // =====================================================
+        // SELECTED STUDENT
+        // =====================================================
+
+        table.getSelectionModel()
+                .selectedItemProperty()
+                .addListener(
+                        (
+                                observable,
+                                oldValue,
+                                selected
+                        ) -> {
+
+                            if (selected != null) {
+
+                                comments.setText(
+                                        safe(
+                                                selected
+                                                        .getCounsellorComment()
+                                        )
+                                );
+                            }
+                        }
+                );
+
+        // =====================================================
+        // BUTTONS
+        // =====================================================
+
+        Button view =
                 createDarkButton(
-                        "View Profile",
-                        135
+                        "View Application",
+                        150
                 );
 
         Button verify =
-                createDarkButton(
-                        "Verify Documents",
-                        155
-                );
-
-        Button approve =
                 createPrimaryButton(
-                        "Approve",
-                        120
+                        "Review Documents",
+                        160
                 );
 
         Button reject =
@@ -269,262 +617,430 @@ public class StudentManagementPage {
                         110
                 );
 
-        viewProfile.setOnAction(e -> {
-
-            Student selected =
-                    table.getSelectionModel()
-                            .getSelectedItem();
-
-            if (selected == null) {
-
-                showMessage(
-                        "Student Management",
-                        "Please select a student."
-                );
-
-                return;
-            }
-
-            showMessage(
-                    "Student Profile",
-
-                    "Name: "
-                            + selected.getName()
-
-                            + "\nApplication ID: "
-                            + selected.getApplicationId()
-
-                            + "\nCategory: "
-                            + selected.getCategory()
-
-                            + "\nDocument Status: "
-                            + selected.getStatus()
-            );
-        });
-
-        verify.setOnAction(e -> {
-
-            Student selected =
-                    table.getSelectionModel()
-                            .getSelectedItem();
-
-            if (selected == null) {
-
-                showMessage(
-                        "Student Management",
-                        "Please select a student."
-                );
-
-                return;
-            }
-
-            selected.setStatus(
-                    "Verified"
-            );
-
-            table.refresh();
-
-            showMessage(
-                    "Verification",
-                    "Student documents verified successfully."
-            );
-        });
-
-        approve.setOnAction(e -> {
-
-            Student selected =
-                    table.getSelectionModel()
-                            .getSelectedItem();
-
-            if (selected == null) {
-
-                showMessage(
-                        "Student Management",
-                        "Please select a student."
-                );
-
-                return;
-            }
-
-            showMessage(
-                    "Approved",
-                    "Student application approved successfully."
-            );
-        });
-
-        reject.setOnAction(e -> {
-
-            Student selected =
-                    table.getSelectionModel()
-                            .getSelectedItem();
-
-            if (selected == null) {
-
-                showMessage(
-                        "Student Management",
-                        "Please select a student."
-                );
-
-                return;
-            }
-
-            showMessage(
-                    "Rejected",
-                    "Student application rejected."
-            );
-        });
-
-        HBox actionButtons =
-                new HBox(
-                        10,
-                        viewProfile,
-                        verify,
-                        approve,
-                        reject
-                );
-
-        actionButtons.setAlignment(
-                Pos.CENTER_LEFT
-        );
-
-        // =========================
-        // COMMENTS
-        // =========================
-
-        Label commentTitle =
-                new Label("Counsellor Comments");
-
-        commentTitle.setStyle(
-                "-fx-font-size: 15px;" +
-                "-fx-font-weight: bold;" +
-                "-fx-text-fill: " + TEXT + ";"
-        );
-
-        Label commentDescription =
-                new Label(
-                        "Add remarks for the selected student."
-                );
-
-        commentDescription.setStyle(
-                "-fx-font-size: 12px;" +
-                "-fx-text-fill: " + MUTED + ";"
-        );
-
-        TextArea comments =
-                new TextArea();
-
-        comments.setPromptText(
-                "Enter verification remarks or comments..."
-        );
-
-        comments.setPrefRowCount(3);
-
-        comments.setWrapText(true);
-
-        comments.setStyle(
-                "-fx-control-inner-background: #0D120D;" +
-                "-fx-text-fill: white;" +
-                "-fx-prompt-text-fill: #6F7A6F;" +
-                "-fx-border-color: " + BORDER + ";" +
-                "-fx-border-radius: 7px;" +
-                "-fx-background-radius: 7px;"
-        );
-
         Button saveComment =
-                createPrimaryButton(
+                createDarkButton(
                         "Save Comment",
                         140
                 );
 
-        saveComment.setOnAction(e -> {
+        // =====================================================
+        // VIEW
+        // =====================================================
 
-            Student selected =
+        view.setOnAction(e -> {
+
+            ApplicationRecord selected =
                     table.getSelectionModel()
                             .getSelectedItem();
 
             if (selected == null) {
 
                 showMessage(
-                        "Student Management",
-                        "Please select a student first."
+                        Alert.AlertType.WARNING,
+                        "Student Applications",
+                        "Please select an application."
                 );
 
                 return;
             }
 
-            if (comments.getText()
-                    .trim()
-                    .isEmpty()) {
+            String information =
+                    "Candidate: "
+                            + safe(
+                            selected
+                                    .getCandidateName()
+                    )
+
+                    + "\n\nStudent Email: "
+                    + safe(
+                            selected
+                                    .getStudentEmail()
+                    )
+
+                    + "\nMobile: "
+                    + safe(
+                            selected
+                                    .getMobileNumber()
+                    )
+
+                    + "\nCategory: "
+                    + safe(
+                            selected
+                                    .getCategory()
+                    )
+
+                    + "\n\nApplication Status: "
+                    + safe(
+                            selected
+                                    .getStatus()
+                    )
+
+                    + "\nVerification Status: "
+                    + safe(
+                            selected
+                                    .getVerificationStatus()
+                    )
+
+                    + "\nSubmitted: "
+                    + safe(
+                            selected
+                                    .getSubmittedAt()
+                    )
+
+                    + "\n\nCounsellor Comment:\n"
+                    + safe(
+                            selected
+                                    .getCounsellorComment()
+                    );
+
+            showMessage(
+                    Alert.AlertType.INFORMATION,
+                    "Application Details",
+                    information
+            );
+        });
+
+        // =====================================================
+        // VERIFY
+        // =====================================================
+
+        verify.setOnAction(e -> {
+
+            ApplicationRecord selected =
+                    table.getSelectionModel()
+                            .getSelectedItem();
+
+            if (selected == null) {
 
                 showMessage(
-                        "Comments",
+                        Alert.AlertType.WARNING,
+                        "Verification",
+                        "Please select an application."
+                );
+
+                return;
+            }
+
+            String verificationStatus =
+                    safe(selected.getVerificationStatus());
+
+            if ("Verified".equalsIgnoreCase(verificationStatus)) {
+
+                showMessage(
+                        Alert.AlertType.INFORMATION,
+                        "Verification",
+                        "This application is already verified."
+                );
+
+                return;
+            }
+
+            if ("Rejected".equalsIgnoreCase(verificationStatus)) {
+
+                showMessage(
+                        Alert.AlertType.WARNING,
+                        "Verification",
+                        "This application is already rejected."
+                );
+
+                return;
+            }
+
+            Navigation.goTo(
+                    CounsellorDocumentVerificationPage.getScene()
+            );
+        });
+
+        // =====================================================
+        // REJECT
+        // =====================================================
+
+        reject.setOnAction(e -> {
+
+            ApplicationRecord selected =
+                    table.getSelectionModel()
+                            .getSelectedItem();
+
+            if (selected == null) {
+
+                showMessage(
+                        Alert.AlertType.WARNING,
+                        "Application",
+                        "Please select an application."
+                );
+
+                return;
+            }
+
+            Alert confirmation =
+                    new Alert(
+                            Alert.AlertType.CONFIRMATION
+                    );
+
+            confirmation.setTitle(
+                    "Reject Application"
+            );
+
+            confirmation.setHeaderText(
+                    "Reject selected application?"
+            );
+
+            confirmation.setContentText(
+                    selected.getStudentEmail()
+            );
+
+            confirmation.showAndWait()
+                    .ifPresent(response -> {
+
+                        if (
+                                response
+                                        == ButtonType.OK
+                        ) {
+
+                            String studentEmail =
+                                    selected.getStudentEmail();
+
+                            reject.setDisable(true);
+
+                            AsyncTaskRunner.run(
+                                    () -> applicationDAO.rejectApplication(
+                                            studentEmail
+                                    ),
+
+                                    success -> {
+
+                                        reject.setDisable(false);
+
+                                        if (Boolean.TRUE.equals(success)) {
+
+                                            showMessage(
+                                                    Alert.AlertType.INFORMATION,
+                                                    "Application",
+                                                    "Application rejected."
+                                            );
+
+                                            loadApplications.run();
+
+                                        } else {
+
+                                            showMessage(
+                                                    Alert.AlertType.ERROR,
+                                                    "Application",
+                                                    "Unable to reject application."
+                                            );
+                                        }
+                                    },
+
+                                    error -> {
+
+                                        reject.setDisable(false);
+                                        error.printStackTrace();
+
+                                        showMessage(
+                                                Alert.AlertType.ERROR,
+                                                "Application",
+                                                "Unable to reject application."
+                                        );
+                                    }
+                            );
+                        }
+                    });
+        });
+
+        // =====================================================
+        // SAVE COMMENT
+        // =====================================================
+
+        saveComment.setOnAction(e -> {
+
+            ApplicationRecord selected =
+                    table.getSelectionModel()
+                            .getSelectedItem();
+
+            if (selected == null) {
+
+                showMessage(
+                        Alert.AlertType.WARNING,
+                        "Comment",
+                        "Please select an application."
+                );
+
+                return;
+            }
+
+            String comment =
+                    comments.getText()
+                            .trim();
+
+            if (comment.isEmpty()) {
+
+                showMessage(
+                        Alert.AlertType.WARNING,
+                        "Comment",
                         "Please enter a comment."
                 );
 
                 return;
             }
 
-            showMessage(
-                    "Comment",
-                    "Comment saved successfully."
-            );
+            String studentEmail =
+                    selected.getStudentEmail();
 
-            comments.clear();
+            saveComment.setDisable(true);
+
+            AsyncTaskRunner.run(
+                    () -> applicationDAO.saveCounsellorComment(
+                            studentEmail,
+                            comment
+                    ),
+
+                    success -> {
+
+                        saveComment.setDisable(false);
+
+                        if (Boolean.TRUE.equals(success)) {
+
+                            showMessage(
+                                    Alert.AlertType.INFORMATION,
+                                    "Comment",
+                                    "Comment saved successfully."
+                            );
+
+                            loadApplications.run();
+
+                        } else {
+
+                            showMessage(
+                                    Alert.AlertType.ERROR,
+                                    "Comment",
+                                    "Unable to save comment."
+                            );
+                        }
+                    },
+
+                    error -> {
+
+                        saveComment.setDisable(false);
+                        error.printStackTrace();
+
+                        showMessage(
+                                Alert.AlertType.ERROR,
+                                "Comment",
+                                "Unable to save comment."
+                        );
+                    }
+            );
         });
 
-        HBox commentButtonBox =
-                new HBox(saveComment);
+        // =====================================================
+        // ACTION BAR
+        // =====================================================
 
-        commentButtonBox.setAlignment(
-                Pos.CENTER_RIGHT
-        );
-
-        VBox commentBox =
-                new VBox(
-                        8,
-                        commentTitle,
-                        commentDescription,
-                        comments,
-                        commentButtonBox
+        HBox actions =
+                new HBox(
+                        12,
+                        view,
+                        verify,
+                        reject
                 );
 
-        commentBox.setPadding(
+        actions.setAlignment(
+                Pos.CENTER_LEFT
+        );
+
+        Region commentSpacer =
+                new Region();
+
+        HBox.setHgrow(
+                commentSpacer,
+                Priority.ALWAYS
+        );
+
+        HBox commentActions =
+                new HBox(
+                        commentSpacer,
+                        saveComment
+                );
+
+        VBox commentCard =
+                new VBox(
+                        10,
+                        commentTitle,
+                        comments,
+                        commentActions
+                );
+
+        commentCard.setPadding(
                 new Insets(20)
         );
 
-        commentBox.setStyle(
+        commentCard.setStyle(
                 "-fx-background-color: " + CARD + ";" +
-                "-fx-background-radius: 10px;" +
+                "-fx-background-radius: 12px;" +
                 "-fx-border-color: " + BORDER + ";" +
-                "-fx-border-radius: 10px;"
+                "-fx-border-width: 1px;" +
+                "-fx-border-radius: 12px;"
         );
 
-        // =========================
+        // =====================================================
         // CONTENT
-        // =========================
+        // =====================================================
 
         VBox content =
                 new VBox(
-                        20,
+                        22,
                         heading,
+                        stats,
                         searchBox,
                         table,
-                        actionButtons,
-                        commentBox
+                        actions,
+                        commentCard
                 );
 
         content.setPadding(
-                new Insets(5)
+                new Insets(18, 22, 28, 22)
+        );
+
+        content.setFillWidth(
+                true
+        );
+
+        content.setMaxWidth(
+                Double.MAX_VALUE
         );
 
         content.setStyle(
                 "-fx-background-color: " + BG + ";"
         );
 
+        ScrollPane scrollPane =
+                new ScrollPane(content);
+
+        scrollPane.setFitToWidth(
+                true
+        );
+
+        scrollPane.setHbarPolicy(
+                ScrollPane.ScrollBarPolicy.NEVER
+        );
+
+        scrollPane.setVbarPolicy(
+                ScrollPane.ScrollBarPolicy.NEVER
+        );
+
+        scrollPane.setPannable(
+                true
+        );
+
+        scrollPane.setStyle(
+                "-fx-background: " + BG + ";" +
+                "-fx-background-color: " + BG + ";"
+        );
+
         BorderPane layout =
                 CounsellorLayout.create(
                         "Students",
-                        content
+                        scrollPane
                 );
 
         return new Scene(
@@ -534,9 +1050,117 @@ public class StudentManagementPage {
         );
     }
 
-    // =========================
+    private static void updateStatistics(
+            List<ApplicationRecord> data,
+            Label totalValue,
+            Label pendingValue,
+            Label verifiedValue,
+            Label rejectedValue
+    ) {
+
+        int pending = 0;
+        int verified = 0;
+        int rejected = 0;
+
+        for (ApplicationRecord application : data) {
+
+            String status =
+                    application.getVerificationStatus();
+
+            if ("Pending".equalsIgnoreCase(status)) {
+
+                pending++;
+
+            } else if ("Verified".equalsIgnoreCase(status)) {
+
+                verified++;
+
+            } else if ("Rejected".equalsIgnoreCase(status)) {
+
+                rejected++;
+            }
+        }
+
+        totalValue.setText(
+                String.valueOf(data.size())
+        );
+
+        pendingValue.setText(
+                String.valueOf(pending)
+        );
+
+        verifiedValue.setText(
+                String.valueOf(verified)
+        );
+
+        rejectedValue.setText(
+                String.valueOf(rejected)
+        );
+    }
+
+    // =========================================================
+    // STAT CARD
+    // =========================================================
+
+    private static VBox createStatCard(
+            String title,
+            Label value
+    ) {
+
+        Label titleLabel =
+                new Label(title);
+
+        titleLabel.setStyle(
+                "-fx-font-size: 10px;" +
+                "-fx-font-weight: bold;" +
+                "-fx-text-fill: " + MUTED + ";"
+        );
+
+        VBox card =
+                new VBox(
+                        7,
+                        titleLabel,
+                        value
+                );
+
+        card.setPadding(
+                new Insets(18)
+        );
+
+        card.setMaxWidth(
+                Double.MAX_VALUE
+        );
+
+        card.setStyle(
+                "-fx-background-color: " + CARD + ";" +
+                "-fx-background-radius: 12px;" +
+                "-fx-border-color: " + BORDER + ";" +
+                "-fx-border-width: 1px;" +
+                "-fx-border-radius: 12px;"
+        );
+
+        return card;
+    }
+
+    private static Label createStatValue(
+            String value
+    ) {
+
+        Label label =
+                new Label(value);
+
+        label.setStyle(
+                "-fx-font-size: 24px;" +
+                "-fx-font-weight: bold;" +
+                "-fx-text-fill: " + LIME + ";"
+        );
+
+        return label;
+    }
+
+    // =========================================================
     // BUTTONS
-    // =========================
+    // =========================================================
 
     private static Button createPrimaryButton(
             String text,
@@ -546,15 +1170,38 @@ public class StudentManagementPage {
         Button button =
                 new Button(text);
 
-        button.setPrefWidth(width);
-        button.setPrefHeight(40);
+        button.setPrefWidth(
+                width
+        );
 
-        button.setStyle(
+        button.setPrefHeight(
+                42
+        );
+
+        String normal =
                 "-fx-background-color: " + LIME + ";" +
                 "-fx-text-fill: #0B100B;" +
+                "-fx-font-size: 13px;" +
                 "-fx-font-weight: bold;" +
-                "-fx-background-radius: 7px;" +
-                "-fx-cursor: hand;"
+                "-fx-background-radius: 8px;" +
+                "-fx-cursor: hand;";
+
+        String hover =
+                "-fx-background-color: #D0FF4D;" +
+                "-fx-text-fill: #0B100B;" +
+                "-fx-font-size: 13px;" +
+                "-fx-font-weight: bold;" +
+                "-fx-background-radius: 8px;" +
+                "-fx-cursor: hand;";
+
+        button.setStyle(normal);
+
+        button.setOnMouseEntered(e ->
+                button.setStyle(hover)
+        );
+
+        button.setOnMouseExited(e ->
+                button.setStyle(normal)
         );
 
         return button;
@@ -568,17 +1215,44 @@ public class StudentManagementPage {
         Button button =
                 new Button(text);
 
-        button.setPrefWidth(width);
-        button.setPrefHeight(40);
+        button.setPrefWidth(
+                width
+        );
 
-        button.setStyle(
-                "-fx-background-color: #1C251C;" +
-                "-fx-text-fill: white;" +
+        button.setPrefHeight(
+                42
+        );
+
+        String normal =
+                "-fx-background-color: #1A221A;" +
+                "-fx-text-fill: " + TEXT + ";" +
+                "-fx-font-size: 13px;" +
                 "-fx-font-weight: bold;" +
                 "-fx-border-color: #354235;" +
-                "-fx-border-radius: 7px;" +
-                "-fx-background-radius: 7px;" +
-                "-fx-cursor: hand;"
+                "-fx-border-width: 1px;" +
+                "-fx-border-radius: 8px;" +
+                "-fx-background-radius: 8px;" +
+                "-fx-cursor: hand;";
+
+        String hover =
+                "-fx-background-color: #202B20;" +
+                "-fx-text-fill: " + TEXT + ";" +
+                "-fx-font-size: 13px;" +
+                "-fx-font-weight: bold;" +
+                "-fx-border-color: " + LIME + ";" +
+                "-fx-border-width: 1px;" +
+                "-fx-border-radius: 8px;" +
+                "-fx-background-radius: 8px;" +
+                "-fx-cursor: hand;";
+
+        button.setStyle(normal);
+
+        button.setOnMouseEntered(e ->
+                button.setStyle(hover)
+        );
+
+        button.setOnMouseExited(e ->
+                button.setStyle(normal)
         );
 
         return button;
@@ -592,99 +1266,110 @@ public class StudentManagementPage {
         Button button =
                 new Button(text);
 
-        button.setPrefWidth(width);
-        button.setPrefHeight(40);
+        button.setPrefWidth(
+                width
+        );
 
-        button.setStyle(
-                "-fx-background-color: #DC2626;" +
+        button.setPrefHeight(
+                42
+        );
+
+        String normal =
+                "-fx-background-color: " + RED + ";" +
                 "-fx-text-fill: white;" +
+                "-fx-font-size: 13px;" +
                 "-fx-font-weight: bold;" +
-                "-fx-background-radius: 7px;" +
-                "-fx-cursor: hand;"
+                "-fx-background-radius: 8px;" +
+                "-fx-cursor: hand;";
+
+        String hover =
+                "-fx-background-color: #EF4444;" +
+                "-fx-text-fill: white;" +
+                "-fx-font-size: 13px;" +
+                "-fx-font-weight: bold;" +
+                "-fx-background-radius: 8px;" +
+                "-fx-cursor: hand;";
+
+        button.setStyle(normal);
+
+        button.setOnMouseEntered(e ->
+                button.setStyle(hover)
+        );
+
+        button.setOnMouseExited(e ->
+                button.setStyle(normal)
         );
 
         return button;
     }
 
-    // =========================
+    private static <T> void styleTableColumn(
+            TableColumn<ApplicationRecord, T> column,
+            String title
+    ) {
+
+        Label header =
+                new Label(title);
+
+        header.setStyle(
+                "-fx-text-fill: #172017;" +
+                "-fx-font-size: 12px;" +
+                "-fx-font-weight: bold;"
+        );
+
+        column.setText(
+                null
+        );
+
+        column.setGraphic(
+                header
+        );
+    }
+
+    // =========================================================
+    // SAFE
+    // =========================================================
+
+    private static String safe(
+            String value
+    ) {
+
+        if (
+                value == null ||
+                value.isBlank()
+        ) {
+
+            return "Not Available";
+        }
+
+        return value;
+    }
+
+    // =========================================================
     // ALERT
-    // =========================
+    // =========================================================
 
     private static void showMessage(
+            Alert.AlertType type,
             String title,
             String message
     ) {
 
         Alert alert =
-                new Alert(
-                        Alert.AlertType.INFORMATION
-                );
+                new Alert(type);
 
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
+        alert.setTitle(
+                title
+        );
+
+        alert.setHeaderText(
+                null
+        );
+
+        alert.setContentText(
+                message
+        );
 
         alert.showAndWait();
-    }
-
-    // =========================
-    // STUDENT MODEL
-    // =========================
-
-    public static class Student {
-
-        private final String applicationId;
-        private final String name;
-        private final String category;
-
-        private String status;
-
-        public Student(
-                String applicationId,
-                String name,
-                String category,
-                String status
-        ) {
-
-            this.applicationId =
-                    applicationId;
-
-            this.name =
-                    name;
-
-            this.category =
-                    category;
-
-            this.status =
-                    status;
-        }
-
-        public String getApplicationId() {
-
-            return applicationId;
-        }
-
-        public String getName() {
-
-            return name;
-        }
-
-        public String getCategory() {
-
-            return category;
-        }
-
-        public String getStatus() {
-
-            return status;
-        }
-
-        public void setStatus(
-                String status
-        ) {
-
-            this.status =
-                    status;
-        }
     }
 }

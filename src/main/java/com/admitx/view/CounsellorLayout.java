@@ -5,6 +5,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.*;
 
 public class CounsellorLayout {
@@ -32,26 +33,97 @@ public class CounsellorLayout {
                 "-fx-background-color: " + BG + ";"
         );
 
+        BorderPane sidebar =
+                createSidebar(activePage);
+
         root.setLeft(
-                createSidebar(activePage)
+                sidebar
         );
 
         VBox main =
                 new VBox();
 
+        main.setMinHeight(0);
+        main.setMinWidth(0);
+
         HBox topBar =
                 createTopBar(activePage);
 
         StackPane contentArea =
-                new StackPane(content);
+                new StackPane();
+
+        contentArea.setMinSize(
+                0,
+                0
+        );
+
+        contentArea.setMaxSize(
+                Double.MAX_VALUE,
+                Double.MAX_VALUE
+        );
 
         contentArea.setPadding(
-                new Insets(25)
+                new Insets(18, 25, 20, 25)
         );
 
         contentArea.setStyle(
                 "-fx-background-color: " + BG + ";"
         );
+
+        if (content instanceof ScrollPane existingScrollPane) {
+
+            existingScrollPane.setFitToWidth(true);
+            existingScrollPane.setHbarPolicy(
+                    ScrollPane.ScrollBarPolicy.NEVER
+            );
+            existingScrollPane.setVbarPolicy(
+                    ScrollPane.ScrollBarPolicy.NEVER
+            );
+            existingScrollPane.setPannable(true);
+            existingScrollPane.setMinSize(0, 0);
+            existingScrollPane.setMaxSize(
+                    Double.MAX_VALUE,
+                    Double.MAX_VALUE
+            );
+
+            contentArea.getChildren().add(
+                    existingScrollPane
+            );
+
+        } else {
+
+            ScrollPane pageScroll =
+                    new ScrollPane(content);
+
+            pageScroll.setFitToWidth(true);
+            pageScroll.setHbarPolicy(
+                    ScrollPane.ScrollBarPolicy.NEVER
+            );
+            pageScroll.setVbarPolicy(
+                    ScrollPane.ScrollBarPolicy.AS_NEEDED
+            );
+            pageScroll.setPannable(true);
+
+            pageScroll.setMinSize(
+                    0,
+                    0
+            );
+
+            pageScroll.setMaxSize(
+                    Double.MAX_VALUE,
+                    Double.MAX_VALUE
+            );
+
+            pageScroll.setStyle(
+                    "-fx-background: " + BG + ";" +
+                    "-fx-background-color: " + BG + ";" +
+                    "-fx-border-color: transparent;"
+            );
+
+            contentArea.getChildren().add(
+                    pageScroll
+            );
+        }
 
         VBox.setVgrow(
                 contentArea,
@@ -70,33 +142,17 @@ public class CounsellorLayout {
         return root;
     }
 
-    private static VBox createSidebar(
+    private static BorderPane createSidebar(
             String activePage
     ) {
 
-        VBox sidebar =
-                new VBox();
+        BorderPane sidebar =
+                new BorderPane();
 
-        sidebar.setPrefWidth(
-                245
-        );
-
-        sidebar.setMinWidth(
-                245
-        );
-
-        sidebar.setPadding(
-                new Insets(
-                        24,
-                        14,
-                        18,
-                        14
-                )
-        );
-
-        sidebar.setSpacing(
-                5
-        );
+        sidebar.setPrefWidth(245);
+        sidebar.setMinWidth(245);
+        sidebar.setMaxWidth(245);
+        sidebar.setMinHeight(0);
 
         sidebar.setStyle(
                 "-fx-background-color: " + PANEL + ";" +
@@ -133,19 +189,33 @@ public class CounsellorLayout {
 
         logoBox.setPadding(
                 new Insets(
-                        4,
-                        8,
-                        24,
-                        8
+                        20,
+                        22,
+                        14,
+                        22
                 )
         );
 
-        sidebar.getChildren().add(
-                logoBox
+        logoBox.setStyle(
+                "-fx-background-color: " + PANEL + ";"
+        );
+
+        VBox menu =
+                new VBox();
+
+        menu.setSpacing(5);
+
+        menu.setPadding(
+                new Insets(
+                        8,
+                        14,
+                        14,
+                        14
+                )
         );
 
         addButton(
-                sidebar,
+                menu,
                 "⌂",
                 "Dashboard",
                 "Dashboard",
@@ -156,7 +226,7 @@ public class CounsellorLayout {
         );
 
         addButton(
-                sidebar,
+                menu,
                 "◉",
                 "Students",
                 "Students",
@@ -167,7 +237,7 @@ public class CounsellorLayout {
         );
 
         addButton(
-                sidebar,
+                menu,
                 "▣",
                 "Colleges",
                 "Colleges",
@@ -178,7 +248,7 @@ public class CounsellorLayout {
         );
 
         addButton(
-                sidebar,
+                menu,
                 "★",
                 "Merit List",
                 "Merit List",
@@ -189,7 +259,7 @@ public class CounsellorLayout {
         );
 
         addButton(
-                sidebar,
+                menu,
                 "☷",
                 "Option Form",
                 "Option Form",
@@ -200,10 +270,10 @@ public class CounsellorLayout {
         );
 
         addButton(
-                sidebar,
-                "1",
-                "CAP Round 1",
-                "CAP Round 1",
+                menu,
+                "▦",
+                "CAP Rounds",
+                "CAP Rounds",
                 activePage,
                 () -> Navigation.goTo(
                         CAPRound1ManagementPage.getScene()
@@ -211,29 +281,7 @@ public class CounsellorLayout {
         );
 
         addButton(
-                sidebar,
-                "2",
-                "CAP Round 2",
-                "CAP Round 2",
-                activePage,
-                () -> Navigation.goTo(
-                        CAPRound2ManagementPage.getScene()
-                )
-        );
-
-        addButton(
-                sidebar,
-                "3",
-                "CAP Round 3",
-                "CAP Round 3",
-                activePage,
-                () -> Navigation.goTo(
-                        CAPRound3ManagementPage.getScene()
-                )
-        );
-
-        addButton(
-                sidebar,
+                menu,
                 "▤",
                 "Reports",
                 "Reports",
@@ -244,7 +292,7 @@ public class CounsellorLayout {
         );
 
         addButton(
-                sidebar,
+                menu,
                 "●",
                 "Notices",
                 "Notices",
@@ -254,16 +302,50 @@ public class CounsellorLayout {
                 )
         );
 
-        Region spacer =
-                new Region();
+        addButton(
 
-        VBox.setVgrow(
-                spacer,
-                Priority.ALWAYS
+                menu,
+
+                "ⓘ",
+
+                "About Us",
+
+                "About Us",
+
+                activePage,
+
+                () -> Navigation.goTo(
+
+                        AboutUsPage.getScene()
+
+                )
+
         );
 
-        sidebar.getChildren().add(
-                spacer
+        ScrollPane menuScroll =
+                new ScrollPane(menu);
+
+        menuScroll.setFitToWidth(true);
+        menuScroll.setHbarPolicy(
+                ScrollPane.ScrollBarPolicy.NEVER
+        );
+        menuScroll.setVbarPolicy(
+                ScrollPane.ScrollBarPolicy.AS_NEEDED
+        );
+        menuScroll.setPannable(true);
+
+        menuScroll.setMinHeight(0);
+        menuScroll.setMaxHeight(Double.MAX_VALUE);
+
+        BorderPane.setAlignment(
+                menuScroll,
+                Pos.TOP_LEFT
+        );
+
+        menuScroll.setStyle(
+                "-fx-background: " + PANEL + ";" +
+                "-fx-background-color: " + PANEL + ";" +
+                "-fx-border-color: transparent;"
         );
 
         Label account =
@@ -276,12 +358,36 @@ public class CounsellorLayout {
                 "-fx-padding: 0 8 6 8;"
         );
 
-        sidebar.getChildren().add(
+        VBox accountBox =
+                new VBox();
+
+        accountBox.setSpacing(3);
+
+        accountBox.setPadding(
+                new Insets(
+                        8,
+                        14,
+                        10,
+                        14
+                )
+        );
+
+        accountBox.setMinHeight(112);
+        accountBox.setPrefHeight(112);
+        accountBox.setMaxHeight(112);
+
+        accountBox.setStyle(
+                "-fx-background-color: " + PANEL + ";" +
+                "-fx-border-color: " + BORDER + ";" +
+                "-fx-border-width: 1 0 0 0;"
+        );
+
+        accountBox.getChildren().add(
                 account
         );
 
         addButton(
-                sidebar,
+                accountBox,
                 "●",
                 "Profile",
                 "Profile",
@@ -292,7 +398,7 @@ public class CounsellorLayout {
         );
 
         addButton(
-                sidebar,
+                accountBox,
                 "⇥",
                 "Logout",
                 "Logout",
@@ -301,6 +407,10 @@ public class CounsellorLayout {
                         CounsellorLoginPage.getScene()
                 )
         );
+
+        sidebar.setTop(logoBox);
+        sidebar.setCenter(menuScroll);
+        sidebar.setBottom(accountBox);
 
         return sidebar;
     }
@@ -351,7 +461,11 @@ public class CounsellorLayout {
         );
 
         button.setPrefHeight(
-                44
+                40
+        );
+
+        button.setMinHeight(
+                40
         );
 
         button.setAlignment(
@@ -359,7 +473,12 @@ public class CounsellorLayout {
         );
 
         boolean active =
-                page.equals(activePage);
+                page.equals(activePage)
+                        || (
+                        "CAP Rounds".equals(page)
+                                && activePage != null
+                                && activePage.startsWith("CAP Round")
+                );
 
         if (active) {
 

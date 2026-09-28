@@ -17,8 +17,9 @@ import javafx.scene.text.FontWeight;
 
 public class CounsellorLoginPage {
 
-    private static final String COUNSELLOR_ID = "YASH";
-    private static final String COUNSELLOR_PASSWORD = "123";
+    private static final String COUNSELLOR_ID = "core2web";
+    private static final String COUNSELLOR_PASSWORD =
+        System.getenv("COUNSELLOR_PASSWORD");
 
     private static final String BLACK = "#050705";
     private static final String DARK = "#0C110B";

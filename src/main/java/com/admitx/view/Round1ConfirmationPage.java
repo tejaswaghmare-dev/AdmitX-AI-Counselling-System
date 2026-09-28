@@ -27,7 +27,7 @@ public class Round1ConfirmationPage {
                 new Label("CAP Round 1 Confirmation");
 
         title.setStyle(
-                "-fx-font-size: 26px;" +
+                "-fx-font-size: 28px;" +
                 "-fx-font-weight: bold;" +
                 "-fx-text-fill: " + WHITE + ";"
         );
@@ -166,7 +166,7 @@ public class Round1ConfirmationPage {
                 );
 
         resultCard.setPadding(
-                new Insets(22)
+                new Insets(24)
         );
 
         resultCard.setStyle(
@@ -209,14 +209,14 @@ public class Round1ConfirmationPage {
                 );
 
         nextCard.setPadding(
-                new Insets(18)
+                new Insets(20)
         );
 
         nextCard.setStyle(
                 "-fx-background-color: #151B10;" +
-                "-fx-background-radius: 10px;" +
+                "-fx-background-radius: 12px;" +
                 "-fx-border-color: #38452B;" +
-                "-fx-border-radius: 10px;"
+                "-fx-border-radius: 12px;"
         );
 
         Button dashboard =
@@ -277,8 +277,11 @@ public class Round1ConfirmationPage {
                 );
 
         content.setPadding(
-                new Insets(30)
+                new Insets(20, 24, 30, 24)
         );
+
+        content.setFillWidth(true);
+        content.setMaxWidth(Double.MAX_VALUE);
 
         content.setStyle(
                 "-fx-background-color: " + BG + ";"
@@ -309,6 +312,9 @@ public class Round1ConfirmationPage {
         Label valueLabel =
                 new Label(value);
 
+        valueLabel.setWrapText(true);
+        valueLabel.setMaxWidth(Double.MAX_VALUE);
+
         valueLabel.setStyle(
                 "-fx-font-size: 14px;" +
                 "-fx-font-weight: bold;" +
@@ -323,7 +329,7 @@ public class Round1ConfirmationPage {
                 );
 
         box.setPadding(
-                new Insets(12)
+                new Insets(14, 16, 14, 16)
         );
 
         box.setStyle(
@@ -340,51 +346,69 @@ public class Round1ConfirmationPage {
             Button button
     ) {
 
-        button.setPrefHeight(42);
+        button.setPrefHeight(44);
+        button.setPadding(new Insets(0, 22, 0, 22));
 
-        button.setPadding(
-                new Insets(
-                        0,
-                        20,
-                        0,
-                        20
-                )
-        );
-
-        button.setStyle(
+        String normal =
                 "-fx-background-color: " + LIME + ";" +
                 "-fx-text-fill: #0B100B;" +
                 "-fx-font-size: 13px;" +
                 "-fx-font-weight: bold;" +
-                "-fx-background-radius: 8px;" +
-                "-fx-cursor: hand;"
-        );
+                "-fx-background-radius: 9px;" +
+                "-fx-cursor: hand;";
+
+        String hover =
+                "-fx-background-color: #C7FF3A;" +
+                "-fx-text-fill: #0B100B;" +
+                "-fx-font-size: 13px;" +
+                "-fx-font-weight: bold;" +
+                "-fx-background-radius: 9px;" +
+                "-fx-cursor: hand;";
+
+        button.setStyle(normal);
+        button.setOnMouseEntered(e -> {
+            if (!button.isDisabled()) {
+                button.setStyle(hover);
+            }
+        });
+        button.setOnMouseExited(e -> button.setStyle(normal));
     }
 
     private static void styleSecondaryButton(
             Button button
     ) {
 
-        button.setPrefHeight(42);
+        button.setPrefHeight(44);
+        button.setPadding(new Insets(0, 20, 0, 20));
 
-        button.setPadding(
-                new Insets(
-                        0,
-                        18,
-                        0,
-                        18
-                )
-        );
-
-        button.setStyle(
+        String normal =
                 "-fx-background-color: #171F17;" +
                 "-fx-text-fill: " + WHITE + ";" +
                 "-fx-border-color: #344034;" +
-                "-fx-border-radius: 8px;" +
-                "-fx-background-radius: 8px;" +
+                "-fx-border-width: 1px;" +
+                "-fx-border-radius: 9px;" +
+                "-fx-background-radius: 9px;" +
                 "-fx-font-size: 12px;" +
                 "-fx-font-weight: bold;" +
-                "-fx-cursor: hand;"
-        );
+                "-fx-cursor: hand;";
+
+        String hover =
+                "-fx-background-color: #202A20;" +
+                "-fx-text-fill: " + WHITE + ";" +
+                "-fx-border-color: " + LIME + ";" +
+                "-fx-border-width: 1px;" +
+                "-fx-border-radius: 9px;" +
+                "-fx-background-radius: 9px;" +
+                "-fx-font-size: 12px;" +
+                "-fx-font-weight: bold;" +
+                "-fx-cursor: hand;";
+
+        button.setStyle(normal);
+        button.setOnMouseEntered(e -> {
+            if (!button.isDisabled()) {
+                button.setStyle(hover);
+            }
+        });
+        button.setOnMouseExited(e -> button.setStyle(normal));
     }
 }

@@ -310,18 +310,7 @@ public class OptionConfirmationPage {
             alert.showAndWait();
         });
 
-        Button dashboardButton =
-                new Button("← Dashboard");
-
-        styleSecondaryButton(
-                dashboardButton
-        );
-
-        dashboardButton.setOnAction(e ->
-                Navigation.goTo(
-                        StudentDashboardPage.getScene()
-                )
-        );
+       
 
         Button capRoundButton =
                 new Button(
@@ -349,7 +338,6 @@ public class OptionConfirmationPage {
         HBox buttons =
                 new HBox(
                         12,
-                        dashboardButton,
                         downloadButton,
                         spacer,
                         capRoundButton

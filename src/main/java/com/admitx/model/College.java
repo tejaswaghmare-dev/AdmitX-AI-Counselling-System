@@ -2,89 +2,160 @@ package com.admitx.model;
 
 public class College {
 
-    private String collegeID;
-    private String collegeName;
-    private String district;
-    private String university;
-    private String branch;
-    private int intake;
+private String collegeID;
+private String collegeName;
+private String district;
+private String university;
+private String branch;
 
-    // Required by Firestore
-    public College() {
-    }
+private int intake;
+private int seatsAvailable;
 
-    public College(
-            String collegeID,
-            String collegeName,
-            String district,
-            String university,
-            String branch,
-            int intake) {
+// Minimum percentile required for this college
+private double cutoff;
 
-        this.collegeID = collegeID;
-        this.collegeName = collegeName;
-        this.district = district;
-        this.university = university;
-        this.branch = branch;
-        this.intake = intake;
-    }
 
-    // College ID
-    public String getCollegeID() {
-        return collegeID;
-    }
+// Required by Firestore
+public College() {
+}
 
-    public void setCollegeID(String collegeID) {
-        this.collegeID = collegeID;
-    }
 
-    // College Name
-    public String getCollegeName() {
-        return collegeName;
-    }
+public College(
+        String collegeID,
+        String collegeName,
+        String district,
+        String university,
+        String branch,
+        int intake,
+        double cutoff) {
 
-    public void setCollegeName(String collegeName) {
-        this.collegeName = collegeName;
-    }
+    this.collegeID = collegeID;
+    this.collegeName = collegeName;
+    this.district = district;
+    this.university = university;
+    this.branch = branch;
+    this.intake = intake;
+    this.cutoff = cutoff;
 
-    // District
-    public String getDistrict() {
-        return district;
-    }
+    // Initially all seats are available
+    this.seatsAvailable = intake;
+}
 
-    public void setDistrict(String district) {
-        this.district = district;
-    }
 
-    // University
-    public String getUniversity() {
-        return university;
-    }
+// ================================
+// COLLEGE ID
+// ================================
 
-    public void setUniversity(String university) {
-        this.university = university;
-    }
+public String getCollegeID() {
+    return collegeID;
+}
 
-    // Branch
-    public String getBranch() {
-        return branch;
-    }
+public void setCollegeID(String collegeID) {
+    this.collegeID = collegeID;
+}
 
-    public void setBranch(String branch) {
-        this.branch = branch;
-    }
 
-    // Intake
-    public int getIntake() {
-        return intake;
-    }
+// ================================
+// COLLEGE NAME
+// ================================
 
-    public void setIntake(int intake) {
-        this.intake = intake;
-    }
+public String getCollegeName() {
+    return collegeName;
+}
 
-    @Override
-    public String toString() {
-        return collegeID + " - " + collegeName + " - " + branch;
-    }
+public void setCollegeName(String collegeName) {
+    this.collegeName = collegeName;
+}
+
+
+// ================================
+// DISTRICT
+// ================================
+
+public String getDistrict() {
+    return district;
+}
+
+public void setDistrict(String district) {
+    this.district = district;
+}
+
+
+// ================================
+// UNIVERSITY
+// ================================
+
+public String getUniversity() {
+    return university;
+}
+
+public void setUniversity(String university) {
+    this.university = university;
+}
+
+
+// ================================
+// BRANCH
+// ================================
+
+public String getBranch() {
+    return branch;
+}
+
+public void setBranch(String branch) {
+    this.branch = branch;
+}
+
+
+// ================================
+// TOTAL INTAKE
+// ================================
+
+public int getIntake() {
+    return intake;
+}
+
+public void setIntake(int intake) {
+    this.intake = intake;
+}
+
+
+// ================================
+// AVAILABLE SEATS
+// ================================
+
+public int getSeatsAvailable() {
+    return seatsAvailable;
+}
+
+public void setSeatsAvailable(int seatsAvailable) {
+    this.seatsAvailable = seatsAvailable;
+}
+
+
+// ================================
+// COLLEGE CUTOFF
+// ================================
+
+public double getCutoff() {
+    return cutoff;
+}
+
+public void setCutoff(double cutoff) {
+    this.cutoff = cutoff;
+}
+
+
+@Override
+public String toString() {
+    return collegeID
+            + " - "
+            + collegeName
+            + " - "
+            + branch
+            + " - Cutoff: "
+            + cutoff;
+}
+
+
 }

@@ -9,7 +9,7 @@ public class CollegeAddController {
 
     CollegeDAO dao = new CollegeDAO();
 
-    public void addcollege (String clgid,String collegename,String district,String university, String branch,int intake){
+    public void addcollege (String clgid,String collegename,String district,String university, String branch,int intake,double cutoff){
         
         College clg = new College(
             clgid,
@@ -17,7 +17,8 @@ public class CollegeAddController {
             district,
             university,
             branch,
-            intake
+            intake,
+            cutoff
         );
 
        

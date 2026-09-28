@@ -1,11 +1,17 @@
 package com.admitx.view;
 
+import com.admitx.dao.CAPAllotmentDAO;
+import com.admitx.model.CAPAllotment;
+import com.admitx.model.Student;
+import com.admitx.util.AsyncTaskRunner;
+
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.*;
 
@@ -21,32 +27,210 @@ public class CAPRound2Page {
 
     public static Scene getScene() {
 
-        Label title = new Label("CAP Round 2");
+        String studentEmail =
+                Student.getInstance().getEmail();
+
+        /*
+         * CHECK LOGIN
+         */
+
+        if (
+                studentEmail == null ||
+                studentEmail.isBlank()
+        ) {
+
+            showMessage(
+                    "Login Required",
+                    "Please login before viewing CAP Round 2."
+            );
+
+            return StudentLoginPage.getScene();
+        }
+
+        /*
+         * LOAD ROUND 2
+         */
+
+        Scene loadingScene =
+                createLoadingScene();
+
+        AsyncTaskRunner.run(
+                () -> new CAPAllotmentDAO()
+                        .getStudentAllotment(2),
+                allotment -> Navigation.goTo(
+                        createRoundScene(allotment)
+                ),
+                error -> {
+                    error.printStackTrace();
+                    showLoadingError();
+                }
+        );
+
+        return loadingScene;
+    }
+
+    private static Scene createRoundScene(
+            CAPAllotment allotment
+    ) {
+
+        /*
+         * HEADING
+         */
+
+        Label title =
+                new Label("CAP Round 2");
 
         title.setStyle(
-                "-fx-font-size: 26px;" +
+                "-fx-font-size: 28px;" +
                 "-fx-font-weight: bold;" +
                 "-fx-text-fill: " + WHITE + ";"
         );
 
-        Label subtitle = new Label(
-                "Review your upgraded allotment and choose your next action."
-        );
+        Label subtitle =
+                new Label(
+                        "Review your Round 2 allotment and choose your next action."
+                );
 
         subtitle.setStyle(
                 "-fx-font-size: 13px;" +
                 "-fx-text-fill: " + MUTED + ";"
         );
 
-        VBox heading = new VBox(
-                6,
-                title,
-                subtitle
-        );
+        VBox heading =
+                new VBox(
+                        6,
+                        title,
+                        subtitle
+                );
 
-        Label status = new Label(
-                "●  ROUND 2 ALLOTMENT PUBLISHED"
+        /*
+         * NO ROUND 2 RESULT
+         */
+
+        if (allotment == null) {
+
+            Label waitingBadge =
+                    new Label(
+                            "●  ROUND 2 RESULT NOT AVAILABLE"
+                    );
+
+            waitingBadge.setStyle(
+                    "-fx-background-color: #211F0F;" +
+                    "-fx-text-fill: #FACC15;" +
+                    "-fx-font-size: 11px;" +
+                    "-fx-font-weight: bold;" +
+                    "-fx-padding: 8 14 8 14;" +
+                    "-fx-background-radius: 20px;" +
+                    "-fx-border-color: #665F20;" +
+                    "-fx-border-radius: 20px;"
+            );
+
+            Label waitingTitle =
+                    new Label(
+                            "CAP Round 2 result is not available."
+                    );
+
+            waitingTitle.setStyle(
+                    "-fx-font-size: 18px;" +
+                    "-fx-font-weight: bold;" +
+                    "-fx-text-fill: " + WHITE + ";"
+            );
+
+            Label waitingDescription =
+                    new Label(
+                            "Round 2 results are available only after Betterment processing and result publication."
+                    );
+
+            waitingDescription.setWrapText(true);
+
+            waitingDescription.setStyle(
+                    "-fx-font-size: 13px;" +
+                    "-fx-text-fill: " + MUTED + ";"
+            );
+
+            VBox waitingCard =
+                    new VBox(
+                            15,
+                            waitingBadge,
+                            waitingTitle,
+                            waitingDescription
+                    );
+
+            waitingCard.setPadding(
+                    new Insets(22)
+            );
+
+            waitingCard.setStyle(
+                    "-fx-background-color: " + CARD + ";" +
+                    "-fx-background-radius: 12px;" +
+                    "-fx-border-color: " + BORDER + ";" +
+                    "-fx-border-radius: 12px;"
+            );
+
+            
+
+            VBox content =
+                    new VBox(
+                            22,
+                            heading,
+                            waitingCard
+                        
+                    );
+
+            content.setPadding(
+                    new Insets(20, 24, 30, 24)
+            );
+
+            content.setStyle(
+                    "-fx-background-color: "
+                            + BG
+                            + ";"
+            );
+
+            ScrollPane scrollPane =
+                    new ScrollPane(
+                            content
+                    );
+
+            scrollPane.setFitToWidth(
+                    true
+            );
+
+            scrollPane.setHbarPolicy(
+                    ScrollPane.ScrollBarPolicy.NEVER
+            );
+
+            scrollPane.setVbarPolicy(
+                    ScrollPane.ScrollBarPolicy.NEVER
+            );
+            scrollPane.setPannable(true);
+
+            scrollPane.setVbarPolicy(
+                ScrollPane.ScrollBarPolicy.NEVER
         );
+        scrollPane.setPannable(true);
+
+        scrollPane.setStyle(
+                    "-fx-background: " + BG + ";" +
+                    "-fx-background-color: " + BG + ";"
+            );
+
+            return new Scene(
+                    StudentLayout.create(
+                            "CAP Round 2",
+                            scrollPane
+                    )
+            );
+        }
+
+        /*
+         * RESULT PUBLISHED
+         */
+
+        Label status =
+                new Label(
+                        "●  ROUND 2 ALLOTMENT PUBLISHED"
+                );
 
         status.setStyle(
                 "-fx-background-color: #1D2A10;" +
@@ -59,19 +243,27 @@ public class CAPRound2Page {
                 "-fx-border-radius: 20px;"
         );
 
-        Label allotmentTitle = createSectionTitle(
-                "UPGRADE DETAILS"
-        );
+        Label allotmentTitle =
+                createSectionTitle(
+                        "UPGRADE DETAILS"
+                );
 
-        GridPane details = new GridPane();
+        GridPane details =
+                new GridPane();
 
         details.setHgap(18);
         details.setVgap(15);
 
+        /*
+         * FIRESTORE VALUES
+         */
+
         addDetail(
                 details,
                 "Previous College",
-                "College of Engineering Pune",
+                safe(
+                        allotment.getPreviousCollege()
+                ),
                 0,
                 0
         );
@@ -79,23 +271,29 @@ public class CAPRound2Page {
         addDetail(
                 details,
                 "Previous Branch",
-                "Computer Engineering",
+                safe(
+                        allotment.getPreviousBranch()
+                ),
                 1,
                 0
         );
 
         addDetail(
                 details,
-                "New College",
-                "Vishwakarma Institute of Technology",
+                "Round 2 College",
+                safe(
+                        allotment.getCollege()
+                ),
                 0,
                 1
         );
 
         addDetail(
                 details,
-                "New Branch",
-                "Information Technology",
+                "Round 2 Branch",
+                safe(
+                        allotment.getBranch()
+                ),
                 1,
                 1
         );
@@ -103,15 +301,19 @@ public class CAPRound2Page {
         addDetail(
                 details,
                 "Upgrade Status",
-                "Upgraded",
+                safe(
+                        allotment.getUpgradeStatus()
+                ),
                 0,
                 2
         );
 
         addDetail(
                 details,
-                "Round",
-                "CAP Round 2",
+                "Allotted Preference",
+                allotment.getPreferenceNumber() > 0
+                        ? "Preference No. " + allotment.getPreferenceNumber()
+                        : "Not Allotted",
                 1,
                 2
         );
@@ -151,6 +353,10 @@ public class CAPRound2Page {
                 "-fx-border-radius: 12px;"
         );
 
+        /*
+         * ACTION SECTION
+         */
+
         Label actionTitle =
                 createSectionTitle(
                         "CHOOSE YOUR ACTION"
@@ -158,8 +364,8 @@ public class CAPRound2Page {
 
         Label actionDescription =
                 new Label(
-                        "Freeze accepts your Round 2 seat. Betterment keeps the seat "
-                        + "while allowing you to participate in CAP Round 3."
+                        "Freeze accepts your Round 2 seat and ends further CAP participation. "
+                                + "Betterment keeps your current seat while allowing you to participate in CAP Round 3."
                 );
 
         actionDescription.setWrapText(true);
@@ -169,65 +375,75 @@ public class CAPRound2Page {
                 "-fx-text-fill: " + MUTED + ";"
         );
 
+        /*
+         * FREEZE
+         */
+
         VBox freezeCard =
                 createActionCard(
                         "FREEZE",
                         "Accept Round 2 Seat",
-                        "Confirm this upgraded allotment and proceed towards admission."
+                        "Accept this allotment and stop participating in further CAP rounds."
                 );
 
         Button freeze =
-                new Button("Freeze Seat");
+                new Button(
+                        "Freeze Seat"
+                );
 
         stylePrimaryButton(
                 freeze
         );
 
         freeze.setOnAction(e -> {
-
-            showMessage(
+            saveDecisionAsync(
+                    freeze,
+                    "Seat Accepted",
                     "Seat Frozen",
-                    "Your Round 2 seat has been accepted."
-            );
-
-            Navigation.goTo(
-                    CAPRound3Page.getScene()
+                    "Your Round 2 seat has been accepted. You will not participate in CAP Round 3.",
+                    () -> Navigation.goTo(AdmissionConfirmationPage.getScene())
             );
         });
 
-        freezeCard.getChildren().add(
-                freeze
-        );
+        freezeCard.getChildren()
+                .add(
+                        freeze
+                );
+
+        /*
+         * BETTERMENT
+         */
 
         VBox bettermentCard =
                 createActionCard(
                         "BETTERMENT",
                         "Participate in Round 3",
-                        "Keep the Round 2 seat while trying for a higher preference."
+                        "Keep your Round 2 seat while trying for a higher preference."
                 );
 
         Button betterment =
-                new Button("Request Betterment");
+                new Button(
+                        "Request Betterment"
+                );
 
         styleBettermentButton(
                 betterment
         );
 
         betterment.setOnAction(e -> {
-
-            showMessage(
+            saveDecisionAsync(
+                    betterment,
                     "Betterment Requested",
-                    "You will be considered for further upgrade."
-            );
-
-            Navigation.goTo(
-                    CAPRound3Page.getScene()
+                    "Betterment Requested",
+                    "Your request has been saved. You are now eligible for CAP Round 3.",
+                    () -> Navigation.goTo(CAPRound2Page.getScene())
             );
         });
 
-        bettermentCard.getChildren().add(
-                betterment
-        );
+        bettermentCard.getChildren()
+                .add(
+                        betterment
+                );
 
         HBox actionCards =
                 new HBox(
@@ -265,10 +481,46 @@ public class CAPRound2Page {
                 "-fx-border-radius: 12px;"
         );
 
+        /*
+         * PREVENT DECISION CHANGES
+         */
+
+        boolean hasSeat =
+                allotment.getPreferenceNumber() > 0
+                        && allotment.getCollege() != null
+                        && !allotment.getCollege().isBlank();
+
+        String existingDecision =
+                allotment.getDecision();
+
+        if (!hasSeat) {
+            freeze.setDisable(true);
+            betterment.setDisable(true);
+            actionDescription.setText(
+                    "No seat was allotted in Round 2. You will automatically be considered in CAP Round 3 using your locked preferences."
+            );
+        }
+
+        if (hasSeat && (
+                existingDecision != null &&
+                !existingDecision.isBlank() &&
+                !"Pending".equalsIgnoreCase(
+                        existingDecision
+                )
+        )) {
+
+            freeze.setDisable(true);
+            betterment.setDisable(true);
+
+            actionDescription.setText(
+                    "Your Round 2 decision has already been submitted: "
+                            + existingDecision
+            );
+        }
+
         Label note =
                 new Label(
-                        "Your Round 2 decision will determine whether you continue "
-                        + "to CAP Round 3 or keep the currently allotted seat."
+                        "Your Round 2 decision determines whether you keep this seat or continue to CAP Round 3."
                 );
 
         note.setWrapText(true);
@@ -277,14 +529,16 @@ public class CAPRound2Page {
                 "-fx-background-color: #151B10;" +
                 "-fx-text-fill: #B9C5B2;" +
                 "-fx-font-size: 12px;" +
-                "-fx-padding: 14px;" +
+                "-fx-padding: 16px;" +
                 "-fx-background-radius: 8px;" +
                 "-fx-border-color: #38452B;" +
                 "-fx-border-radius: 8px;"
         );
 
         Button dashboard =
-                new Button("← Dashboard");
+                new Button(
+                        "← Dashboard"
+                );
 
         styleSecondaryButton(
                 dashboard
@@ -316,21 +570,32 @@ public class CAPRound2Page {
                 );
 
         content.setPadding(
-                new Insets(30)
+                new Insets(20, 24, 30, 24)
         );
 
         content.setStyle(
-                "-fx-background-color: " + BG + ";"
+                "-fx-background-color: "
+                        + BG
+                        + ";"
         );
 
         ScrollPane scrollPane =
-                new ScrollPane(content);
+                new ScrollPane(
+                        content
+                );
 
-        scrollPane.setFitToWidth(true);
+        scrollPane.setFitToWidth(
+                true
+        );
 
         scrollPane.setHbarPolicy(
                 ScrollPane.ScrollBarPolicy.NEVER
         );
+
+        scrollPane.setVbarPolicy(
+                ScrollPane.ScrollBarPolicy.NEVER
+        );
+        scrollPane.setPannable(true);
 
         scrollPane.setStyle(
                 "-fx-background: " + BG + ";" +
@@ -343,6 +608,86 @@ public class CAPRound2Page {
                         scrollPane
                 )
         );
+    }
+
+    private static Scene createLoadingScene() {
+
+        ProgressIndicator progress = new ProgressIndicator();
+        progress.setPrefSize(42, 42);
+
+        Label label = new Label("Loading CAP Round 2 allotment...");
+        label.setStyle(
+                "-fx-text-fill:" + MUTED + ";" +
+                "-fx-font-size:13px;"
+        );
+
+        VBox loadingBox = new VBox(14, progress, label);
+        loadingBox.setAlignment(Pos.CENTER);
+
+        BorderPane content = new BorderPane();
+        content.setCenter(loadingBox);
+        content.setStyle("-fx-background-color:" + BG + ";");
+
+        return new Scene(
+                StudentLayout.create("CAP Round 2", content)
+        );
+    }
+
+    private static void showLoadingError() {
+        showMessage(
+                "Loading Error",
+                "Could not load CAP Round 2 allotment."
+        );
+    }
+
+    private static void saveDecisionAsync(
+            Button button,
+            String decision,
+            String successTitle,
+            String successMessage,
+            Runnable onSuccess
+    ) {
+        button.setDisable(true);
+        AsyncTaskRunner.run(
+                () -> new CAPAllotmentDAO()
+                        .saveDecision(2, decision),
+                saved -> {
+                    button.setDisable(false);
+                    if (Boolean.TRUE.equals(saved)) {
+                        showMessage(successTitle, successMessage);
+                        if (onSuccess != null) {
+                            onSuccess.run();
+                        }
+                    } else {
+                        showMessage(
+                                "Error",
+                                "Unable to save your Round 2 decision."
+                        );
+                    }
+                },
+                error -> {
+                    button.setDisable(false);
+                    error.printStackTrace();
+                    showMessage(
+                            "Error",
+                            "Unable to save your Round 2 decision."
+                    );
+                }
+        );
+    }
+
+    private static String safe(
+            String value
+    ) {
+
+        if (
+                value == null ||
+                value.isBlank()
+        ) {
+            return "Not Available";
+        }
+
+        return value;
     }
 
     private static Label createSectionTitle(
@@ -370,7 +715,9 @@ public class CAPRound2Page {
     ) {
 
         Label label =
-                new Label(labelText);
+                new Label(
+                        labelText
+                );
 
         label.setStyle(
                 "-fx-font-size: 11px;" +
@@ -379,9 +726,13 @@ public class CAPRound2Page {
         );
 
         Label valueLabel =
-                new Label(value);
+                new Label(
+                        value
+                );
 
-        valueLabel.setWrapText(true);
+        valueLabel.setWrapText(
+                true
+        );
 
         valueLabel.setStyle(
                 "-fx-font-size: 14px;" +
@@ -441,7 +792,9 @@ public class CAPRound2Page {
         Label titleLabel =
                 new Label(title);
 
-        titleLabel.setWrapText(true);
+        titleLabel.setWrapText(
+                true
+        );
 
         titleLabel.setStyle(
                 "-fx-font-size: 15px;" +
@@ -452,7 +805,9 @@ public class CAPRound2Page {
         Label descriptionLabel =
                 new Label(description);
 
-        descriptionLabel.setWrapText(true);
+        descriptionLabel.setWrapText(
+                true
+        );
 
         descriptionLabel.setStyle(
                 "-fx-font-size: 11px;" +
@@ -481,9 +836,9 @@ public class CAPRound2Page {
 
         card.setStyle(
                 "-fx-background-color: " + ROW + ";" +
-                "-fx-background-radius: 10px;" +
+                "-fx-background-radius: 12px;" +
                 "-fx-border-color: " + BORDER + ";" +
-                "-fx-border-radius: 10px;"
+                "-fx-border-radius: 12px;"
         );
 
         return card;
@@ -494,16 +849,35 @@ public class CAPRound2Page {
     ) {
 
         button.setPrefHeight(40);
-        button.setMaxWidth(Double.MAX_VALUE);
+
+        button.setMaxWidth(
+                Double.MAX_VALUE
+        );
 
         button.setStyle(
                 "-fx-background-color: " + LIME + ";" +
+                "-fx-cursor: hand;" +
                 "-fx-text-fill: #0B100B;" +
                 "-fx-font-size: 12px;" +
                 "-fx-font-weight: bold;" +
                 "-fx-background-radius: 8px;" +
                 "-fx-cursor: hand;"
         );
+
+        String normalStyle = button.getStyle();
+
+        button.setOnMouseEntered(e -> {
+            if (!button.isDisabled()) {
+                button.setOpacity(0.88);
+            }
+        });
+
+        button.setOnMouseExited(e -> {
+            button.setOpacity(1.0);
+            if (!button.isDisabled()) {
+                button.setStyle(normalStyle);
+            }
+        });
     }
 
     private static void styleBettermentButton(
@@ -511,7 +885,10 @@ public class CAPRound2Page {
     ) {
 
         button.setPrefHeight(40);
-        button.setMaxWidth(Double.MAX_VALUE);
+
+        button.setMaxWidth(
+                Double.MAX_VALUE
+        );
 
         button.setStyle(
                 "-fx-background-color: #25351A;" +
@@ -523,6 +900,21 @@ public class CAPRound2Page {
                 "-fx-font-weight: bold;" +
                 "-fx-cursor: hand;"
         );
+
+        String normalStyle = button.getStyle();
+
+        button.setOnMouseEntered(e -> {
+            if (!button.isDisabled()) {
+                button.setOpacity(0.88);
+            }
+        });
+
+        button.setOnMouseExited(e -> {
+            button.setOpacity(1.0);
+            if (!button.isDisabled()) {
+                button.setStyle(normalStyle);
+            }
+        });
     }
 
     private static void styleSecondaryButton(
@@ -550,6 +942,21 @@ public class CAPRound2Page {
                 "-fx-font-weight: bold;" +
                 "-fx-cursor: hand;"
         );
+
+        String normalStyle = button.getStyle();
+
+        button.setOnMouseEntered(e -> {
+            if (!button.isDisabled()) {
+                button.setOpacity(0.88);
+            }
+        });
+
+        button.setOnMouseExited(e -> {
+            button.setOpacity(1.0);
+            if (!button.isDisabled()) {
+                button.setStyle(normalStyle);
+            }
+        });
     }
 
     private static void showMessage(
@@ -565,6 +972,7 @@ public class CAPRound2Page {
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(message);
+
         alert.showAndWait();
     }
 }
